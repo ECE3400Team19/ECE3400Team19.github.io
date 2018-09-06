@@ -20,7 +20,7 @@ We then put together our robot and had it perform a [simple autonomous task](#ro
 * Several resistors (kΩ range)
 * 1 Solderless breadboard
 
-## Communicating between the Uno and Video
+## Part 1 - Communicating between the Uno and Video
 
 Our first task was to get the internal LED on the Arduino Uno to blink. In the Arduino IDE, we navigated to File > Examples > 1.Basics > Blink. This opened up the "Blink" example sketch. To program the Arduino, we first compiled the code by clicking the checkmark and then uploaded it by clicking on the right-pointing arrow. Once the code uploaded, the internal LED blinked on and off every second.
 
@@ -71,7 +71,7 @@ Video of internal LED blinking once the Blink sketch was uploaded:
   <source src="blinking.MOV" type="video/mp4">
 </video>
 
-## Part 1 - Modifying the Blink sketch
+## Part 2 - Modifying the Blink sketch
 
 Next, we needed to modify the Blink sketch to now make an external LED blink on and off every second. First let's start with connecting the LED to the Arduino. We placed our LED onto the breadboard, connecting the anode of the LED (the longer leg) to digital pin 12 on the Arduino with a wire, and the cathode (the shorter leg) to the GND (ground) pin on the Arduino with a wire. To prevent shorting out any pin on the board or any components themselves, we placed a 1.5 kΩ resistor in series with the LED before connecting it to digital pin 12. The only modification that needed to be made in the Blink sketch was changing LED_BUILTIN to 12, to denote digital pin 12 where the external LED was connected. This change was made both within void setup() and void loop().
 
@@ -85,10 +85,10 @@ void setup() {
 
 // the loop function runs over and over again forever
 void loop() {
-  digitalWrite(12, HIGH);   // turn the LED on (HIGH is the voltage level)
-  delay(1000);                       // wait for a second
-  digitalWrite(12, LOW);    // turn the LED off by making the voltage LOW
-  delay(1000);                       // wait for a second
+  digitalWrite(12, HIGH); // turn the LED on (HIGH is the voltage level)
+  delay(1000);            // wait for a second
+  digitalWrite(12, LOW);  // turn the LED off by making the voltage LOW
+  delay(1000);            // wait for a second
 }
 ```
 
@@ -98,7 +98,25 @@ Video of external LED blinking once the modified Blink sketch was uploaded:
   <source src="externalLED.MOV" type="video/mp4">
 </video>
 
-## Part 2 - Using the analog output
+## Part 3 - The Serial Monitor and the Analog Pins
+
+
+Code for Part 3:
+```
+int pot = A5; // create variable to refer to analog pin connection of the potentiometer
+
+void setup() {
+  Serial.begin(9600); // set data rate to 9600 bps (bits per second)
+}
+
+void loop() {
+  int analogValue = analogRead(pot); // read the input analog voltage
+  Serial.println(analogValue); // print voltage value (on a new line) to Serial Monitor
+}
+
+```
+Picture of potentiometer connected to the Arduino Uno:
+<img src="lab1_fig1.png" width="400" height="300" alt="potentiometer-diagram">
 
 
 Video of potentiometer-controlled LED output
@@ -111,7 +129,7 @@ Photo of the Arduino setup with external LED and potentiometer.
 
 
 
-## Part 3 - Using the Parallax servos
+## Part 4 - Using the Parallax servos
 
 Video of Servo control
 
