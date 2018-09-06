@@ -104,18 +104,23 @@ Video of external LED blinking once the modified Blink sketch was uploaded:
 
 Code for Part 3:
 ```
-int pot = A5; // create variable to refer to analog pin connection of the potentiometer
+ // create variable to refer to analog pin connection of the potentiometer
+int pot = A5;
 
 void setup() {
-  Serial.begin(9600); // set data rate to 9600 bps (bits per second)
+   // set data rate to 9600 bps (bits per second)
+  Serial.begin(9600);
 }
 
 void loop() {
-  int analogValue = analogRead(pot); // read the input analog voltage
-  Serial.println(analogValue); // print voltage value (on a new line) to Serial Monitor
+  // read the input analog voltage
+  int analogValue = analogRead(pot);
+  // print voltage value (on a new line) to Serial Monitor
+  Serial.println(analogValue);
 }
 
 ```
+
 Picture of potentiometer connected to the Arduino Uno:
 <img src="lab1_fig1.png" width="400" height="300" alt="potentiometer-diagram">
 
