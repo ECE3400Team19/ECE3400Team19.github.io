@@ -81,10 +81,14 @@ Video of potentiometer-controlled Servo control
 
 ## Part 4 - Assembling the robot!
 
-## Robot demo!!!
+## Robot demo
 
-what a good boi
+<video width="800" height="600" controls>
+  <source src="recorded-1535680951.MP4" type="video/mp4">
+</video>
+
+...and as with all projects, not everything goes perfectly at first! Here is a quick blooper:
+
 <video width="800" height="600" controls>
   <source src="robot.mov" type="video/mp4">
 </video>
-
