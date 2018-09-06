@@ -23,6 +23,8 @@ We then put together our robot and had it perform a [simple autonomous task](#ro
 ## Communicating between the Uno and Video
 
 Our first task was to get the internal LED on the Arduino Uno to blink. In the Arduino IDE, we navigated to File > Examples > 1.Basics > Blink. This opened up the "Blink" example sketch. To program the Arduino, we first compiled the code by clicking the checkmark and then uploaded it by clicking on the right-pointing arrow. Once the code uploaded, the internal LED blinked on and off every second.
+
+Blink sketch uploaded to the Arduino:
 ```
 /*
   Blink
@@ -62,6 +64,13 @@ void loop() {
   delay(1000);                       // wait for a second
 }
 ```
+
+Video of internal LED blinking once the Blink sketch was uploaded:
+
+<video width="800" height="600" controls>
+  <source src="blinking.MOV" type="video/mp4">
+</video>
+
 ## Part 1 - Modifying the Blink sketch
 
 Next, we needed to modify the Blink sketch to now make an external LED blink on and off every second.
@@ -81,11 +90,6 @@ void loop() {
 }
 ```
 
-Video of LED blinking.
-
-<video width="800" height="600" controls>
-  <source src="blinking.MOV" type="video/mp4">
-</video>
 
 Photo of the Arduino setup with external LED
 
