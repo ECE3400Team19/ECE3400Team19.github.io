@@ -87,7 +87,8 @@ Video of potentiometer-controlled Servo control
   <source src="recorded-1535680951.MP4" type="video/mp4">
 </video>
 
-...and as with all projects, not everything goes perfectly at first! Here is a quick blooper:
+
+As with all projects, not everything goes perfectly at first! Here is a quick blooper:
 
 <video width="800" height="600" controls>
   <source src="robot.mov" type="video/mp4">
