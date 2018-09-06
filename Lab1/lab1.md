@@ -7,7 +7,7 @@
 
 In this lab, we used the various functionalities of the Arduino Uno and the Arduino IDE, as well as the GitHub repository.
 We brainstormed and constructed a simple functional Arduino program using multiple external components and the Arduino Uno.
-We then put together our robot and had it perform a [simple autonomous task](#robot-demo).
+We then put together our robot and had it perform a [simple autonomous task](#robot-demo!!!).
 
 ## Materials
 
@@ -46,7 +46,7 @@ Video of LED blinking.
 
 Photo of the Arduino setup with external LED
 
-!["arduino!"](arduino.JPG)
+<img src="arduino.JPG" width="800" height="600" alt="arduino!!!">
 
 Video of external LED blinking
 
@@ -81,7 +81,9 @@ Video of potentiometer-controlled Servo control
 
 ## Part 4 - Assembling the robot!
 
-## Robot demo
+## Robot demo!!!
+
+what a good boi
 
 <video width="800" height="600" controls>
   <source src="robot.mov" type="video/mp4">
