@@ -104,7 +104,7 @@ Video of external LED blinking once the modified Blink sketch was uploaded:
 
  Diagram of potentiometer connected to the Arduino Uno:
 
- <img src="lab1_fig1.png" width="300" height="250" alt="potentiometer-diagram">
+ <img src="lab1_fig1.png" width="400" height="250" alt="potentiometer-diagram">
 
 Code for Part 3:
 ```
