@@ -124,7 +124,7 @@ void loop() {
 }
 
 ```
-\*\*\*Need to insert picture of only potentiometer being connected\*\*\*
+NEED TO INSERT PHOTO OF JUST POT BEING CONNECTED!!!
 
 Video of potentiometer-controlled LED output
 
