@@ -102,6 +102,9 @@ Video of external LED blinking once the modified Blink sketch was uploaded:
 
  In this part of the lab, we utilized the Uno's analog pins. An analog pin only works as an INPUT, which removes the need to configure it as an INPUT within void setup(). We used a potentiometer to input a range of different analog voltages and then printed the values to the screen using the Serial Monitor. The potentiometer we used has three pins and a diagram can be seen below. The potentiometer was placed on the breadboard and its center pin was connected in series with a 1.5 kΩ resistor to analog pin A5 with a wire. Out of the remaining two pins, one was connected to GND on the Arduino and the remaining pin was connected to +5V. Since we used the Serial Monitor to print out voltage values, in void setup() we needed to set the rate at which data will be read in. We picked 9600 bps (bits per second) as it is a commonly used value. Again, analog pin A5 did not need to be set up as an input. Within void loop(), the analog voltage value of the potentiometer is read and then printed to the Serial Monitor. As the potentiometer knob is turned CCW (counter-clockwise) the input voltage decreases in value, whereas turning it CW increases the voltage.  
 
+ Diagram of potentiometer connected to the Arduino Uno:
+ <img src="lab1_fig1.png" width="200" height="50" alt="potentiometer-diagram">
+
 Code for Part 3:
 ```
  // create variable to refer to analog pin connection of the potentiometer
@@ -120,9 +123,6 @@ void loop() {
 }
 
 ```
-
-Picture of potentiometer connected to the Arduino Uno:
-<img src="lab1_fig1.png" width="300" height="100" alt="potentiometer-diagram">
 
 
 Video of potentiometer-controlled LED output
