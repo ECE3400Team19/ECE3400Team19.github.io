@@ -40,21 +40,50 @@ void loop() {
 
 Video of LED blinking.
 
-
 <video width="800" height="600" controls>
   <source src="blinking.MOV" type="video/mp4">
 </video>
 
-Photo of the Arduino setup
+Photo of the Arduino setup with external LED
 
 !["arduino!"](arduino.JPG)
 
+Video of external LED blinking
+
+<video width="800" height="600" controls>
+  <source src="externalLED.MOV" type="video/mp4">
+</video>
 
 ## Part 2 - Using the analog output
 
 
+Video of potentiometer-controlled LED output
+
+<video width="800" height="600" controls>
+  <source src="externalLEDPOT.MOV" type="video/mp4">
+</video>
+
+
 ## Part 3 - Using the Parallax servos
+
+Video of Servo control
+
+<video width="800" height="600" controls>
+  <source src="servo.MOV" type="video/mp4">
+</video>
+
+Video of potentiometer-controlled Servo control
+
+<video width="800" height="600" controls>
+  <source src="servoPot.MOV" type="video/mp4">
+</video>
+
 
 ## Part 4 - Assembling the robot!
 
 ## Robot demo
+
+<video width="800" height="600" controls>
+  <source src="robot.mov" type="video/mp4">
+</video>
+
