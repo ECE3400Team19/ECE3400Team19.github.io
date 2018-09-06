@@ -73,7 +73,7 @@ Video of internal LED blinking once the Blink sketch was uploaded:
 
 ## Part 1 - Modifying the Blink sketch
 
-Next, we needed to modify the Blink sketch to now make an external LED blink on and off every second. First let's start with connecting the LED to the Arduino. We placed our LED onto the breadboard, connecting the anode of the LED (the longer leg) to digital pin 12 on the Arduino with a wire, and the cathode (the shorter leg) to the GND (ground) pin on the Arduino with a wire. The only modification that needed to be made in the Blink sketch was changing LED_BUILTIN to 12, to denote digital pin 12 where the external LED was connected. This change was made both within void setup() and void loop().
+Next, we needed to modify the Blink sketch to now make an external LED blink on and off every second. First let's start with connecting the LED to the Arduino. We placed our LED onto the breadboard, connecting the anode of the LED (the longer leg) to digital pin 12 on the Arduino with a wire, and the cathode (the shorter leg) to the GND (ground) pin on the Arduino with a wire. To prevent shorting out any pin on the board or any components themselves, we placed a resistor of at least 330Ω in series with the LED before connecting it to digital pin 12. The only modification that needed to be made in the Blink sketch was changing LED_BUILTIN to 12, to denote digital pin 12 where the external LED was connected. This change was made both within void setup() and void loop().
 
 Modified Blink sketch which blinks an external LED on and off  every second:
 ```
@@ -92,8 +92,6 @@ void loop() {
 }
 ```
 
-Photo of the Arduino setup with external LED:
-<img src="arduino.JPG" width="800" height="600" alt="arduino!!!">
 
 Video of external LED blinking once the modified Blink sketch was uploaded:
 <video width="800" height="600" controls>
@@ -108,6 +106,9 @@ Video of potentiometer-controlled LED output
 <video width="800" height="600" controls>
   <source src="externalLEDPOT.MOV" type="video/mp4">
 </video>
+Photo of the Arduino setup with external LED and potentiometer.
+<img src="arduino.JPG" width="800" height="600" alt="arduino!!!">
+
 
 
 ## Part 3 - Using the Parallax servos
