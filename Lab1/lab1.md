@@ -122,7 +122,7 @@ void loop() {
 ```
 
 Picture of potentiometer connected to the Arduino Uno:
-<img src="lab1_fig1.png" width="400" height="300" alt="potentiometer-diagram">
+<img src="lab1_fig1.png" width="300" height="100" alt="potentiometer-diagram">
 
 
 Video of potentiometer-controlled LED output
