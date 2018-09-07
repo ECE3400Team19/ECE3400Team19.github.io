@@ -125,6 +125,7 @@ void loop() {
 
 ```
 Photo of the potentiometer circuit
+
 <img src="pot.JPG" width="640" height="480" alt="pot!!!">
 
 Video of potentiometer-controlled LED output
