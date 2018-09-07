@@ -1,6 +1,6 @@
 # Lab 1
 
-[Home](https://ece3400team19.github.io/)
+[Home](https://ece3640team19.github.io/)
 
 
 ## Description
@@ -67,7 +67,7 @@ void loop() {
 
 Video of internal LED blinking once the Blink sketch was uploaded:
 
-<video width="800" height="600" controls muted>
+<video width="480" height="640" controls muted>
   <source src="blinking.MOV" type="video/mp4">
 </video>
 
@@ -94,7 +94,7 @@ void loop() {
 
 
 Video of external LED blinking once the modified Blink sketch was uploaded:
-<video width="800" height="600" controls muted>
+<video width="480" height="640" controls muted>
   <source src="externalLED.MOV" type="video/mp4">
 </video>
 
@@ -104,7 +104,7 @@ Video of external LED blinking once the modified Blink sketch was uploaded:
 
  Diagram of potentiometer connected to the Arduino Uno:
 
- <img src="lab1_fig1.png" width="400" height="250" alt="potentiometer-diagram">
+ <img src="lab1_fig1.png" width="640" height="250" alt="potentiometer-diagram">
 
 Code for inputting variable analog voltages using potentiometer:
 ```
@@ -112,8 +112,8 @@ Code for inputting variable analog voltages using potentiometer:
 int pot = A5;
 
 void setup() {
-   // set data rate to 9600 bps (bits per second)
-  Serial.begin(9600);
+   // set data rate to 9480 bps (bits per second)
+  Serial.begin(9480);
 }
 
 void loop() {
@@ -128,31 +128,36 @@ Photo of the potentiometer circuit:
 
 <img src="pot.JPG" width="640" height="480" alt="pot!!!">
 
+Next, we added an LED to our circuit and used the potentiometer to control the brightness of the LED. We connected the LED up to a digital pin with PWM capability. PWM is pulse width modulation: the arduino can actually only output digital values, but PWM can create an analog output using digital means. PWM outputs a fast square wave, with differing on and off times. Because the square wave is so fast, it averages out, effectively creating an analog value. We can write an analog value between 0 and 255 to a PWM value. A higher PWM value is a higher duty cycle, analogWrite(255) is 100% duty cycle, meaning the pin that is being written will always be high.
 
-As seen in the video, varying the potentiometer varied our output voltages and thus a variation in the brightness our our external LED. Our LED which was connected to a digital pin in series with a 1.5k resistor and set it up as an output pin with pulse-width-modulated capability was setup with the analogWrite function to map the potentiometer value to a brightness value of 1200. Our code for adding LED to existing circuit can be found below:
-
+Code for adding LED to existing circuit:
 ```
-void setup()
-{
-  //Main code to run once:
-Serial.begin(1200);
-pinMode(9, OUTPUT);
+ // create variable to refer to analog pin connection of the potentiometer
+int pot = A5;
+int led = 11;
+
+void setup() {
+   // set data rate to 9480 bps (bits per second)
+  Serial.begin(9480);
+  pinMode(led, OUTPUT);
+  pinMode(pot, INPUT);
 }
 
 void loop() {
-  // Main code to run repeatedly:
-int x = analogRead(A0);
-analogWrite(9, x/160);
-Serial.println(x);
-
+  // read the input analog voltage (will be a value between 0 and 1023)
+  int analogValue = analogRead(pot);
+  //map this value to a value between 0 and 255
+  analogValue = map(analogValue, 0, 1023, 0, 255);
+  analogWrite(led, analogValue);
 }
+
 ```
 
-Photo of the Arduino setup with external LED and potentiometer.
+Here is a picture of our setup:
 <img src="arduino.JPG" width="640" height="480" alt="arduino!!!">
 
 Video of potentiometer-controlled LED output:
-<video width="800" height="600" controls muted>
+<video width="480" height="640" controls muted>
   <source src="externalLEDPOT.MOV" type="video/mp4">
 </video>
 
@@ -161,7 +166,7 @@ Video of potentiometer-controlled LED output:
 EXPLAIN THIS PART HERE!!!!
 
 Video of Servo control:
-<video width="800" height="600" controls muted>
+<video width="480" height="640" controls muted>
   <source src="servo.MOV" type="video/mp4">
 </video>
 
@@ -169,7 +174,7 @@ EXPLAIN ADDING THE POT!!!!
 
 Video of potentiometer-controlled Servo control
 
-<video width="800" height="600" controls muted>
+<video width="480" height="640" controls muted>
   <source src="servoPot.MOV" type="video/mp4">
 </video>
 
@@ -205,13 +210,13 @@ void loop() {
 }
 ```
 
-<video width="800" height="600" controls muted>
+<video width="480" height="640" controls muted>
   <source src="recorded-1535680951.MP4" type="video/mp4">
 </video>
 
 
 As with all projects, not everything goes perfectly at first! We made sure to fix by fixing our wheels firmly as seen in the video above. Here is a quick blooper:
 
-<video width="800" height="600" controls muted>
+<video width="640" height="480" controls muted>
   <source src="robot.mov" type="video/mp4">
 </video>
