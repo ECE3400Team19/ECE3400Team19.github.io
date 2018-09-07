@@ -124,14 +124,15 @@ void loop() {
 }
 
 ```
-Photo of the potentiometer circuit.
-<img src="pot.JPG" width="800" height="600" alt="pot!!!">
+Photo of the potentiometer circuit
+<img src="pot.JPG" width="640" height="480" alt="pot!!!">
+
 Video of potentiometer-controlled LED output
 <video width="800" height="600" controls>
   <source src="externalLEDPOT.MOV" type="video/mp4">
 </video>
 Photo of the Arduino setup with external LED and potentiometer.
-<img src="arduino.JPG" width="800" height="600" alt="arduino!!!">
+<img src="arduino.JPG" width="640" height="480" alt="arduino!!!">
 
 
 
