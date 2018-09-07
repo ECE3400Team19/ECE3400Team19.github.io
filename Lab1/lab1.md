@@ -131,11 +131,33 @@ Photo of the potentiometer circuit:
 \*HERE WE NEED TO DESCRIBE ADDING THE LED TO THIS CIRCUIT!!!\*
 
 EXPLAIN THIS PART!!!
+Next, we added an LED to our circuit and used the potentiometer to control the brightness of the LED. We connected the LED up to a digital pin with PWM capability. PWM is pulse width modulation: the arduino can actually only output digital values, PWM outputs a fast square wave, with differing on and off times. Because the square wave is so fast, it averages out, effectively creating an analog value.
 
 Code for adding LED to existing circuit:
-ADD CODE HERE!!!
+```
+ // create variable to refer to analog pin connection of the potentiometer
+int pot = A5;
+int led = 11;
 
-Photo of the Arduino setup with external LED and potentiometer.
+void setup() {
+   // set data rate to 9600 bps (bits per second)
+  Serial.begin(9600);
+  pinMode(led, OUTPUT);
+  pinMode(pot, INPUT);
+}
+
+void loop() {
+  // read the input analog voltage
+  int analogValue = analogRead(pot);
+  //map this value to a value between 0 and 255
+  //so that we can write it to the LED
+  analogValue = map(analogValue, 0, 1023, 0, 255);
+  analogWrite(led, analogValue);
+}
+
+```
+
+Here is a picture of our setup:
 <img src="arduino.JPG" width="640" height="480" alt="arduino!!!">
 
 Video of potentiometer-controlled LED output:
