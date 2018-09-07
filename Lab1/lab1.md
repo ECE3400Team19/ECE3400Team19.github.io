@@ -1,7 +1,9 @@
+[Home](https://ece3640team19.github.io/) [Milestones](ttps://ece3640team19.github.io/)
+
 # Lab 1
-
-[Home](https://ece3640team19.github.io/)
-
+## Lab 1 Team Grouped Tasks
+1. Asena Ulug and Cynthia Zelga: Github creation and layout, Servo codes, sections 1,2 & 3 lab write up, Robot motion
+2.  John Chukwunonso Nwankwo, Robert Morgowicz and Laasya Renganathan: Internal and external LED blink, sections 4, 5 & 6 lab write up, Robot assembly
 
 ## Description
 
@@ -246,7 +248,3 @@ As with all projects, not everything goes perfectly at first! We made sure to fi
 <video width="640" height="480" controls muted>
   <source src="robot.mov" type="video/mp4">
 </video>
-
-## Lab 1 Team Grouped Tasks
-1. Asena Ulug and Cynthia Zelga: Github creation and layout, Servo codes, sections 1,2 & 3 lab write up, Robot motion
-2.  John Chukwunonso Nwankwo, Robert Morgowicz and Laasya Renganathan: Internal and external LED blink, sections 4, 5 & 6 lab write up, Robot assembly
