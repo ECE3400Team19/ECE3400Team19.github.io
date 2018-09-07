@@ -163,9 +163,19 @@ Video of potentiometer-controlled Servo control
 
 ## Part 5 - Assembling the robot!
 
+We constructed the Robot as follows:
+
+Each servo motor had a matching wheel attached.  Since we found wheels that fit the motors directly, we did not utilize the spokes or screws when attaching the wheels.  The motors driving the wheels were attached to the underside of the large white piece, henceforth referred to as the main chassis, via plastic struts.  A red peg was attached to the front of the main chassis, in which we placed a ball bearing.  This was intended to create a level platform for the components atop the main chassis while still allowing the robot to move and turn freely with the two servo-powered wheels.  While it served the former function quite well, the peg we obtained was slightly too short for the ball bearing to engage, so it more slid than rolled on this component.  Atop the main chassis we attached the breadboard with Velcro.  We anchored the Arduino to the breadboard directly by lashing it with a rubber band.  We used a similar method to attach the battery to the main chassis.  This construction was meant to be temporary, and would be refined in later labs.  
+
 ## Robot demo
 
-EXPLAIN HERE!!!
+With our robot constructed and the servos hooked up to the Arduino, we were now able to make it move.  For simple forward locomotion, we assigned each servo a value equidistant from 90 in opposite directions (i.e. 180 and 0).  To visualize why, consider viewing the robot from the right side.  Looking at the wheel on that side, a clockwise rotation would propel the robot forward. However, looking at the robot from the left, anti-clockwise motion would result in forward propulsion.  As such, we needed to make the servos spin in 'opposite' directions to make both wheels spin 'forward.'  For a similar reason, assigning the same value to both wheels caused to robot to turn.  Depending on which side of 90 the value fell, it would turn either right or left.  
+
+To demo the robot's movement, we set values to the servos to make the robot go forward, waited as it did so, then set values for it to turn, waited for it to turn, and repeated.  Since the code in the loop repeats naturally, this was easily implemented.  
+
+```
+Code For Robot Demo Goes Here!
+```
 
 <video width="800" height="600" controls muted>
   <source src="recorded-1535680951.MP4" type="video/mp4">
