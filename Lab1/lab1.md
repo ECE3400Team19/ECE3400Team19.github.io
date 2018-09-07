@@ -100,7 +100,7 @@ Video of external LED blinking once the modified Blink sketch was uploaded:
 
 ## Part 3 - The Serial Monitor and the Analog Pins
 
- In this part of the lab, we utilized the Uno's analog pins. An analog pin only works as an INPUT, which removes the need to configure it as an INPUT within void setup(). We used a potentiometer to input a range of different analog voltages and then printed the values to the screen using the Serial Monitor. The potentiometer we used has three pins and a diagram can be seen below. The potentiometer was placed on the breadboard and its center pin was connected in series with a 1.5 kΩ resistor to analog pin A5 with a wire. Out of the remaining two pins, one was connected to GND on the Arduino and the remaining pin was connected to +5V. Since we used the Serial Monitor to print out voltage values, in void setup() we needed to set the rate at which data will be read in. We picked 9600 bps (bits per second) as it is a commonly used value. Again, analog pin A5 did not need to be set up as an input. Within void loop(), the analog voltage value of the potentiometer is read and then printed to the Serial Monitor. As the potentiometer knob is turned CCW (counter-clockwise) the input voltage decreases in value, whereas turning it CW increases the voltage.  
+ In this part of the lab, we utilized the Uno's analog pins. An analog pin only works as an INPUT, which removes the need to configure it as an INPUT within void setup(). We made a simple voltage divider using a potentiometer and resistor to create a range of different analog voltages, which we read using the analog input pin, and then printed the values to the screen using the Serial Monitor. The potentiometer we used has three pins as shown in the diagram below. The potentiometer was placed on the breadboard and its center pin was connected in series with a 1.5 kΩ resistor to analog pin A5 with a wire. Out of the remaining two pins, one was connected to GND on the Arduino and the remaining pin was connected to +5V. Since we used the Serial Monitor to print out voltage values, in void setup() we needed to set the rate at which data will be read in. We picked 9600 bps (bits per second) as it is a commonly used baud rate. Again, analog pin A5 did not need to be set up as an input. Within void loop(), the analog voltage value of the potentiometer is read and then printed to the Serial Monitor. As the potentiometer knob is turned CCW (counter-clockwise) the input voltage decreases in value, whereas turning it CW increases the voltage.  
 
  Diagram of potentiometer connected to the Arduino Uno:
 
@@ -128,10 +128,8 @@ Photo of the potentiometer circuit:
 
 <img src="pot.JPG" width="640" height="480" alt="pot!!!">
 
-\*HERE WE NEED TO DESCRIBE ADDING THE LED TO THIS CIRCUIT!!!\*
-
-EXPLAIN THIS PART!!!
-Next, we added an LED to our circuit and used the potentiometer to control the brightness of the LED. We connected the LED up to a digital pin with PWM capability. PWM is pulse width modulation: the arduino can actually only output digital values, PWM outputs a fast square wave, with differing on and off times. Because the square wave is so fast, it averages out, effectively creating an analog value.
+!
+Next, we added an LED to our circuit and used the potentiometer to control the brightness of the LED. We connected the LED up to a digital pin with PWM capability. PWM is pulse width modulation: the arduino can actually only output digital values, but PWM can create an analog output using digital means. PWM outputs a fast square wave, with differing on and off times. Because the square wave is so fast, it averages out, effectively creating an analog value. We can write an analog value between 0 and 255 to a PWM value. A higher PWM value is a higher duty cycle, analogWrite(255) is 100% duty cycle, meaning the pin that is being written will always be high.
 
 Code for adding LED to existing circuit:
 ```
@@ -147,10 +145,9 @@ void setup() {
 }
 
 void loop() {
-  // read the input analog voltage
+  // read the input analog voltage (will be a value between 0 and 1023)
   int analogValue = analogRead(pot);
   //map this value to a value between 0 and 255
-  //so that we can write it to the LED
   analogValue = map(analogValue, 0, 1023, 0, 255);
   analogWrite(led, analogValue);
 }
