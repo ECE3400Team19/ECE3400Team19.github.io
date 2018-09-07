@@ -1,4 +1,4 @@
-# Team 19
+# ECE 3400 Fall 2018 - Team 19
 
 [Contract](Contract/contract.md)
 ||
