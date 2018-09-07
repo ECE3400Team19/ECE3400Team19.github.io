@@ -169,7 +169,21 @@ Video of Servo control:
 <video width="480" height="640" controls muted>
   <source src="servo.MOV" type="video/mp4">
 </video>
-
+```
+#include <Servo.h>
+Servo servo;
+int pot = A5;
+void setup() {
+  servo.attach(5);
+}
+void loop() {
+  servo.write(180);
+  delay(1000);
+  servo.write(90);
+  delay(1000);
+  servo.write(0);
+}
+```
 EXPLAIN ADDING THE POT!!!!
 
 Video of potentiometer-controlled Servo control
@@ -177,6 +191,20 @@ Video of potentiometer-controlled Servo control
 <video width="480" height="640" controls muted>
   <source src="servoPot.MOV" type="video/mp4">
 </video>
+```
+#include <Servo.h>
+Servo servo;
+void setup() {
+  servo.attach(5);
+  pinMode(pot, INPUT);
+}
+void loop() {
+  int analogValue = analogRead(pot);
+  //map this value to a value between 0 and 180
+  analogValue = map(analogValue, 0, 1023, 0, 180);
+  servo.write(analogValue);
+}
+```
 
 
 ## Part 5 - Assembling the robot!
@@ -193,6 +221,8 @@ To demo the robot's movement, we set values to the servos to make the robot go f
 
 ```
 #include <Servo.h>
+Servo left;
+Servo right;
 void setup() {
   left.attach(5);
   right.attach(10);
