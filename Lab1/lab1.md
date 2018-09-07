@@ -106,7 +106,7 @@ Video of external LED blinking once the modified Blink sketch was uploaded:
 
  <img src="lab1_fig1.png" width="400" height="250" alt="potentiometer-diagram">
 
-Code for Part 3:
+Code for inputting variable analog voltages using potentiometer:
 ```
  // create variable to refer to analog pin connection of the potentiometer
 int pot = A5;
@@ -124,26 +124,35 @@ void loop() {
 }
 
 ```
-Photo of the potentiometer circuit
+Photo of the potentiometer circuit:
 
 <img src="pot.JPG" width="640" height="480" alt="pot!!!">
 
-Video of potentiometer-controlled LED output
-<video width="800" height="600" controls muted>
-  <source src="externalLEDPOT.MOV" type="video/mp4">
-</video>
+\*HERE WE NEED TO DESCRIBE ADDING THE LED TO THIS CIRCUIT!!!\*
+
+EXPLAIN THIS PART!!!
+
+Code for adding LED to existing circuit:
+ADD CODE HERE!!!
+
 Photo of the Arduino setup with external LED and potentiometer.
 <img src="arduino.JPG" width="640" height="480" alt="arduino!!!">
 
-
+Video of potentiometer-controlled LED output:
+<video width="800" height="600" controls muted>
+  <source src="externalLEDPOT.MOV" type="video/mp4">
+</video>
 
 ## Part 4 - Using the Parallax servos
 
-Video of Servo control
+EXPLAIN THIS PART HERE!!!!
 
+Video of Servo control:
 <video width="800" height="600" controls muted>
   <source src="servo.MOV" type="video/mp4">
 </video>
+
+EXPLAIN ADDING THE POT!!!!
 
 Video of potentiometer-controlled Servo control
 
@@ -152,9 +161,11 @@ Video of potentiometer-controlled Servo control
 </video>
 
 
-## Part 4 - Assembling the robot!
+## Part 5 - Assembling the robot!
 
 ## Robot demo
+
+EXPLAIN HERE!!!
 
 <video width="800" height="600" controls muted>
   <source src="recorded-1535680951.MP4" type="video/mp4">
