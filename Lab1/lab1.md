@@ -67,7 +67,7 @@ void loop() {
 
 Video of internal LED blinking once the Blink sketch was uploaded:
 
-<video width="800" height="600" controls>
+<video width="800" height="600" controls muted>
   <source src="blinking.MOV" type="video/mp4">
 </video>
 
@@ -94,7 +94,7 @@ void loop() {
 
 
 Video of external LED blinking once the modified Blink sketch was uploaded:
-<video width="800" height="600" controls>
+<video width="800" height="600" controls muted>
   <source src="externalLED.MOV" type="video/mp4">
 </video>
 
@@ -128,7 +128,7 @@ Photo of the potentiometer circuit
 <img src="pot.JPG" width="640" height="480" alt="pot!!!">
 
 Video of potentiometer-controlled LED output
-<video width="800" height="600" controls>
+<video width="800" height="600" controls muted>
   <source src="externalLEDPOT.MOV" type="video/mp4">
 </video>
 Photo of the Arduino setup with external LED and potentiometer.
@@ -140,13 +140,13 @@ Photo of the Arduino setup with external LED and potentiometer.
 
 Video of Servo control
 
-<video width="800" height="600" controls>
+<video width="800" height="600" controls muted>
   <source src="servo.MOV" type="video/mp4">
 </video>
 
 Video of potentiometer-controlled Servo control
 
-<video width="800" height="600" controls>
+<video width="800" height="600" controls muted>
   <source src="servoPot.MOV" type="video/mp4">
 </video>
 
@@ -155,13 +155,13 @@ Video of potentiometer-controlled Servo control
 
 ## Robot demo
 
-<video width="800" height="600" controls>
+<video width="800" height="600" controls muted>
   <source src="recorded-1535680951.MP4" type="video/mp4">
 </video>
 
 
 As with all projects, not everything goes perfectly at first! Here is a quick blooper:
 
-<video width="800" height="600" controls>
+<video width="800" height="600" controls muted>
   <source src="robot.mov" type="video/mp4">
 </video>
