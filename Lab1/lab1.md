@@ -1,4 +1,4 @@
-# Lab 1
+# Lab 1: Microcontroller
 [Home](https://ece3640team19.github.io/)
 
 ## Team Tasks
@@ -7,8 +7,8 @@
 
 ## Lab Description
 
-In this lab, we used the various functionalities of the Arduino Uno and the Arduino IDE, as well as the GitHub repository.
-We brainstormed and constructed a simple functional Arduino program using multiple external components and the Arduino Uno.
+In this lab, we used the various functionalities of the Arduino Uno and the Arduino IDE, as well as the GitHub repository to come up with a basic Microcontroller. The purpose of our Microcontroller is to serve as the logical control unit of our final Robot.
+As described in various parts of this lab report, we brainstormed and constructed a simple functional Arduino program, using multiple external components and the Arduino Uno in this lab session.
 We then put together our robot and had it perform a [simple autonomous task](#robot-demo).
 
 ## Lab Materials
@@ -21,6 +21,7 @@ We then put together our robot and had it perform a [simple autonomous task](#ro
 * 1 Potentiometer
 * Several resistors (kΩ range)
 * 1 Solderless breadboard
+
 
 ## Part 1 - Communicating between the Uno and Video
 
@@ -72,6 +73,7 @@ Video of internal LED blinking once the Blink sketch was uploaded:
 <video width="480" height="640" controls muted>
   <source src="blinking.MOV" type="video/mp4">
 </video>
+
 
 ## Part 2 - Modifying the Blink sketch
 
@@ -242,7 +244,9 @@ void loop() {
   <source src="recorded-1535680951.MP4" type="video/mp4">
 </video>
 
+
 # Quick Blooper
+
 As with all projects, not everything goes perfectly at first! We made sure to fix by using firmly fitted wheels  as seen in the video below.
 
 <video width="640" height="480" controls muted>
