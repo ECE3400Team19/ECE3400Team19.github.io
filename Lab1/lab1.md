@@ -112,8 +112,8 @@ Code for inputting variable analog voltages using potentiometer:
 int pot = A5;
 
 void setup() {
-   // set data rate to 9480 bps (bits per second)
-  Serial.begin(9480);
+   // set data rate to 9600 bps (bits per second)
+  Serial.begin(9600);
 }
 
 void loop() {
@@ -137,8 +137,8 @@ int pot = A5;
 int led = 11;
 
 void setup() {
-   // set data rate to 9480 bps (bits per second)
-  Serial.begin(9480);
+   // set data rate to 9600 bps (bits per second)
+  Serial.begin(9600);
   pinMode(led, OUTPUT);
   pinMode(pot, INPUT);
 }
