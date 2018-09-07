@@ -104,7 +104,7 @@ Video of external LED blinking once the modified Blink sketch was uploaded:
 
  Diagram of potentiometer connected to the Arduino Uno:
 
- <img src="lab1_fig1.png" width="640" height="250" alt="potentiometer-diagram">
+ <img src="lab1_fig1.png" width="341" height="189" alt="potentiometer-diagram">
 
 Code for inputting variable analog voltages using potentiometer:
 ```
@@ -126,7 +126,7 @@ void loop() {
 ```
 Photo of the potentiometer circuit:
 
-<img src="pot.JPG" width="400" height="200" alt="pot!!!">
+<img src="pot.JPG" width="400" height="300" alt="pot!!!">
 
 Next, we added an LED to our circuit and used the potentiometer to control the brightness of the LED. We connected the LED up to a digital pin with PWM capability. PWM is pulse width modulation: the arduino can actually only output digital values, but PWM can create an analog output using digital means. PWM outputs a fast square wave, with differing on and off times. Because the square wave is so fast, it averages out, effectively creating an analog value. We can write an analog value between 0 and 255 to a PWM value. A higher PWM value is a higher duty cycle, analogWrite(255) is 100% duty cycle, meaning the pin that is being written will always be high.
 
