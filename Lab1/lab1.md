@@ -124,9 +124,8 @@ void loop() {
 }
 
 ```
-NEED TO INSERT PHOTO OF JUST POT BEING CONNECTED!!!
 Photo of the potentiometer circuit.
-<img src="POT.JPG" width="800" height="600" alt="pot!!!">
+<img src="pot.JPG" width="800" height="600" alt="pot!!!">
 Video of potentiometer-controlled LED output
 <video width="800" height="600" controls>
   <source src="externalLEDPOT.MOV" type="video/mp4">
