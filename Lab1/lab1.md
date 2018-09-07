@@ -1,17 +1,17 @@
-[Home](https://ece3640team19.github.io/) [Milestones](ttps://ece3640team19.github.io/)
-
 # Lab 1
-## Lab 1 Team Grouped Tasks
-1. Asena Ulug and Cynthia Zelga: Github creation and layout, Servo codes, sections 1,2 & 3 lab write up, Robot motion
-2.  John Chukwunonso Nwankwo, Robert Morgowicz and Laasya Renganathan: Internal and external LED blink, sections 4, 5 & 6 lab write up, Robot assembly
+[Home](https://ece3640team19.github.io/)
 
-## Description
+## Team Tasks
+* Group 1: Asena Ulug and Cynthia Zelga: Github creation and layout, Servo codes, sections 1,2 & 3 lab write up, Robot motion
+* Group 2: John Chukwunonso Nwankwo, Robert Morgowicz and Laasya Renganathan: Internal and external LED blink, sections 4, 5 & 6 lab write up, Robot assembly
+
+## Lab Description
 
 In this lab, we used the various functionalities of the Arduino Uno and the Arduino IDE, as well as the GitHub repository.
 We brainstormed and constructed a simple functional Arduino program using multiple external components and the Arduino Uno.
 We then put together our robot and had it perform a [simple autonomous task](#robot-demo).
 
-## Materials
+## Lab Materials
 
 * 1 Arduino Uno (in the box)
 * 1 USB A/B cable (in the box)
