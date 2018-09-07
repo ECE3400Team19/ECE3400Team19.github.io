@@ -128,7 +128,6 @@ Photo of the potentiometer circuit:
 
 <img src="pot.JPG" width="640" height="480" alt="pot!!!">
 
-!
 Next, we added an LED to our circuit and used the potentiometer to control the brightness of the LED. We connected the LED up to a digital pin with PWM capability. PWM is pulse width modulation: the arduino can actually only output digital values, but PWM can create an analog output using digital means. PWM outputs a fast square wave, with differing on and off times. Because the square wave is so fast, it averages out, effectively creating an analog value. We can write an analog value between 0 and 255 to a PWM value. A higher PWM value is a higher duty cycle, analogWrite(255) is 100% duty cycle, meaning the pin that is being written will always be high.
 
 Code for adding LED to existing circuit:
@@ -158,7 +157,7 @@ Here is a picture of our setup:
 <img src="arduino.JPG" width="640" height="480" alt="arduino!!!">
 
 Video of potentiometer-controlled LED output:
-<video width="800" height="600" controls muted>
+<video width="600" height="800" controls muted>
   <source src="externalLEDPOT.MOV" type="video/mp4">
 </video>
 
@@ -167,7 +166,7 @@ Video of potentiometer-controlled LED output:
 EXPLAIN THIS PART HERE!!!!
 
 Video of Servo control:
-<video width="800" height="600" controls muted>
+<video width="600" height="800" controls muted>
   <source src="servo.MOV" type="video/mp4">
 </video>
 
@@ -175,7 +174,7 @@ EXPLAIN ADDING THE POT!!!!
 
 Video of potentiometer-controlled Servo control
 
-<video width="800" height="600" controls muted>
+<video width="600" height="800" controls muted>
   <source src="servoPot.MOV" type="video/mp4">
 </video>
 
@@ -211,13 +210,13 @@ void loop() {
 }
 ```
 
-<video width="800" height="600" controls muted>
+<video width="600" height="800" controls muted>
   <source src="recorded-1535680951.MP4" type="video/mp4">
 </video>
 
 
 As with all projects, not everything goes perfectly at first! Here is a quick blooper:
 
-<video width="800" height="600" controls muted>
-  <source src="robot.mov" type="video/mp4">
+<video width="600" height="800" controls muted>
+  <source src="robot.mov" type="/mp4">
 </video>
