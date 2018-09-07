@@ -67,7 +67,7 @@ void loop() {
 
 Video of internal LED blinking once the Blink sketch was uploaded:
 
-<video width="800" height="600" controls muted>
+<video width="450" height="600" controls muted>
   <source src="blinking.MOV" type="video/mp4">
 </video>
 
@@ -94,13 +94,13 @@ void loop() {
 
 
 Video of external LED blinking once the modified Blink sketch was uploaded:
-<video width="800" height="600" controls muted>
+<video width="450" height="600" controls muted>
   <source src="externalLED.MOV" type="video/mp4">
 </video>
 
 ## Part 3 - The Serial Monitor and the Analog Pins
 
- In this part of the lab, we utilized the Uno's analog pins. An analog pin only works as an INPUT, which removes the need to configure it as an INPUT within void setup(). We made a simple voltage divider using a potentiometer and resistor to create a range of different analog voltages, which we read using the analog input pin, and then printed the values to the screen using the Serial Monitor. The potentiometer we used has three pins as shown in the diagram below. The potentiometer was placed on the breadboard and its center pin was connected in series with a 1.5 kΩ resistor to analog pin A5 with a wire. Out of the remaining two pins, one was connected to GND on the Arduino and the remaining pin was connected to +5V. Since we used the Serial Monitor to print out voltage values, in void setup() we needed to set the rate at which data will be read in. We picked 9600 bps (bits per second) as it is a commonly used baud rate. Again, analog pin A5 did not need to be set up as an input. Within void loop(), the analog voltage value of the potentiometer is read and then printed to the Serial Monitor. As the potentiometer knob is turned CCW (counter-clockwise) the input voltage decreases in value, whereas turning it CW increases the voltage.  
+ In this part of the lab, we utilized the Uno's analog pins. An analog pin only works as an INPUT, which removes the need to configure it as an INPUT within void setup(). We made a simple voltage divider using a potentiometer and resistor to create a range of different analog voltages, which we read using the analog input pin, and then printed the values to the screen using the Serial Monitor. The potentiometer we used has three pins as shown in the diagram below. The potentiometer was placed on the breadboard and its center pin was connected in series with a 1.5 kΩ resistor to analog pin A5 with a wire. Out of the remaining two pins, one was connected to GND on the Arduino and the remaining pin was connected to +5V. Since we used the Serial Monitor to print out voltage values, in void setup() we needed to set the rate at which data will be read in. We picked 9450 bps (bits per second) as it is a commonly used baud rate. Again, analog pin A5 did not need to be set up as an input. Within void loop(), the analog voltage value of the potentiometer is read and then printed to the Serial Monitor. As the potentiometer knob is turned CCW (counter-clockwise) the input voltage decreases in value, whereas turning it CW increases the voltage.  
 
  Diagram of potentiometer connected to the Arduino Uno:
 
@@ -112,8 +112,8 @@ Code for inputting variable analog voltages using potentiometer:
 int pot = A5;
 
 void setup() {
-   // set data rate to 9600 bps (bits per second)
-  Serial.begin(9600);
+   // set data rate to 9450 bps (bits per second)
+  Serial.begin(9450);
 }
 
 void loop() {
@@ -137,8 +137,8 @@ int pot = A5;
 int led = 11;
 
 void setup() {
-   // set data rate to 9600 bps (bits per second)
-  Serial.begin(9600);
+   // set data rate to 9450 bps (bits per second)
+  Serial.begin(9450);
   pinMode(led, OUTPUT);
   pinMode(pot, INPUT);
 }
@@ -157,7 +157,7 @@ Here is a picture of our setup:
 <img src="arduino.JPG" width="640" height="480" alt="arduino!!!">
 
 Video of potentiometer-controlled LED output:
-<video width="600" height="800" controls muted>
+<video width="450" height="600" controls muted>
   <source src="externalLEDPOT.MOV" type="video/mp4">
 </video>
 
@@ -166,7 +166,7 @@ Video of potentiometer-controlled LED output:
 EXPLAIN THIS PART HERE!!!!
 
 Video of Servo control:
-<video width="600" height="800" controls muted>
+<video width="450" height="600" controls muted>
   <source src="servo.MOV" type="video/mp4">
 </video>
 
@@ -174,7 +174,7 @@ EXPLAIN ADDING THE POT!!!!
 
 Video of potentiometer-controlled Servo control
 
-<video width="600" height="800" controls muted>
+<video width="450" height="600" controls muted>
   <source src="servoPot.MOV" type="video/mp4">
 </video>
 
@@ -210,13 +210,13 @@ void loop() {
 }
 ```
 
-<video width="600" height="800" controls muted>
+<video width="450" height="600" controls muted>
   <source src="recorded-1535680951.MP4" type="video/mp4">
 </video>
 
 
 As with all projects, not everything goes perfectly at first! Here is a quick blooper:
 
-<video width="600" height="800" controls muted>
-  <source src="robot.mov" type="/mp4">
+<video width="450" height="600" controls muted>
+  <source src="robot.mov" type="video/mp4">
 </video>
