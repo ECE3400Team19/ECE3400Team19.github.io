@@ -174,7 +174,22 @@ With our robot constructed and the servos hooked up to the Arduino, we were now 
 To demo the robot's movement, we set values to the servos to make the robot go forward, waited as it did so, then set values for it to turn, waited for it to turn, and repeated.  Since the code in the loop repeats naturally, this was easily implemented.  
 
 ```
-Code For Robot Demo Goes Here!
+#include <Servo.h>
+void setup() {
+  left.attach(5);
+  right.attach(10);
+}
+void loop() {
+  //STRAIGHT
+  left.write(180);
+  right.write(0);
+  delay(1000);
+
+  //TURN
+  left.write(45);
+  right.write(45);
+  delay(1000);
+}
 ```
 
 <video width="800" height="600" controls muted>
