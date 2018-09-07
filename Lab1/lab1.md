@@ -161,7 +161,9 @@ Video of potentiometer-controlled LED output:
 
 ## Part 4 - Using the Parallax servos
 
-EXPLAIN THIS PART HERE!!!!
+In this section of our Lab 1, we had our initial circuitry put together (1 Arduino board, 1 breadboard, 2 Parallax servo and wirings). Here our potentiometer values (as shown in our code below) were mapped to our servo to facilitate our robot motion. The white cable was connected to the PWM pin 5 (pulse-width-modulated), VCC (5V) red cable was hooked up to the voltage output from the Arduino board, and the black wire went to the ground.
+
+
 
 Video of Servo control:
 <video width="480" height="640" controls muted>
@@ -182,7 +184,7 @@ void loop() {
   servo.write(0);
 }
 ```
-EXPLAIN ADDING THE POT!!!!
+In our potentiometer code above, we labeled our servos (which were parallax and could rotate continuously) and mapped them between values 0 and 180 as to sync their movement just like in the case of our potentiometer, thus giving them the ability to rotate continuously, serving as the propelling system of our robot wheels.
 
 Video of potentiometer-controlled Servo control
 
