@@ -5,7 +5,7 @@
 [Lab 1](Lab1/lab1.md)
 ||
 [Lab 2](Lab2/lab2.md)
-<img src="IMG_8322.jpg" width="640" height="480" alt="team_photo">
+<img src="IMG_8322.jpg" width="400" height="300" alt="team_photo">
 
 ## Team Members:
 * Asena Ulug
