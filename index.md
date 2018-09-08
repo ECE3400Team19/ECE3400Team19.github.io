@@ -7,8 +7,8 @@
 [Milestone 1](Lab2/lab2.md)
 
 
-## Team Members: <img src="Team 19.png" width="420" height="250" alt="banner" img align="right"> 
-* Asena Ulug            
+## Team Members: <img src="Team 19.png" width="450" height="265" alt="banner" img align="right"> 
+* Asena Ulug          
 * Cynthia Zelga 
 * John Chukwunonso Nwankwo 
 * Robert Morgowicz 
