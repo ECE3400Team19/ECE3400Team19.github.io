@@ -8,10 +8,10 @@
 
 
 ## Team Members:
-* Asena Ulug               
+* Asena Ulug       <img src="Team 19.png" width="460" height="200" alt="banner" img align="right">        
 * Cynthia Zelga 
 * John Chukwunonso Nwankwo
 * Robert Morgowicz
 * Laasya Renganathan
 
-<img src="Team 19.png" width="460" height="200" alt="banner" img align="right">
+
