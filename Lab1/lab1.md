@@ -132,19 +132,19 @@ Photo of the potentiometer circuit:
 
 <img src="pot.JPG" width="400" height="300" alt="pot!!!">
 
-Next, we added an LED to our circuit and used the potentiometer to control the brightness of the LED. We connected the LED up to a digital pin with PWM capability. PWM is pulse width modulation: the arduino can actually only output digital values, but PWM can create an analog output using digital means. PWM outputs a fast square wave, with differing on and off times. Because the square wave is so fast, it averages out, effectively creating an analog value. We can write an analog value between 0 and 255 to a PWM value. A higher PWM value is a higher duty cycle, analogWrite(255) is 100% duty cycle, meaning the pin that is being written will always be high.
+Next, we added an LED to our circuit and used the potentiometer to control the brightness of the LED. We connected the LED up to a digital pin with PWM capability. PWM is pulse width modulation: the Arduino can actually only output digital values, but PWM can create an analog output using digital means. PWM outputs a fast square wave, with differing on and off times. Because the square wave is so fast, it averages out, effectively creating an analog value. We can write an analog value between 0 and 255 to a PWM value. A higher PWM value is a higher duty cycle, analogWrite(255) is 100% duty cycle, meaning the pin that is being written will always be high.
 
 Code for adding LED to existing circuit:
 ```
  // create variable to refer to analog pin connection of the potentiometer
 int pot = A5;
+// create variable to refer to LED pin connection
 int led = 11;
 
 void setup() {
    // set data rate to 9600 bps (bits per second)
   Serial.begin(9600);
   pinMode(led, OUTPUT);
-  pinMode(pot, INPUT);
 }
 
 void loop() {
@@ -172,10 +172,11 @@ In this section of our Lab 1, we had our initial circuitry put together (1 Ardui
 ```
 #include <Servo.h>
 Servo servo;
-int pot = A5;
+
 void setup() {
   servo.attach(5);
 }
+
 void loop() {
   servo.write(180);
   delay(1000);
@@ -193,11 +194,14 @@ Video of potentiometer-controlled Servo control
 </video>
 ```
 #include <Servo.h>
+// create variable to refer to analog pin connection of the potentiometer
+int pot = A5;
 Servo servo;
+
 void setup() {
   servo.attach(5);
-  pinMode(pot, INPUT);
 }
+
 void loop() {
   int analogValue = analogRead(pot);
   //map this value to a value between 0 and 180
@@ -223,10 +227,12 @@ To demo the robot's movement, we set values to the servos to make the robot go f
 #include <Servo.h>
 Servo left;
 Servo right;
+
 void setup() {
   left.attach(5);
   right.attach(10);
 }
+
 void loop() {
   //STRAIGHT
   left.write(180);
