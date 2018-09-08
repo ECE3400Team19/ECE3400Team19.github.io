@@ -1,5 +1,5 @@
 # Lab 1: Microcontroller
-[Home](https://ece3640team19.github.io/)
+[Home](https://ece3400team19.github.io/)
 
 ## Team Tasks
 * Group 1: Asena Ulug and Cynthia Zelga: Github creation and layout, Servo codes, sections 1,2 & 3 lab write up, Robot motion
