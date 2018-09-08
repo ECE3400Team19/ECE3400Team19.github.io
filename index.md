@@ -15,4 +15,3 @@
 * Laasya Renganathan
 
 <img src="Team 19.png" width="760" height="200" alt="banner">
-<img src="IMG_8322.jpg" width="380" height="300" alt="team_photo"> <img src="19-K.jpg" width="300" height="300" alt="banana">
