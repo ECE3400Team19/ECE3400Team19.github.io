@@ -23,7 +23,7 @@ We then put together our robot and had it perform a [simple autonomous task](#ro
 * 1 Solderless breadboard
 
 
-## Part 1 - Communicating between the Uno and Video
+## Part 1 - Communicating between the Uno and IDE
 
 Our first task was to get the internal LED on the Arduino Uno to blink. In the Arduino IDE, we navigated to File > Examples > 1.Basics > Blink. This opened up the "Blink" example sketch. To program the Arduino, we first compiled the code by clicking the checkmark and then uploaded it by clicking on the right-pointing arrow. Once the code uploaded, the internal LED blinked on and off every second.
 
