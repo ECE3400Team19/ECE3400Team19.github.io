@@ -2,6 +2,8 @@
 [Home](https://ece3400team19.github.io/)
 
 ## Team Tasks
+Asena, Cynthia, Laasya- code implementation for line following and figure eight, lab writeup parts 2 and 3
+Nonso, Robert - line sensor hookup, code debugging, lab writeup for part 1
 
 ## Milestone Description
 The goal of this milestone was to get our robot to follow a line and traverse a grid in a figure eight
@@ -118,7 +120,7 @@ The next part of the lab was traversing a grid in a figure eight. In the video b
  <iframe width="560" height="315" src="https://www.youtube.com/embed/7-ruKoju54E" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
 
  In order to move the robot in a figure eight, we took our line following code from above, and added a counter called numIntersections that is initialized to 0. When the robot reaches an intersection (all 3 line sensors see white), the robot turns left or right depending on the value of numIntersections. If numIntersections is less than 4, the robot will turn right. If numIntersections is greater than or equal to 4, the robot will turn left. Once numIntersections reaches 8, it will reset to 0. This way, the robot will make 4 right turns, then 4 left, then 4 right, then 4 left, and so on.
- In between the Line Following portion of the lab and the Moving in a Figure Eight, we changed the line sensors from the back of the robot to the front. The line sensors were closer to the wheels so we changed the way we turned the robot as well, after detecting the intersection, the robot moves forward slightly (for .2 seconds) then begins its turn. 
+ In between the Line Following portion of the lab and the Moving in a Figure Eight, we changed the line sensors from the back of the robot to the front. The line sensors were closer to the wheels so we changed the way we turned the robot as well, after detecting the intersection, the robot moves forward slightly (for .2 seconds) then begins its turn. We decided on this method after the old method of turning would sometimes overshoot or undershoot the line.
  The Arduino code:
 
 ```
