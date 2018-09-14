@@ -14,7 +14,7 @@ The goal of this milestone was to get our robot to follow a line and traverse a 
 There were two tasks included in milestone 1; following a line and driving in a figure eight.  Implicit in the second is the ability to turn either left or right.  To accomplish these tasks, we started with three line sensors.  They were mounted at the bottom of straight vertical pieces attached to the main chassis such that the sensors were as close to the ground as possible without dragging along the floor.  This proximity was necessary to get the most contrast we could between white and black.  
 
 
-<img src="Robot.jpeg" width="350" height="275" alt="banner" img align="right">
+<img src="Robot.jpeg" width="350" height="275" alt="banner" img align="right"> 
 At first we had all three sensors facing parallel to the line side-by-side to use multiple low outputs (multiple sensors 'on the line') to aid in following the line.  However, we later settled on a method using a single sensor low to do line following, using the other two sensors only for course correction and detecting intersections.  To go along with this alternate implementation, we flared out the two sensors on the sides, aligning them away from the central sensor such that the distance between them was roughly equal to the width of the line for easy course correction.  
 
 As we moved to the figure eight task, we decided to remount the sensors, putting them on the opposite side of the robot.  We kept the flared design from before for this remounting as well.  The final sensor position is shown to the right.
@@ -22,7 +22,8 @@ As we moved to the figure eight task, we decided to remount the sensors, putting
 
 ## Part 2 - Following a Line
 Once we completed the setup for the Line Sensors, we developed an algorithm to best help the robot find the white line, stay on it, and turn right or left at the perpendicular intersections. The pseudo-code for this is as follows:
-  <video width="500" height="350" controls muted><source src="Robot Striaght line motion.mp4" type="video/mp4">
+<video width="320" height="240" autoplay><source src="Robot Straight line motion.mp4" type="video/mp4">    
+  
 Loop:
   If the middle line sensor detects a white line:
     the robot should go straight
@@ -114,7 +115,7 @@ void loop() {
 ```
 
 ## Part 3 - Moving in a Figure Eight
- <iframe width="560" height="315" src="https://www.youtube.com/embed/7-ruKoju54E?rel=0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+ <iframe width="560" height="315" src="https://www.youtube.com/embed/7-ruKoju54E" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
 
 ```
 #include <Servo.h>
