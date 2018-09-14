@@ -70,7 +70,7 @@ void loop() {
 
 Video of internal LED blinking once the Blink sketch was uploaded:
 
-<video width="480" height="640" controls muted>
+<video width="480" height="340" controls muted>
   <source src="blinking.MOV" type="video/mp4">
 </video>
 
