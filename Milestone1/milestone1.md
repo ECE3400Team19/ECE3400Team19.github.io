@@ -42,6 +42,73 @@ Loop:
 This allowed the robot to find and remain on a line, even if it's starting position was not perfectly parallel with any of the white lines. The Arduino implementation of this code is provided below:
 
 ```
+#include <Servo.h>
+
+Servo left; //180 turns wheel backward
+Servo right; //180 turns wheel forward
+
+int leftPin = A0; //define left line sensor's pin
+int middlePin = A5; //define middle line sensor's pin
+int rightPin = A1; //define right line sensor's pin
+int leftSensor; //stores left line sensor's value
+int middleSensor; //stores middle line sensor's value
+int rightSensor; //stores right line sensor's value
+int leftSpeed; //stores value of left servo
+int rightSpeed; //stores value of right servo
+int numIntersections = 0; //counts number of turns completed
+
+
+void setup() {
+  Serial.begin(9600);
+  //left servo is connected to digital pin 10
+  left.attach(10);
+  //right servo is connected to digital pin 5
+  right.attach(5);
+}
+
+void loop() {
+  //read line sensor values
+  leftSensor = analogRead(leftPin);
+  middleSensor = analogRead(middlePin);
+  rightSensor = analogRead(rightPin);
+
+  //all sensors are on the white line
+  if (leftSensor < 800  && middleSensor < 800 && rightSensor < 800) {
+    // AT AN INTERSECTION
+    leftSpeed = 85;
+    rightSpeed = 85;
+    left.write(leftSpeed);
+    right.write(rightSpeed);
+    delay(400);
+  }
+  //middle sensor is on the white line
+  else if (middleSensor < 800) {
+    //GO STRAIGHT
+    leftSpeed = 95;
+    rightSpeed = 85;
+    left.write(leftSpeed);
+    right.write(rightSpeed);
+  }
+  //middle sensor is not on the white line
+  //adjust to get robot moving straight on the line again
+  else {
+    //robot has veered to the right
+    //left sensor is only on the white line
+    if (leftSensor < 800){
+      //TURN LEFT
+      leftSpeed = 85;
+      rightSpeed = 85;
+    }
+    //robot has veered to the left
+    //right sensor is only on the white line
+    if (rightSensor < 800){
+      //TURN RIGHT
+      leftSpeed = 95;
+      rightSpeed = 95;
+    }
+    left.write(leftSpeed);        right.write(rightSpeed);
+  }
+}
 ```
 
 ## Part 3 - Moving in a Figure Eight
