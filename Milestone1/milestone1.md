@@ -2,8 +2,8 @@
 [Home](https://ece3400team19.github.io/)
 
 ## Team Tasks
-Asena, Cynthia, Laasya- code implementation for line following and figure eight, lab writeup parts 2 and 3
-Nonso, Robert - line sensor hookup, code debugging, lab writeup for part 1
+  * Asena, Cynthia, Laasya: code implementation for line following and figure eight, lab writeup parts 2 and 3
+  * Nonso, Robert: line sensor hookup, robot assembly, code debugging, lab writeup for part 1
 
 ## Milestone Description
 The goal of this milestone was to get our robot to follow a line and traverse a grid in a figure eight
