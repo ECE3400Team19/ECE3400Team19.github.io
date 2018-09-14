@@ -113,8 +113,4 @@ void loop() {
 ```
 
 ## Part 3 - Moving in a Figure Eight
-<object data="https://www.youtube.com/watch?v=7-ruKoju54E&feature=youtu.be"
- width="560" height="315"></object>
-
- <iframe src="https://youtu.be/7-ruKoju54E"
- width="560" height="315" frameborder="0" allowfullscreen></iframe>
+ <iframe width="560" height="315" src="https://www.youtube.com/embed/7-ruKoju54E" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
