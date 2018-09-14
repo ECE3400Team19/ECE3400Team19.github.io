@@ -113,6 +113,5 @@ void loop() {
 ```
 
 ## Part 3 - Moving in a Figure Eight
-<iframe width="420" height="315"
-  src="https://youtu.be/7-ruKoju54E">
-</iframe>
+<object data="https://www.youtube.com/watch?v=7-ruKoju54E&feature=youtu.be"
+ width="560" height="315"></object>
