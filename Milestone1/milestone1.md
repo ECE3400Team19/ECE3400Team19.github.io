@@ -114,3 +114,95 @@ void loop() {
 
 ## Part 3 - Moving in a Figure Eight
  <iframe width="560" height="315" src="https://www.youtube.com/embed/7-ruKoju54E" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+
+```
+#include <Servo.h>
+
+Servo left; //180 turns wheel backward
+Servo right; //180 turns wheel forward
+
+int leftPin = A0; //define left line sensor's pin
+int middlePin = A5; //define middle line sensor's pin
+int rightPin = A1; //define right line sensor's pin
+int leftSensor; //stores left line sensor's value
+int middleSensor; //stores middle line sensor's value
+int rightSensor; //stores right line sensor's value
+int leftSpeed; //stores value of left servo
+int rightSpeed; //stores value of right servo
+int numIntersections = 0; //counts number of turns completed
+
+
+void setup() {
+  Serial.begin(9600);
+  //left servo is connected to digital pin 10
+  left.attach(10);
+  //right servo is connected to digital pin 5
+  right.attach(5);
+}
+
+//code within void loop() was modified
+//to make robot move in a figure 8 shape
+void loop() {
+  //read line sensor values
+  leftSensor = analogRead(leftPin);
+  middleSensor = analogRead(middlePin);
+  rightSensor = analogRead(rightPin);
+
+  //all sensors are on the white line
+  if (leftSensor < 800 && middleSensor < 800 && rightSensor < 800){
+    //AT AN INTERSECTION
+    //reset count of turns made if figure 8 was executed
+    if (numIntersections == 8) {numIntersections = 0;}
+    //executed all right turns in figure 8, now turns left
+    if (numIntersections > 3) {
+      //TURN LEFT
+      leftSpeed = 85;
+      rightSpeed = 85;
+    }
+    //executes right turns in figure 8
+    else {
+      //TURN RIGHT
+      leftSpeed = 95;
+      rightSpeed = 95;
+    }
+    ++numIntersections; //increment count of turns made
+    //robot goes straight for 2 ms before starting to turn
+    left.write(95);
+    right.write(85);
+    delay(200);
+    //executes turn
+    left.write(leftSpeed);
+    right.write(rightSpeed);
+    delay(700);
+  }
+  //middle sensor is on the white line
+  else if ( middleSensor < 800) {
+    //GO STRAIGHT
+    leftSpeed = 95;
+    rightSpeed = 85;
+    left.write(leftSpeed);
+    right.write(rightSpeed);
+  }
+  //middle sensor is not on the white line
+  //adjust to get robot moving straight on the line again
+  else {
+    //robot has veered to the right
+    //left sensor is only on the white line
+    if (leftSensor < 800) {
+      //TURN LEFT
+      leftSpeed = 85;
+      rightSpeed = 85;
+    }
+    //robot has veered to the left
+    //right sensor is only on the white line
+    if (rightSensor < 800) {
+      //TURN RIGHT
+      leftSpeed = 95;
+      rightSpeed = 95;
+    }
+    left.write(leftSpeed);
+    right.write(rightSpeed);
+  }
+}
+
+```
