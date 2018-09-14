@@ -17,7 +17,7 @@ At first we had all three sensors facing parallel to the line side-by-side to us
 
 As we moved to the figure eight task, we decided to remount the sensors, putting them on the opposite side of the robot.  We kept the flared design from before for this remounting as well.  The final sensor position is shown below
 
-[Image Goes Here]
+ <img src="Robot.jpeg" width="341" height="189">
 
 ## Part 2 - Following a Line
 Once we completed the setup for the Line Sensors, we developed an algorithm to best help the robot find the white line, stay on it, and turn right or left at the perpendicular intersections. The pseudo-code for this is as follows:
