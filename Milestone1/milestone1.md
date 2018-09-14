@@ -106,7 +106,8 @@ void loop() {
       leftSpeed = 95;
       rightSpeed = 95;
     }
-    left.write(leftSpeed);        right.write(rightSpeed);
+    left.write(leftSpeed);
+    right.write(rightSpeed);
   }
 }
 ```
