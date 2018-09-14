@@ -22,7 +22,7 @@ As we moved to the figure eight task, we decided to remount the sensors, putting
 
 ## Part 2 - Following a Line
 Once we completed the setup for the Line Sensors, we developed an algorithm to best help the robot find the white line, stay on it, and turn right or left at the perpendicular intersections. The pseudo-code for this is as follows:
-<video width="320" height="240" autoplay><source src="Robot Straight line motion.mp4" type="video/mp4">    
+<video width="320" height="240" autoplay><source src="Roboline.mp4" type="video/mp4">    
   
 Loop:
   If the middle line sensor detects a white line:
