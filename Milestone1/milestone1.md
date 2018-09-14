@@ -45,3 +45,6 @@ This allowed the robot to find and remain on a line, even if it's starting posit
 ```
 
 ## Part 3 - Moving in a Figure Eight
+<iframe width="420" height="315"
+  src="https://youtu.be/7-ruKoju54E">
+</iframe>
