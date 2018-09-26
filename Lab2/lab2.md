@@ -18,7 +18,7 @@ In this lab, we added sensors and circuitry to our robot. The first was a microp
 * Capacitors and resistors of our choosing
 
 We started the lab by assembling the microphone circuit suggested by the lab handout with a 1 µF capacitor and a 3.3 kΩ resistor:
- <img src="basicMircophoneCircuit.png" width="380" height="312" alt="microphone-circuit">
+ <img src="basicMicrophoneCircuit.png" width="380" height="312" alt="microphone-circuit">
 We then used a tone generator app to play a 660Hz tone directly into the microphone at maximum volume, then checked the output of the circuit using the oscilloscope.
 We were able to see our 660Hz signal on our oscilloscope with great difficulty, because the microphone also picked up all other noise in the room.
 Then, we started looking at how to amplify our desired signal and squash other signals. We decided to feed the output of our microphone into a band pass filter, then amplify this using an op amp.  
