@@ -5,6 +5,8 @@
 [Lab 1](Lab1/lab1.md)
 ||
 [Milestone 1](Milestone1/milestone1.md)
+||
+[Lab 2](Lab2/lab2.md)
 
 
 ## Team Members: <img src="Team 19.png" width="450" height="265" alt="banner" img align="right"> 
