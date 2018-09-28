@@ -31,7 +31,7 @@ Here is a picture of our circuit:
 
  <img src="Acoustic Circuit.JPG" width="504" height="378" alt="acoustic-circuit">
 
-INSERT CIRCUIT DIAGRAM PIC
+<img src="mic_schematic.png" width="504" height="378" alt="mic-circuit">
 
 After building our circuit, we modified the example sketch from the FFT library, fft_adc_serial, to use analogRead(), the built-in method for reading an analog input, instead of running the ADC in free-running mode. The frequency 660Hz is in the 5th bin using the ADC, but in the 20th bin using analogRead() because analogRead() runs at a much slower sampling rate.
 
