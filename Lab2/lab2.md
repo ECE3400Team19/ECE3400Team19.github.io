@@ -29,8 +29,8 @@ We started by building Team Alpha's circuit, and then adding an additional capac
 
 Here is a picture of our circuit and a diagram:
 
-<img src="Acoustic Circuit.JPG" width="396.6" height="277.2" alt="acoustic-circuit" img align = "left">
-<img src="mic_schematic.png" width="473" height="277.2" alt="mic-circuit" img align = "center">
+<img src="Acoustic Circuit.JPG" width="396.6/1.1" height="277.2/1.1" alt="acoustic-circuit" img align = "left">
+<img src="mic_schematic.png" width="473/1.1" height="277.2/1.1" alt="mic-circuit" img align = "center">
 
 
 
