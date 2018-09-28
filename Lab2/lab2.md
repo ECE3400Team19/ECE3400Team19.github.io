@@ -26,7 +26,12 @@ We then used a tone generator app to play a 660Hz tone directly into the microph
 We were able to see our 660Hz signal on our oscilloscope with great difficulty, because the microphone also picked up all other noise in the room.
 Then, we started looking at how to amplify our desired signal and squash other signals. We decided to feed the output of our microphone into an active band pass filter.
 We started by building Team Alpha's circuit, and then adding an additional capacitor for more filtering.
-INSERT CIRCUIT PIC
+
+Here is a picture of our circuit:
+
+ <img src="Acoustic Circuit.JPG" width="504" height="378" alt="acoustic-circuit">
+
+INSERT CIRCUIT DIAGRAM PIC
 
 After building our circuit, we modified the example sketch from the FFT library, fft_adc_serial, to use analogRead(), the built-in method for reading an analog input, instead of running the ADC in free-running mode. The frequency 660Hz is in the 5th bin using the ADC, but in the 20th bin using analogRead() because analogRead() runs at a much slower sampling rate.
 
@@ -35,6 +40,13 @@ We first used the signal generator to put a 660Hz, 50mVpp with 25mV offset sine 
  <img src="FFT1.PNG" width="706" height="410" alt="fft-graph">
 
  There is a peak of similar amplitude in the fifth pin from the 660Hz from the signal generator and the 660Hz from the tone generator app. This shows that our circuit is able to detect a 660Hz tone.
+
+ We then played the 660Hz tone into our microphone again and checked the output using the oscilloscope.
+ The setup and oscilloscope looked as follows:
+
+<img src="Acoustic Test.JPG" width="480" height="640" alt="tone generator setup">
+<img src="oscilloscope_audio.JPG" width="506" height="434.5" alt="tone generator setup">
+
 
 
 
