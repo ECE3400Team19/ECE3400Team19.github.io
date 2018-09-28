@@ -45,7 +45,10 @@ We first used the signal generator to put a 660Hz, 50mVpp with 25mV offset sine 
  The setup and oscilloscope looked as follows:
 
 <img src="Acoustic Test.JPG" width="240" height="320" alt="tone generator setup" img align="left">
-<img src="oscilloscope_audio.JPG" width="253" height="217.25" alt="tone generator setup" img align="right">
+<img src="oscilloscope_audio.JPG" width="253" height="217.25" alt="tone generator setup" img align="center">
+
+
+
 
 
 
