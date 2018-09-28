@@ -19,7 +19,7 @@ In this lab, we added sensors and circuitry to our robot. The first was a microp
 
 We started the lab by assembling the microphone circuit suggested by the lab handout with a 1 µF capacitor and a 3.3 kΩ resistor:
 
- <img src="basicMicrophoneCircuit.png" width="180" height="156" alt="microphone-circuit" img align="right">
+ <img src="basicMicrophoneCircuit.png" width="180" height="156" alt="microphone-circuit">
 
 We then used a tone generator app to play a 660Hz tone directly into the microphone at maximum volume, then checked the output of the circuit using the oscilloscope.
 
@@ -44,8 +44,8 @@ We first used the signal generator to put a 660Hz, 50mVpp with 25mV offset sine 
  We then played the 660Hz tone into our microphone again and checked the output using the oscilloscope.
  The setup and oscilloscope looked as follows:
 
-<img src="Acoustic Test.JPG" width="480" height="640" alt="tone generator setup" img align="left">
-<img src="oscilloscope_audio.JPG" width="506" height="434.5" alt="tone generator setup" img align="right">
+<img src="Acoustic Test.JPG" width="240" height="320" alt="tone generator setup" img align="left">
+<img src="oscilloscope_audio.JPG" width="253" height="217.25" alt="tone generator setup" img align="right">
 
 
 
