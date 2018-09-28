@@ -19,7 +19,7 @@ In this lab, we added sensors and circuitry to our robot. The first was a microp
 
 We started the lab by assembling the microphone circuit suggested by the lab handout with a 1 µF capacitor and a 3.3 kΩ resistor:
 
- <img src="basicMicrophoneCircuit.png" width="180" height="250" alt="microphone-circuit" img align="right">
+ <img src="basicMicrophoneCircuit.png" width="180" height="230" alt="microphone-circuit" img align="right">
 
 We then used a tone generator app to play a 660Hz tone directly into the microphone at maximum volume, then checked the output of the circuit using the oscilloscope.
 
