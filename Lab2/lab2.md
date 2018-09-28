@@ -32,6 +32,8 @@ Here is a picture of our circuit:
 <img src="Acoustic Circuit.JPG" width="336/1.1" height="252/1.1" alt="acoustic-circuit" img align = "left">
 <img src="mic_schematic.png" width="430/1.1" height="252/1.1" alt="mic-circuit" img align = "right">
 
+
+
 After building our circuit, we modified the example sketch from the FFT library, fft_adc_serial, to use analogRead(), the built-in method for reading an analog input, instead of running the ADC in free-running mode. The frequency 660Hz is in the 5th bin using the ADC, but in the 20th bin using analogRead() because analogRead() runs at a much slower sampling rate.
 
 We first used the signal generator to put a 660Hz, 50mVpp with 25mV offset sine wave into our active band pass filter. We fed the output into pin A1 and ran our modified code for FFT. We got the output from the serial monitor and plotted it in Excel. We then played a 660Hz tone from the app Tone Generator directly into our microphone. We got the output and plotted in in Excel. The two plots are shown below:
