@@ -32,11 +32,11 @@ After building our circuit, we modified the example sketch from the FFT library,
 
 We first used the signal generator to put a 660Hz, 50mVpp with 25mV offset sine wave into our active band pass filter. We fed the output into pin A1 and ran our modified code for FFT. We got the output from the serial monitor and plotted it in Excel. We then played a 660Hz tone from the app Tone Generator directly into our microphone. We got the output and plotted in in Excel. The two plots are shown below:
 
- <img src="FFT1.png" width="706" height="410" alt="fft-graph">
+ <img src="FFT1.PNG" width="706" height="410" alt="fft-graph">
 
  There is a peak of similar amplitude in the fifth pin from the 660Hz from the signal generator and the 660Hz from the tone generator app. This shows that our circuit is able to detect a 660Hz tone.
 
- 
+
 
 
 # Part 2: Optical
