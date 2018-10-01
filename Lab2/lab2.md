@@ -91,4 +91,5 @@ The third stage is a non-inverting amplifier with a gain of 11x.  With our signa
 [Figure: Input and Output Waveforms for op-amp in detection operation
 
 Full circuit schematic:
-<img src="Lab 2 IR Schematic.png" width="240" height="320" alt="IR circuit schematic" img align="center">
+<br/>
+<img src="Lab 2 IR Schematic.png" width="440" height="320" alt="IR circuit schematic" img align="center">
