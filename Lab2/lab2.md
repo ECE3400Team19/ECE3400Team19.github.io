@@ -89,3 +89,6 @@ The second stage is a simple RC low-pass filter.  With resistor and capacitor va
 The third stage is a non-inverting amplifier with a gain of 11x.  With our signal biased at 250 mV, the maximum value we would expect would be around 2.5 V.  In practice, the pulse ends up smaller than this would expect, and our final signal had a peak-to-peak of about 1V.  This means we could increase the gain of our amplifier or the bias voltage on the detector to increase our detectable range.  
 
 [Figure: Input and Output Waveforms for op-amp in detection operation
+
+Full circuit schematic:
+<img src="Lab 2 IR Schematic.png" width="240" height="320" alt="IR circuit schematic" img align="center">
