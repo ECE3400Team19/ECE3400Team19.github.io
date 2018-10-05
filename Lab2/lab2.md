@@ -68,37 +68,34 @@ The frequency of the output measured by the oscilloscope was 660Hz and the volta
 ## FFT Analysis and Arduino Code
 
 ## Circuit Design and Construction
-[Figure: Circuit Diagram]
+<br/>
+<img src="Lab 2 IR Schematic.png" width="440" height="320" alt="IR circuit schematic" img align="center">
 
 The circuit consists of three distinct stages.  The photodetector, a low-pass filter, and a non-inverting amplifier.  Each stage is discussed below.  
 
 We decided to deviate from the default configuration given to us on the lab handout, reversing the positions of the photodetector and 1.8 kΩ resistor.  With a 5V pull up, the detector could only pull down the voltage in pulses by about half a volt, resulting in a pulse ranging from 4 to 5V at maximum intensity (i.e. with the IR hat right next to the detector).  However, reversing this configuration, we had a baseline of 0V and the detector would pull up our value instead, resulting in a 0-1V range at maximum intensity.  In this range, an amplifier becomes much more advantageous.  
 
-[Figure: Pull down configuration of the photodetector]
+<img src="Optical Reading 3.jpg" width="252" height="189" alt="Pull Down Configurtion" img align="center">
 
 The second stage is a simple RC low-pass filter.  With resistor and capacitor values as shown, it has a corner frequency at roughly 10 kHz.  These values were chosen so the filter would pass 6 kHz frequencies while rejecting frequencies at 18 kHz.  With this configuration, we were able to cut the amplitude of 18kHz signals to less than 50% while keeping 6kHz signals within 10% of their initial amplitude.  This filter, along with software on the board not checking bins corresponding to 18 kHz, allows us to reject the decoy signal.  
 
-[Figure(s): 6 kHz Pass and 18 kHz Rejection]
+<img src="Optical_6kHz_Pass.jpg" width="252" height="189" alt="6kHz" img align="center">
+<img src="Optical_18kHz_Reject.jpg" width="252" height="189" alt="18kHz" img align="center">
 
 The third stage is a non-inverting amplifier with a gain of 51x.  With a maximum range of 0-1 V, there is a possibility of the output signal clipping at the rails of the Op-Amp (0 and 5 V).  This issue of clipping is not a significant concern, as we are prioritizing early detection.  That is to say, we want to be able to see the robot from far away and react, and our reaction should avoid the case where the detector gets close enough to the other IR hat for clipping to be an issue (i.e. a collision).  With a gain of 51x, our circuit can readily detect an IR hat at a distance of 1 square away (30cm).  It’s possible that we could increase this gain further to increase our detection range but this will depend on our specific needs for detecting other robots down the line.  
 
-[Figure: Input and Output Waveforms for op-amp in detection operation]  
+<img src="Optical_1_Square_Waveforms.jpg" width="252" height="189" alt="Detection Range" img align="center">
 
-[Figure: Circuit 1-square away from IR Hat]
-
-
-Full circuit schematic:
-<br/>
-<img src="Lab 2 IR Schematic.png" width="440" height="320" alt="IR circuit schematic" img align="center">
-
+<img src="Optical_Hat_1_Square.jpg" width="252" height="189" alt="Detection Range" img align="center">
 
 ## Detecting the 6.08 kHz signal
 
 Every robot maneuvering the maze - our robot as well as the competition's - will have an IR hat mounted at exactly 5.5 inches from the surface that the robot will move across. The IR hats emit at a frequency of 6.08 kHz. Being able to detect this signal at this particular frequency is our means of detecting whether another robot is in the path of our robot. If detected, our robot should turn/move accordingly in order to prevent a collision. Our robot also needs to be able to detect frequencies of 18 kHz, which will be emitted by a decoy. As outlined above, our circuit rejects the decoy frequency by the use of a low-pass filter with a cut-off frequency much below that of the decoy frequency.
 
-To be able to detect the 6.08 kHz signal, we feed the output of our circuit as an analog input to the Arduino. To analyze the signals being read in by the phototransistor, we utilized the Arduino FFT library and modified the fft_adc_serial example sketch. The Arduino FFT library is a quick implementation of a standard FFT algorithm which operates on only real data. We used the FFT library to take in a 16-bit input organized amongst 256 frequency bins and gives an 8-bit logarithmic output. The Fast Fourier Transform (FFT) algorithm samples our signal and decomposes it into its various frequency components. Each component is a sinusoid at a particular frequency with its own amplitude and phase. After running the FFT algorithm using the fft_adc_serial sketch on our input, we were able to graph the logarithmic output vs. the signal input data:
+To be able to detect the 6.08 kHz signal, we feed the output of our circuit as an analog input to the Arduino. To analyze the signals being read in by the phototransistor, we utilized the Arduino FFT library and modified the fft_adc_serial example sketch. The Arduino FFT library is a quick implementation of a standard FFT algorithm which operates on only real data. We used the FFT library to take in a 16-bit input organized amongst 256 frequency bins and gives an 8-bit logarithmic output. The Fast Fourier Transform (FFT) algorithm samples our signal and decomposes it into its various frequency components. Each component is a sinusoid at a particular frequency with its own amplitude and phase. After running the FFT algorithm using the fft_adc_serial sketch on our input, we were able to graph the logarithmic output vs. the signal input data.  Also included on this graph are the results for the 18kHz decoy for comparison:
 
-[INSERT GRAPH SHOWING THE various frequency spectra]
+<img src="IR_Graphs.png" width="480" height="288" alt="IR Signals" img align="left">
+
 
 ```
 /*
