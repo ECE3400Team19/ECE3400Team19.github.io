@@ -136,11 +136,19 @@ The third stage is a non-inverting amplifier with a gain of 51x.  With a maximum
 
 Every robot maneuvering the maze - our robot as well as the competition's - will have an IR hat mounted at exactly 5.5 inches from the surface that the robot will move across. The IR hats emit at a frequency of 6.08 kHz. Being able to detect this signal at this particular frequency is our means of detecting whether another robot is in the path of our robot. If detected, our robot should turn/move accordingly in order to prevent a collision. Our robot also needs to be able to detect frequencies of 18 kHz, which will be emitted by a decoy. As outlined above, our circuit rejects the decoy frequency by the use of a low-pass filter with a cut-off frequency much below that of the decoy frequency.
 
-To be able to detect the 6.08 kHz signal, we feed the output of our circuit as an analog input to the Arduino. To analyze the signals being read in by the phototransistor, we utilized the Arduino FFT library and modified the fft_adc_serial example sketch. The Arduino FFT library is a quick implementation of a standard FFT algorithm which operates on only real data. We used the FFT library to take in a 16-bit input organized amongst 256 frequency bins and gives an 8-bit logarithmic output. The Fast Fourier Transform (FFT) algorithm samples our signal and decomposes it into its various frequency components. Each component is a sinusoid at a particular frequency with its own amplitude and phase. After running the FFT algorithm using the fft_adc_serial sketch on our input, we were able to graph the logarithmic output vs. the signal input data.  Also included on this graph are the results for the 18kHz decoy for comparison:
+To be able to detect the 6.08 kHz signal, we feed the output of our circuit as an analog input to the Arduino. To analyze the signals being read in by the phototransistor, we utilized the Arduino FFT library and modified the fft_adc_serial example sketch. The Arduino FFT library is a quick implementation of a standard FFT algorithm which operates on only real data. The Fast Fourier Transform (FFT) algorithm samples our signal and decomposes it into its various frequency components. Each component is a sinusoid at a particular frequency with its own amplitude and phase. The fft_adc_serial sketch takes in a 16-bit input, organizes it among 256 frequency bins, and gives an 8-bit logarithmic output. After running the FFT algorithm using this sketch on our input, we were able to graph the logarithmic output vs. the signal input data.  Also included on this graph are the results for the 18kHz decoy for comparison:
 
 <img src="IR_Graphs.png" width="719" height="432" alt="IR Signals">
 
 ## FFT Analysis
+
+The modified fft_adc_serial sketch is included below. As can be seen in the graph above, there are spikes in frequency starting around bin 40 and the amplitude of the output goes above 100. This spike is due to the 6.08 kHz IR signal that is emitted from the IR hat. Therefore, to be able to detect the presence of the emitted IR hat signal we added a conditional statement to the fft_adc_serial sketch which checks the magnitude of the output fft_log_out at a particular range of indices, or bins. After the FFT is computed, the output for bins ranging from 38 up to 48 are checked for a magnitude greater than 100. If True, we print to the serial monitor that the 6.08 kHz was detected.
+
+## Code for handling both IR and Audio
+The code snippet below handles both IR and Audio:
+- distinguishes a 6.08 kHz IR signal from a 18kHz IR signal
+- distinguishes a 660Hz tone from background noise (talking/music)
+
 ```
 /*
 fft_adc_serial.pde
