@@ -72,7 +72,7 @@ void runFFT(uint8_t pin) {
 
 }
 ```
-
+We discuss the code more when we [merge our code with the optical code] #fft-analysis
 <img src="mic_schematic.png" width="430" height="252" alt="mic-circuit" img align = "center">
 
 We first used the signal generator to put a 660Hz, 50mVpp with 25mV offset sine wave into our active band pass filter. We fed the output into pin A1 and ran our modified code for FFT. We got the output from the serial monitor and plotted it in Excel. We then played a 660Hz tone from the app Tone Generator directly into our microphone. We got the output and plotted in in Excel. The two plots are shown below:
@@ -135,7 +135,7 @@ To be able to detect the 6.08 kHz signal, we feed the output of our circuit as a
 
 <img src="IR_Graphs.png" width="480" height="288" alt="IR Signals" img align="left">
 
-
+## FFT Analysis
 ```
 /*
 fft_adc_serial.pde
