@@ -136,7 +136,7 @@ To be able to detect the 6.08 kHz signal, we feed the output of our circuit as a
 <img src="IR_Graphs.png" width="480" height="288" alt="IR Signals" img align="left">
 
 
-
+```
 /*
 fft_adc_serial.pde
 guest openmusiclabs.com 7.7.14
