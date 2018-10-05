@@ -2,8 +2,8 @@
 [Home](https://ece3400team19.github.io/)
 
 ## Team Tasks
-* Acoustic Team: Asena, Laasya
-* Optical Team: Cynthia, Robert, Nonso
+* Acoustic Team: Asena, Laasya, Nonso
+* Optical Team: Cynthia, Robert
 
 ## Lab Description
 
@@ -19,7 +19,7 @@ In this lab, we added sensors and circuitry to our robot. The first was a microp
 
 We started the lab by assembling the microphone circuit suggested by the lab handout with a 1 µF capacitor and a 3.3 kΩ resistor:
 
- <img src="basicMicrophoneCircuit.png" width="180" height="156" alt="microphone-circuit">
+ <img src="basicMicrophoneCircuit.png" width="380" height="156" alt="microphone-circuit">
 
 We then used a tone generator app to play a 660Hz tone directly into the microphone at maximum volume, then checked the output of the circuit using the oscilloscope.
 
@@ -29,11 +29,11 @@ We started by building Team Alpha's circuit, and then adding an additional capac
 
 Here is a picture of our circuit and a diagram:
 
-<img src="Acoustic Circuit.JPG" width="360" height="252" alt="acoustic-circuit" img align = "left">
-
-
+<img src="Acoustic Circuit.JPG" width="430" height="252" alt="acoustic-circuit" img align = "left">
+<img src="mic_schematic.png" width="430" height="252" alt="mic-circuit" img align = "center">
 
 After building our circuit, we modified the example sketch from the FFT library, fft_adc_serial, to use analogRead(), the built-in method for reading an analog input, instead of running the ADC in free-running mode. The frequency 660Hz is in the 5th bin using the ADC, but in the 20th bin using analogRead() because analogRead() runs at a much slower sampling rate. The code is shown below:
+
 ```
 #define LOG_OUT 1 // use the log output function
 #define FFT_N 256 // set to 256 point fft
@@ -72,8 +72,13 @@ void runFFT(uint8_t pin) {
 
 }
 ```
+<<<<<<< HEAD
 We discuss the code more when we [merge our code with the optical code] #fft-analysis
 <img src="mic_schematic.png" width="430" height="252" alt="mic-circuit" img align = "center">
+=======
+
+
+>>>>>>> c2b2767beb331f85dfb1dafa9e918ca5a4a1b6b4
 
 We first used the signal generator to put a 660Hz, 50mVpp with 25mV offset sine wave into our active band pass filter. We fed the output into pin A1 and ran our modified code for FFT. We got the output from the serial monitor and plotted it in Excel. We then played a 660Hz tone from the app Tone Generator directly into our microphone. We got the output and plotted in in Excel. The two plots are shown below:
 
