@@ -65,8 +65,6 @@ The frequency of the output measured by the oscilloscope was 660Hz and the volta
 * 1 IR decoy
 * Capacitors and resistors of our choosing
 
-## FFT Analysis and Arduino Code
-
 ## Circuit Design and Construction
 <br/>
 <img src="Lab 2 IR Schematic.png" width="440" height="320" alt="IR circuit schematic" img align="center">
@@ -80,7 +78,7 @@ We decided to deviate from the default configuration given to us on the lab hand
 The second stage is a simple RC low-pass filter.  With resistor and capacitor values as shown, it has a corner frequency at roughly 10 kHz.  These values were chosen so the filter would pass 6 kHz frequencies while rejecting frequencies at 18 kHz.  With this configuration, we were able to cut the amplitude of 18kHz signals to less than 50% while keeping 6kHz signals within 10% of their initial amplitude.  This filter, along with software on the board not checking bins corresponding to 18 kHz, allows us to reject the decoy signal.  
 
 <img src="Optical_6kHz_Pass.JPG" width="252" height="189" alt="6kHz" img align="center">
-<img src="Optical_18kHz_Reject.JPG" width="252" height="189" alt="18kHz" img align="center">
+<img src="Optical_18kHz_reject.JPG" width="252" height="189" alt="18kHz" img align="center">
 
 The third stage is a non-inverting amplifier with a gain of 51x.  With a maximum range of 0-1 V, there is a possibility of the output signal clipping at the rails of the Op-Amp (0 and 5 V).  This issue of clipping is not a significant concern, as we are prioritizing early detection.  That is to say, we want to be able to see the robot from far away and react, and our reaction should avoid the case where the detector gets close enough to the other IR hat for clipping to be an issue (i.e. a collision).  With a gain of 51x, our circuit can readily detect an IR hat at a distance of 1 square away (30cm).  It’s possible that we could increase this gain further to increase our detection range but this will depend on our specific needs for detecting other robots down the line.  
 
