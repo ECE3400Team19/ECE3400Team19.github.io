@@ -138,7 +138,7 @@ Every robot maneuvering the maze - our robot as well as the competition's - will
 
 To be able to detect the 6.08 kHz signal, we feed the output of our circuit as an analog input to the Arduino. To analyze the signals being read in by the phototransistor, we utilized the Arduino FFT library and modified the fft_adc_serial example sketch. The Arduino FFT library is a quick implementation of a standard FFT algorithm which operates on only real data. We used the FFT library to take in a 16-bit input organized amongst 256 frequency bins and gives an 8-bit logarithmic output. The Fast Fourier Transform (FFT) algorithm samples our signal and decomposes it into its various frequency components. Each component is a sinusoid at a particular frequency with its own amplitude and phase. After running the FFT algorithm using the fft_adc_serial sketch on our input, we were able to graph the logarithmic output vs. the signal input data.  Also included on this graph are the results for the 18kHz decoy for comparison:
 
-<img src="IR_Graphs.png" width="480" height="288" alt="IR Signals" img align="left">
+<img src="IR_Graphs.png" width="719" height="432" alt="IR Signals">
 
 ## FFT Analysis
 ```
