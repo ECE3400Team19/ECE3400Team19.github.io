@@ -72,23 +72,20 @@ The frequency of the output measured by the oscilloscope was 660Hz and the volta
 
 The circuit consists of three distinct stages.  The photodetector, a low-pass filter, and a non-inverting amplifier.  Each stage is discussed below.  
 
-The photodetector’s configuration is largely identical to the configuration listed on the lab sheet with the exception of a resistive network to lower the bias voltage at the top.  We chose to lower this bias voltage from 5V to about 250 mV after considerable difficulty with the photodetector itself.  With a 5V pull up, the detector could only pull down the voltage in pulses by about half a volt, resulting in a pulse ranging from ~4.5 to 5V at maximum intensity (i.e. with the IR hat right next to the detector).  
+We decided to deviate from the default configuration given to us on the lab handout, reversing the positions of the photodetector and 1.8 kΩ resistor.  With a 5V pull up, the detector could only pull down the voltage in pulses by about half a volt, resulting in a pulse ranging from 4 to 5V at maximum intensity (i.e. with the IR hat right next to the detector).  However, reversing this configuration, we had a baseline of 0V and the detector would pull up our value instead, resulting in a 0-1V range at maximum intensity.  In this range, an amplifier becomes much more advantageous.  
 
-[Figure: 5V bias waveform]
+[Figure: Pull down configuration of the photodetector]
 
-Because of the poor quality of the photodetector, we decided to amplify this signal, but doing so in a 4.5-5V range would be difficult while keeping it in a safe range for the Arduino.  Our solution was to decrease the bias voltage such that we would still see a comparable-size pulse while still allowing for later amplification.  With a bias voltage of 250 mV, the input pulse to the amplifier would be across most of the range from 250mV to 0V and, with a gain of about 10, would produce a pulse of 2.5V peak to peak.  
-
-[Figure: 250mV Bias Waveform]
-
-Another solution would be to reverse the resistor and photodetector positions, having the photodetector pull up the signal rather than pull it down.  
-
-The second stage is a simple RC low-pass filter.  With resistor and capacitor values as shown, it has a corner frequency at roughly 10 kHz.  These values were chosen so the filter would pass 6 kHz frequencies while rejecting frequencies at 18 kHz.  With this configuration, we were able to cut the amplitude of 18kHz signals to less than 50% while keeping 6kHz signals within 10% of their initial amplitude.  This filter, along with software on the board not checking bins at 18 kHz, allows us to reject the decoy signal.  
+The second stage is a simple RC low-pass filter.  With resistor and capacitor values as shown, it has a corner frequency at roughly 10 kHz.  These values were chosen so the filter would pass 6 kHz frequencies while rejecting frequencies at 18 kHz.  With this configuration, we were able to cut the amplitude of 18kHz signals to less than 50% while keeping 6kHz signals within 10% of their initial amplitude.  This filter, along with software on the board not checking bins corresponding to 18 kHz, allows us to reject the decoy signal.  
 
 [Figure(s): 6 kHz Pass and 18 kHz Rejection]
 
-The third stage is a non-inverting amplifier with a gain of 11x.  With our signal biased at 250 mV, the maximum value we would expect would be around 2.5 V.  In practice, the pulse ends up smaller than this would expect, and our final signal had a peak-to-peak of about 1V.  This means we could increase the gain of our amplifier or the bias voltage on the detector to increase our detectable range.  
+The third stage is a non-inverting amplifier with a gain of 51x.  With a maximum range of 0-1 V, there is a possibility of the output signal clipping at the rails of the Op-Amp (0 and 5 V).  This issue of clipping is not a significant concern, as we are prioritizing early detection.  That is to say, we want to be able to see the robot from far away and react, and our reaction should avoid the case where the detector gets close enough to the other IR hat for clipping to be an issue (i.e. a collision).  With a gain of 51x, our circuit can readily detect an IR hat at a distance of 1 square away (30cm).  It’s possible that we could increase this gain further to increase our detection range but this will depend on our specific needs for detecting other robots down the line.  
 
-[Figure: Input and Output Waveforms for op-amp in detection operation
+[Figure: Input and Output Waveforms for op-amp in detection operation]  
+
+[Figure: Circuit 1-square away from IR Hat]
+
 
 Full circuit schematic:
 <br/>
@@ -127,7 +124,7 @@ void loop() {
     }
     ADMUX = 0x41; //read from pin A1
     runFFT();
-    
+
     for (int i = 38; i < 48; i++){
       if (fft_log_out[i] > 100){
         Serial.println("6kHz signal detected");
@@ -157,7 +154,7 @@ void runFFT(){
     fft_mag_log(); // take the output of the fft
     sei();
     Serial.println("start");
-    for (byte i = 0 ; i < FFT_N/2 ; i++) { 
+    for (byte i = 0 ; i < FFT_N/2 ; i++) {
       Serial.println(fft_log_out[i]); // send out the data
     }
 }
