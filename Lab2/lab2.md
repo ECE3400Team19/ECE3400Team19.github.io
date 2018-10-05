@@ -95,7 +95,7 @@ Full circuit schematic:
 <img src="Lab 2 IR Schematic.png" width="440" height="320" alt="IR circuit schematic" img align="center">
 
 
-'''
+```
 /*
 fft_adc_serial.pde
 guest openmusiclabs.com 7.7.14
@@ -163,4 +163,4 @@ void runFFT(){
 }
 
 
-'''
+```
