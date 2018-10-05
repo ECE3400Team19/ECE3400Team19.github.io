@@ -2,8 +2,8 @@
 [Home](https://ece3400team19.github.io/)
 
 ## Team Tasks
-* Acoustic Team: Asena, Laasya, Nonso
-* Optical Team: Cynthia, Robert
+* Acoustic Team: Asena, Laasya
+* Optical Team: Cynthia, Robert, Nonso
 
 ## Lab Description
 
