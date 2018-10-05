@@ -96,8 +96,9 @@ Full circuit schematic:
 
 Every robot maneuvering the maze - our robot as well as the competition's - will have an IR hat mounted at exactly 5.5 inches from the surface that the robot will move across. The IR hats emit at a frequency of 6.08 kHz. Being able to detect this signal at this particular frequency is our means of detecting whether another robot is in the path of our robot. If detected, our robot should turn/move accordingly in order to prevent a collision. Our robot also needs to be able to detect frequencies of 18 kHz, which will be emitted by a decoy. As outlined above, our circuit rejects the decoy frequency by the use of a low-pass filter with a cut-off frequency much below that of the decoy frequency.
 
-To be able to detect the 6.08 kHz signal, we feed the output of our circuit as an analog input to the Arduino. To analyze the signals being read in by the phototransistor, we utilized the Arduino FFT library and modified the fft_adc_serial example sketch. The Arduino FFT library is a quick implementation of a standard FFT algorithm which operates on only real data. We used the FFT library to take in a 16-bit input organized amongst 256 frequency bins and gives an 8-bit logarithmic output.
+To be able to detect the 6.08 kHz signal, we feed the output of our circuit as an analog input to the Arduino. To analyze the signals being read in by the phototransistor, we utilized the Arduino FFT library and modified the fft_adc_serial example sketch. The Arduino FFT library is a quick implementation of a standard FFT algorithm which operates on only real data. We used the FFT library to take in a 16-bit input organized amongst 256 frequency bins and gives an 8-bit logarithmic output. The Fast Fourier Transform (FFT) algorithm samples our signal and decomposes it into its various frequency components. Each component is a sinusoid at a particular frequency with its own amplitude and phase. After running the FFT algorithm using the fft_adc_serial sketch on our input, we were able to graph the logarithmic output vs. the signal input data:
 
+[INSERT GRAPH SHOWING THE various frequency spectra]
 
 ```
 /*
@@ -115,45 +116,45 @@ port at 115.2kb.
 #include <FFT.h> // include the library
 
 void setup() {
-  Serial.begin(115200); // use the serial port
-  TIMSK0 = 0; // turn off timer0 for lower jitter
-  ADCSRA = 0xe5; // set the adc to free running mode
-  ADMUX = 0x40; // use adc0
-  DIDR0 = 0x01; // turn off the digital input for adc0
+    Serial.begin(115200); // use the serial port
+    TIMSK0 = 0; // turn off timer0 for lower jitter
+    ADCSRA = 0xe5; // set the adc to free running mode
+    ADMUX = 0x40; // use adc0
+    DIDR0 = 0x01; // turn off the digital input for adc0
 }
 
 void loop() {
-  while(1) { // reduces jitter
-    read from pin A0
-    runFFT();
-    if (fft_log_out[19] > 40 || fft_log_out[20]) > 40){
-      Serial.println("660 Hz signal detected");
-    }
-    ADMUX = 0x41; //read from pin A1
-    runFFT();
+    while(1) { // reduces jitter
+        runFFT();
+        if(fft_log_out[19] > 40 || fft_log_out[20]) > 40) {
+            Serial.println("660 Hz signal detected");
+        }
+        ADMUX = 0x41; //now read from pin A1
+        runFFT();
 
-    for (int i = 38; i < 48; i++){
-      if (fft_log_out[i] > 100){
-        Serial.println("6kHz signal detected");
-        break;
-      }
-    }
-    while(1);
-  }
+        // checks bins in the range 38-48
+        for(int i = 38; i < 48; i++){
+            if(fft_log_out[i] > 100) {
+                Serial.println("6.08 kHz signal detected!");
+                break;
+            }
+        }
+        while(1);
+   }
 }
 
-void runFFT(){
+void runFFT() {
     cli();  // UDRE interrupt slows this way down on arduino1.0
-    for (int i = 0 ; i < 512 ; i += 2) { // save 256 samples
-      while(!(ADCSRA & 0x10)); // wait for adc to be ready
-      ADCSRA = 0xf5; // restart adc
-      byte m = ADCL; // fetch adc data
-      byte j = ADCH;
-      int k = (j << 8) | m; // form into an int
-      k -= 0x0200; // form into a signed int
-      k <<= 6; // form into a 16b signed int
-      fft_input[i] = k; // put real data into even bins
-      fft_input[i+1] = 0; // set odd bins to 0
+    for(int i = 0 ; i < 512 ; i += 2) { // save 256 samples
+        while(!(ADCSRA & 0x10)); // wait for adc to be ready
+        ADCSRA = 0xf5; // restart adc
+        byte m = ADCL; // fetch adc data
+        byte j = ADCH;
+        int k = (j << 8) | m; // form into an int
+        k -= 0x0200; // form into a signed int
+        k <<= 6; // form into a 16b signed int
+        fft_input[i] = k; // put real data into even bins
+        fft_input[i+1] = 0; // set odd bins to 0
     }
     fft_window(); // window the data for better frequency response
     fft_reorder(); // reorder the data before doing the fft
@@ -161,8 +162,8 @@ void runFFT(){
     fft_mag_log(); // take the output of the fft
     sei();
     Serial.println("start");
-    for (byte i = 0 ; i < FFT_N/2 ; i++) {
-      Serial.println(fft_log_out[i]); // send out the data
+    for(byte i = 0 ; i < FFT_N/2 ; i++) {
+        Serial.println(fft_log_out[i]); // send out the data
     }
 }
 
