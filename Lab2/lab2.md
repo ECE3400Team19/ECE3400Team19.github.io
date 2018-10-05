@@ -75,18 +75,18 @@ The circuit consists of three distinct stages.  The photodetector, a low-pass fi
 
 We decided to deviate from the default configuration given to us on the lab handout, reversing the positions of the photodetector and 1.8 kΩ resistor.  With a 5V pull up, the detector could only pull down the voltage in pulses by about half a volt, resulting in a pulse ranging from 4 to 5V at maximum intensity (i.e. with the IR hat right next to the detector).  However, reversing this configuration, we had a baseline of 0V and the detector would pull up our value instead, resulting in a 0-1V range at maximum intensity.  In this range, an amplifier becomes much more advantageous.  
 
-<img src="Optical Reading 3.jpg" width="252" height="189" alt="Pull Down Configurtion" img align="center">
+<img src="Optical Reading 3.JPG" width="252" height="189" alt="Pull Down Configurtion" img align="center">
 
 The second stage is a simple RC low-pass filter.  With resistor and capacitor values as shown, it has a corner frequency at roughly 10 kHz.  These values were chosen so the filter would pass 6 kHz frequencies while rejecting frequencies at 18 kHz.  With this configuration, we were able to cut the amplitude of 18kHz signals to less than 50% while keeping 6kHz signals within 10% of their initial amplitude.  This filter, along with software on the board not checking bins corresponding to 18 kHz, allows us to reject the decoy signal.  
 
-<img src="Optical_6kHz_Pass.jpg" width="252" height="189" alt="6kHz" img align="center">
-<img src="Optical_18kHz_Reject.jpg" width="252" height="189" alt="18kHz" img align="center">
+<img src="Optical_6kHz_Pass.JPG" width="252" height="189" alt="6kHz" img align="center">
+<img src="Optical_18kHz_Reject.JPG" width="252" height="189" alt="18kHz" img align="center">
 
 The third stage is a non-inverting amplifier with a gain of 51x.  With a maximum range of 0-1 V, there is a possibility of the output signal clipping at the rails of the Op-Amp (0 and 5 V).  This issue of clipping is not a significant concern, as we are prioritizing early detection.  That is to say, we want to be able to see the robot from far away and react, and our reaction should avoid the case where the detector gets close enough to the other IR hat for clipping to be an issue (i.e. a collision).  With a gain of 51x, our circuit can readily detect an IR hat at a distance of 1 square away (30cm).  It’s possible that we could increase this gain further to increase our detection range but this will depend on our specific needs for detecting other robots down the line.  
 
-<img src="Optical_1_Square_Waveforms.jpg" width="252" height="189" alt="Detection Range" img align="center">
+<img src="Optical_1_Square_Waveforms.JPG" width="252" height="189" alt="Detection Range" img align="center">
 
-<img src="Optical_Hat_1_Square.jpg" width="252" height="189" alt="Detection Range" img align="center">
+<img src="Optical_Hat_1_Square.JPG" width="252" height="189" alt="Detection Range" img align="center">
 
 ## Detecting the 6.08 kHz signal
 
