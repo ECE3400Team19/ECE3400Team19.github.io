@@ -30,11 +30,12 @@ We started by building Team Alpha's circuit, and then adding an additional capac
 Here is a picture of our circuit and a diagram:
 
 <img src="Acoustic Circuit.JPG" width="360" height="252" alt="acoustic-circuit" img align = "left">
-<img src="mic_schematic.png" width="430" height="252" alt="mic-circuit" img align = "center">
 
 
 
 After building our circuit, we modified the example sketch from the FFT library, fft_adc_serial, to use analogRead(), the built-in method for reading an analog input, instead of running the ADC in free-running mode. The frequency 660Hz is in the 5th bin using the ADC, but in the 20th bin using analogRead() because analogRead() runs at a much slower sampling rate.
+
+<img src="mic_schematic.png" width="430" height="252" alt="mic-circuit" img align = "center">
 
 We first used the signal generator to put a 660Hz, 50mVpp with 25mV offset sine wave into our active band pass filter. We fed the output into pin A1 and ran our modified code for FFT. We got the output from the serial monitor and plotted it in Excel. We then played a 660Hz tone from the app Tone Generator directly into our microphone. We got the output and plotted in in Excel. The two plots are shown below:
 
@@ -95,7 +96,7 @@ To be able to detect the 6.08 kHz signal, we feed the output of our circuit as a
 <img src="IR_Graphs.png" width="480" height="288" alt="IR Signals" img align="left">
 
 
-```
+
 /*
 fft_adc_serial.pde
 guest openmusiclabs.com 7.7.14
