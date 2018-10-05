@@ -34,7 +34,45 @@ Here is a picture of our circuit and a diagram:
 
 
 
-After building our circuit, we modified the example sketch from the FFT library, fft_adc_serial, to use analogRead(), the built-in method for reading an analog input, instead of running the ADC in free-running mode. The frequency 660Hz is in the 5th bin using the ADC, but in the 20th bin using analogRead() because analogRead() runs at a much slower sampling rate.
+After building our circuit, we modified the example sketch from the FFT library, fft_adc_serial, to use analogRead(), the built-in method for reading an analog input, instead of running the ADC in free-running mode. The frequency 660Hz is in the 5th bin using the ADC, but in the 20th bin using analogRead() because analogRead() runs at a much slower sampling rate. The code is shown below:
+```
+#define LOG_OUT 1 // use the log output function
+#define FFT_N 256 // set to 256 point fft
+
+#include <FFT.h> // include the library
+
+void setup() {
+  Serial.begin(115200); // use the serial port
+}
+
+void loop() {
+  while (1) { // reduces jitter
+    Serial.println("FFT from pin A1");
+    runFFT("A1");
+
+    while(1);
+  }
+}
+
+void runFFT(uint8_t pin) {
+  cli();  // UDRE interrupt slows this way down on arduino1.0
+  for (int i = 0 ; i < 512 ; i += 2) { // save 256 samples
+    fft_input[i] = analogRead(pin); // put analog input (pin A0) into even bins
+    fft_input[i + 1] = 0; // set odd bins to 0
+  }
+
+  fft_window(); // window the data for better frequency response
+  fft_reorder(); // reorder the data before doing the fft
+  fft_run(); // process the data in the fft
+  fft_mag_log(); // take the output of the fft
+  sei();
+
+  for (byte i = 0 ; i < FFT_N / 2 ; i++) {
+    Serial.println(fft_log_out[i]); // send out the data
+  }
+
+}
+```
 
 We first used the signal generator to put a 660Hz, 50mVpp with 25mV offset sine wave into our active band pass filter. We fed the output into pin A1 and ran our modified code for FFT. We got the output from the serial monitor and plotted it in Excel. We then played a 660Hz tone from the app Tone Generator directly into our microphone. We got the output and plotted in in Excel. The two plots are shown below:
 
@@ -50,9 +88,11 @@ We first used the signal generator to put a 660Hz, 50mVpp with 25mV offset sine 
 
 The frequency of the output measured by the oscilloscope was 660Hz and the voltage was 1.42 Vpp.
 
+We then tested our circuit by playing both a 400 Hz tone and 660 Hz tone at the same volume into the microphone. We got the following FFT out of the Arduino:
 
+<img src="FFT2.PNG" width="719" height="432" alt="fft-graph">
 
-
+The largest peak is still at bin 20, the bin that represents 660 Hz :)
 
 
 
