@@ -51,7 +51,7 @@ void loop() {
     }
     else {
         Serial.print(dis);
-        Serial.print(" cm\n");
+        Serial.print(" cm\n"); 
         digitalWrite(1, LOW);
         digitalWrite(2, HIGH);
         digitalWrite(3, LOW);
