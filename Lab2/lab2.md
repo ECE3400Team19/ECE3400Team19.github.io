@@ -19,7 +19,7 @@ In this lab, we added sensors and circuitry to our robot. The first was a microp
 
 We started the lab by assembling the microphone circuit suggested by the lab handout with a 1 µF capacitor and a 3.3 kΩ resistor:
 
- <img src="basicMicrophoneCircuit.png" width="380" height="156" alt="microphone-circuit">
+ <img src="basicMicrophoneCircuit.png" width="350" height="220" alt="microphone-circuit" img align="middle">
 
 We then used a tone generator app to play a 660Hz tone directly into the microphone at maximum volume, then checked the output of the circuit using the oscilloscope.
 
@@ -29,8 +29,8 @@ We started by building Team Alpha's circuit, and then adding an additional capac
 
 Here is a picture of our circuit and a diagram:
 
-<img src="Acoustic Circuit.JPG" width="430" height="252" alt="acoustic-circuit" img align = "left">
-<img src="mic_schematic.png" width="430" height="252" alt="mic-circuit" img align = "center">
+<img src="Acoustic Circuit.JPG" width="330" height="300" alt="acoustic-circuit">
+<img src="mic_schematic.png" width="330" height="300" alt="mic-circuit" img align = "right">
 
 After building our circuit, we modified the example sketch from the FFT library, fft_adc_serial, to use analogRead(), the built-in method for reading an analog input, instead of running the ADC in free-running mode. The frequency 660Hz is in the 5th bin using the ADC, but in the 20th bin using analogRead() because analogRead() runs at a much slower sampling rate. The code is shown below:
 
@@ -84,8 +84,8 @@ We first used the signal generator to put a 660Hz, 50mVpp with 25mV offset sine 
  We then played the 660Hz tone into our microphone again and checked the output using the oscilloscope.
  The setup and oscilloscope looked as follows:
 
-<img src="Acoustic Test.JPG" width="240" height="320" alt="tone generator setup" img align="left">
-<img src="oscilloscope_audio.JPG" width="371.91" height="320" alt="tone generator setup" img align="center">
+<img src="Acoustic Test.JPG" width="320" height="320" alt="tone generator setup" img align="left">
+<img src="oscilloscope_audio.JPG" width="320" height="320" alt="tone generator setup" img align="center">
 
 The frequency of the output measured by the oscilloscope was 660Hz and the voltage was 1.42 Vpp.
 
@@ -108,7 +108,7 @@ The largest peak is still at bin 20, the bin that represents 660 Hz :)
 
 ## Circuit Design and Construction
 <br/>
-<img src="Lab 2 IR Schematic.png" width="440" height="320" alt="IR circuit schematic" img align="center">
+<img src="Lab 2 IR Schematic.png" width="640" height="400" alt="IR circuit schematic" img align="center">
 
 The circuit consists of three distinct stages.  The photodetector, a low-pass filter, and a non-inverting amplifier.  Each stage is discussed below.  
 
