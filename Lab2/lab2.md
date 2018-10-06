@@ -89,8 +89,8 @@ We first used the signal generator to put a 660Hz, 50mVpp with 25mV offset sine 
  We then played the 660Hz tone into our microphone again and checked the output using the oscilloscope.
  The setup and oscilloscope looked as follows:
 
-<img src="Acoustic Test.JPG" width="240" height="320" alt="tone generator setup" img align="left">
-<img src="oscilloscope_audio.JPG" width="371.91" height="320" alt="tone generator setup" img align="center">
+<img src="Acoustic Test.JPG" width="320" height="320" alt="tone generator setup" img align="left">
+<img src="oscilloscope_audio.JPG" width="320" height="320" alt="tone generator setup" img align="center">
 
 The frequency of the output measured by the oscilloscope was 660Hz and the voltage was 1.42 Vpp.
 
@@ -113,7 +113,7 @@ The largest peak is still at bin 20, the bin that represents 660 Hz :)
 
 ## Circuit Design and Construction
 <br/>
-<img src="Lab 2 IR Schematic.png" width="440" height="320" alt="IR circuit schematic" img align="center">
+<img src="Lab 2 IR Schematic.png" width="640" height="400" alt="IR circuit schematic" img align="center">
 
 The circuit consists of three distinct stages.  The photodetector, a low-pass filter, and a non-inverting amplifier.  Each stage is discussed below.  
 
