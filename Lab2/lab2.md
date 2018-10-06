@@ -132,9 +132,14 @@ Every robot maneuvering the maze - our robot as well as the competition's - will
 
 To be able to detect the 6.08 kHz signal, we feed the output of our circuit as an analog input to the Arduino. To analyze the signals being read in by the phototransistor, we utilized the Arduino FFT library and modified the fft_adc_serial example sketch. The Arduino FFT library is a quick implementation of a standard FFT algorithm which operates on only real data. We used the FFT library to take in a 16-bit input organized amongst 256 frequency bins and gives an 8-bit logarithmic output. The Fast Fourier Transform (FFT) algorithm samples our signal and decomposes it into its various frequency components. Each component is a sinusoid at a particular frequency with its own amplitude and phase. After running the FFT algorithm using the fft_adc_serial sketch on our input, we were able to graph the logarithmic output vs. the signal input data.  Also included on this graph are the results for the 18kHz decoy for comparison:
 
-<img src="IR_Graphs.png" width="480" height="288" alt="IR Signals" img align="left">
+<img src="IR_Graphs.png" width="480" height="288" alt="IR Signals">
 
 ## FFT Analysis
+The modified fft_adc_serial sketch is included below. As can be seen in the graph above, there are spikes in frequency starting around bin 40 and the amplitude of the output goes above 100. This spike is due to the 6.08 kHz IR signal that is emitted from the IR hat. Therefore, to be able to detect the presence of the emitted IR hat signal we added a conditional statement to the fft_adc_serial sketch which checks the magnitude of the output fft_log_out at a particular range of indices, or bins. After the FFT is computed, the output for bins ranging from 38 up to 48 are checked for a magnitude greater than 100. If True, we print to the serial monitor that the 6.08 kHz was detected.
+## Code for handling both IR and Audio
+The code snippet below handles both IR and Audio:
+- distinguishes a 6.08 kHz IR signal from a 18kHz IR signal
+- distinguishes a 660Hz tone from background noise (talking/music)
 We originally ran the fft_adc_serial code separately for the optical and acoustic teams, but then merged the code at the end. We first run the FFT taking input from pin A0, by setting ADMUX = 0x40, then run the FFT taking input from pin A1 (ADMUX = 0x41). We connected the microphone circuit's output to pin A0 and then check for a peak in bin 5, representing a tone of 660 Hz. We connected the IR circuit's output to pin A1 and check bins 38-48 for a peak, representing a signal of 6.08 kHZ.
 
 ```
