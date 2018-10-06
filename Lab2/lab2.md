@@ -29,8 +29,8 @@ We started by building Team Alpha's circuit, and then adding an additional capac
 
 Here is a picture of our circuit and a diagram:
 
-<img src="Acoustic Circuit.JPG" width="430" height="200" alt="acoustic-circuit">
-<img src="mic_schematic.png" width="430" height="200" alt="mic-circuit" img align = "right">
+<img src="Acoustic Circuit.JPG" width="230" height="300" alt="acoustic-circuit">
+<img src="mic_schematic.png" width="230" height="300" alt="mic-circuit" img align = "right">
 
 After building our circuit, we modified the example sketch from the FFT library, fft_adc_serial, to use analogRead(), the built-in method for reading an analog input, instead of running the ADC in free-running mode. The frequency 660Hz is in the 5th bin using the ADC, but in the 20th bin using analogRead() because analogRead() runs at a much slower sampling rate. The code is shown below:
 
