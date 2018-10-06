@@ -140,6 +140,8 @@ The modified fft_adc_serial sketch is included below. As can be seen in the grap
 The code snippet below handles both IR and Audio:
 - distinguishes a 6.08 kHz IR signal from a 18kHz IR signal
 - distinguishes a 660Hz tone from background noise (talking/music)
+
+
 We originally ran the fft_adc_serial code separately for the optical and acoustic teams, but then merged the code at the end. We first run the FFT taking input from pin A0, by setting ADMUX = 0x40, then run the FFT taking input from pin A1 (ADMUX = 0x41). We connected the microphone circuit's output to pin A0 and then check for a peak in bin 5, representing a tone of 660 Hz. We connected the IR circuit's output to pin A1 and check bins 38-48 for a peak, representing a signal of 6.08 kHZ.
 
 ```
