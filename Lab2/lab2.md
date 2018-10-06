@@ -2,8 +2,8 @@
 [Home](https://ece3400team19.github.io/)
 
 ## Team Tasks
-* Acoustic Team: Asena, Laasya, Nonso
-* Optical Team: Cynthia, Robert
+* Acoustic Team: Asena, Laasya
+* Optical Team: Cynthia, Robert, Nonso
 
 ## Lab Description
 
@@ -72,8 +72,7 @@ void runFFT(uint8_t pin) {
 
 }
 ```
-We discuss the code more when we [merge our code with the optical code] #fft-analysis
-<img src="mic_schematic.png" width="430" height="252" alt="mic-circuit" img align = "center">
+We later merge our code with the code for detecting the 6kHz IR signal.
 
 We first used the signal generator to put a 660Hz, 50mVpp with 25mV offset sine wave into our active band pass filter. We fed the output into pin A1 and ran our modified code for FFT. We got the output from the serial monitor and plotted it in Excel. We then played a 660Hz tone from the app Tone Generator directly into our microphone. We got the output and plotted in in Excel. The two plots are shown below:
 
@@ -114,18 +113,18 @@ The circuit consists of three distinct stages.  The photodetector, a low-pass fi
 
 We decided to deviate from the default configuration given to us on the lab handout, reversing the positions of the photodetector and 1.8 kΩ resistor.  With a 5V pull up, the detector could only pull down the voltage in pulses by about half a volt, resulting in a pulse ranging from 4 to 5V at maximum intensity (i.e. with the IR hat right next to the detector).  However, reversing this configuration, we had a baseline of 0V and the detector would pull up our value instead, resulting in a 0-1V range at maximum intensity.  In this range, an amplifier becomes much more advantageous.  
 
-<img src="Optical Reading 3.JPG" width="252" height="189" alt="Pull Down Configurtion" img align="center">
+<img src="Optical Reading 3.JPG" width="504" height="378" alt="Pull Down Configuration" img align="center">
 
 The second stage is a simple RC low-pass filter.  With resistor and capacitor values as shown, it has a corner frequency at roughly 10 kHz.  These values were chosen so the filter would pass 6 kHz frequencies while rejecting frequencies at 18 kHz.  With this configuration, we were able to cut the amplitude of 18kHz signals to less than 50% while keeping 6kHz signals within 10% of their initial amplitude.  This filter, along with software on the board not checking bins corresponding to 18 kHz, allows us to reject the decoy signal.  
 
-<img src="Optical_6kHz_Pass.JPG" width="252" height="189" alt="6kHz" img align="center">
-<img src="Optical_18kHz_reject.JPG" width="252" height="189" alt="18kHz" img align="center">
+<img src="Optical_6kHz_Pass.JPG" width="504" height="378" alt="6kHz" img align="center">
+<img src="Optical_18kHz_reject.JPG" width="504" height="378" alt="18kHz" img align="center">
 
 The third stage is a non-inverting amplifier with a gain of 51x.  With a maximum range of 0-1 V, there is a possibility of the output signal clipping at the rails of the Op-Amp (0 and 5 V).  This issue of clipping is not a significant concern, as we are prioritizing early detection.  That is to say, we want to be able to see the robot from far away and react, and our reaction should avoid the case where the detector gets close enough to the other IR hat for clipping to be an issue (i.e. a collision).  With a gain of 51x, our circuit can readily detect an IR hat at a distance of 1 square away (30cm).  It’s possible that we could increase this gain further to increase our detection range but this will depend on our specific needs for detecting other robots down the line.  
 
-<img src="Optical_1_Square_Waveforms.JPG" width="252" height="189" alt="Detection Range" img align="center">
+<img src="Optical_1_Square_Waveforms.JPG" width="504" height="378" alt="Detection Range" img align="center">
 
-<img src="Optical_Hat_1_Square.JPG" width="252" height="189" alt="Detection Range" img align="center">
+<img src="Optical_Hat_1_Square.JPG" width="504" height="378" alt="Detection Range" img align="center">
 
 ## Detecting the 6.08 kHz signal
 
@@ -136,6 +135,8 @@ To be able to detect the 6.08 kHz signal, we feed the output of our circuit as a
 <img src="IR_Graphs.png" width="480" height="288" alt="IR Signals" img align="left">
 
 ## FFT Analysis
+We originally ran the fft_adc_serial code separately for the optical and acoustic teams, but then merged the code at the end. We first run the FFT taking input from pin A0, by setting ADMUX = 0x40, then run the FFT taking input from pin A1 (ADMUX = 0x41). We connected the microphone circuit's output to pin A0 and then check for a peak in bin 5, representing a tone of 660 Hz. We connected the IR circuit's output to pin A1 and check bins 38-48 for a peak, representing a signal of 6.08 kHZ.
+
 ```
 /*
 fft_adc_serial.pde
@@ -162,7 +163,7 @@ void setup() {
 void loop() {
     while(1) { // reduces jitter
         runFFT();
-        if(fft_log_out[19] > 40 || fft_log_out[20]) > 40) {
+        if(fft_log_out[5] > 40) {
             Serial.println("660 Hz signal detected");
         }
         ADMUX = 0x41; //now read from pin A1
