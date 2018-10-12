@@ -12,7 +12,9 @@ The goal of this milestone was to get our robot to successfully circle an arbitr
 [3 wall sensors](https://www.sparkfun.com/products/12728) (GP2Y0A41SK0F)
 
 ## Part 1 - Hooking up the Wall Sensors
-
+<video width="640" height="360" controls muted>
+  <source src="IMG_6671.MOV" type="video/mp4">
+</video>
 
 ## Part 2 - Avoiding Walls
 
