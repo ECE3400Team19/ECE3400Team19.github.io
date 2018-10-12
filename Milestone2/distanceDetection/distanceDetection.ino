@@ -124,13 +124,29 @@ void loop() {
         
         //What can you see?
         int seen = B0000;
-        if (IRDetected)         seen |= B1000;
+        digitalWrite(4, LOW);
+        digitalWrite(3, LOW);
+        digitalWrite(2, LOW);
+        digitalWrite(1, LOW);
+        if (IRDetected){         
+          seen |= B1000;
+          digitalWrite(4, HIGH);
+        }
         //left wall
-        if (digitalRead(lw))    seen |= B0100;
+        if (digitalRead(lw)){    
+          seen |= B0100;
+          digitalWrite(3, HIGH);
+        }
         //front wall
-        if (digitalRead(fw))    seen |= B0010;
+        if (digitalRead(fw)){    
+          seen |= B0010;
+          digitalWrite(2, HIGH);
+        }
         //right wall
-        if (digitalRead(rw))    seen |= B0001;
+        if (digitalRead(rw)){    
+          seen |= B0001;
+          digitalWrite(1, HIGH);
+        }
         
         switch (seen) {
           case B0110:
