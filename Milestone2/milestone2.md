@@ -13,6 +13,7 @@ The goal of this milestone was to get our robot to successfully circle an arbitr
 
 ## Part 1 - Hooking up the Wall Sensors
 We connected the line sensor's three pins to ground, power, and an analog input (A2).
+The line sensor outputs a voltage
 Using the following code, we were able to detect how far away the sensor was from a wall.
 
 void setup() {
@@ -32,13 +33,18 @@ void loop() {
     }
     delay(500);
 }
-Here is a video of the code working. Laasya moves her hand farther away from the sensor until she is out of range, and then moves back into range. 
+Here is a video of the code in action. Laasya moves her hand farther away from the sensor until she is out of range, and then moves back into range.
 <video width="640" height="360" controls muted>
   <source src="IMG_6671.MOV" type="video/mp4">
 </video>
 
+The Arduino only has 6 analog inputs. We were already using three analog inputs for the three line sensors we implemented in Milestone 1, and two analog inputs for the microphone detection and IR detection.
+This only left us one analog input. We decided to change the an
 
 ## Part 2 - Avoiding Walls
 
 
 ## Part 3 - Avoiding Walls while Staying on the Line
+
+
+## Part 3 - Avoiding Walls while Staying on the Line and Avoiding Robots 
