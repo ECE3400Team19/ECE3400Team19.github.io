@@ -2,7 +2,7 @@
 #define LOG_OUT 1 // use the log output function
 #define FFT_N 256 // set to 256 point fft
 
-//#include <FFT.h> // include the library
+#include <FFT.h> // include the library
 
 Servo left; //180 turns wheel backward
 Servo right; //180 turns wheel forward
@@ -25,31 +25,44 @@ int frontLED = 2;
 int leftLED =  3;
 int robotLED = 4;
 boolean IRDetected;
+int defaultT = TIMSK0;
+int defaultADC = ADCSRA;
+int defaultADMUX = ADMUX;
+int defaultD = DIDR0;
 
 //helper methods
-//void runFFT(){
-//    cli();  // UDRE interrupt slows this way down on arduino1.0
-//    for (int i = 0 ; i < 512 ; i += 2) { // save 256 samples
-//      while(!(ADCSRA & 0x10)); // wait for adc to be ready
-//      ADCSRA = 0xf5; // restart adc
-//      byte m = ADCL; // fetch adc data
-//      byte j = ADCH;
-//      int k = (j << 8) | m; // form into an int
-//      k -= 0x0200; // form into a signed int
-//      k <<= 6; // form into a 16b signed int
-//      fft_input[i] = k; // put real data into even bins
-//      fft_input[i+1] = 0; // set odd bins to 0
-//    }
-//    fft_window(); // window the data for better frequency response
-//    fft_reorder(); // reorder the data before doing the fft
-//    fft_run(); // process the data in the fft
-//    fft_mag_log(); // take the output of the fft
-//    sei();
-//    Serial.println("start");
+void runFFT(){
+    TIMSK0 = 0; // turn off timer0 for lower jitter
+    ADCSRA = 0xe5; // set the adc to free running mode
+    ADMUX = 0x43; // use adc3
+    DIDR0 = 0x01; // turn off the digital input for adc0
+    cli();  // UDRE interrupt slows this way down on arduino1.0
+    for (int i = 0 ; i < 512 ; i += 2) { // save 256 samples
+      while(!(ADCSRA & 0x10)); // wait for adc to be ready
+      ADCSRA = 0xf5; // restart adc
+      byte m = ADCL; // fetch adc data
+      byte j = ADCH;
+      int k = (j << 8) | m; // form into an int
+      k -= 0x0200; // form into a signed int
+      k <<= 6; // form into a 16b signed int
+      fft_input[i] = k; // put real data into even bins
+      fft_input[i+1] = 0; // set odd bins to 0
+    }
+    fft_window(); // window the data for better frequency response
+    fft_reorder(); // reorder the data before doing the fft
+    fft_run(); // process the data in the fft
+    fft_mag_log(); // take the output of the fft
+    sei();
+    Serial.println("start");
 //    for (byte i = 0 ; i < FFT_N/2 ; i++) { 
 //      Serial.println(fft_log_out[i]); // send out the data
 //    }
-//}
+
+    TIMSK0 = defaultT; 
+    ADCSRA = defaultADC; 
+    ADMUX = defaultADMUX; 
+    DIDR0 = defaultD; 
+}
 
 void goStraight() {
   leftSpeed = 95;
@@ -110,24 +123,25 @@ void setup() {
   pinMode(frontLED, OUTPUT);
   pinMode(robotLED, OUTPUT);
   //fft
+
 //  TIMSK0 = 0; // turn off timer0 for lower jitter
 //  ADCSRA = 0xe5; // set the adc to free running mode
 //  ADMUX = 0x43; // use adc0
 //  DIDR0 = 0x01; // turn off the digital input for adc0
   Serial.println("finished setup");
 }
-void checkWallSensors(){
-  Serial.print("left wall : ");
-  Serial.print(digitalRead(lw));
-  Serial.print(" front wall : ");
-  Serial.print(digitalRead(fw));
-  Serial.print(" right wall : ");
-  Serial.print(digitalRead(rw));
-  Serial.println();
-  delay(50);
-}
+//void checkWallSensors(){
+//  Serial.print("left wall : ");
+//  Serial.print(digitalRead(lw));
+//  Serial.print(" front wall : ");
+//  Serial.print(digitalRead(fw));
+//  Serial.print(" right wall : ");
+//  Serial.print(digitalRead(rw));
+//  Serial.println();
+//  delay(50);
+//}
 //void loop(){
-//  checkWallSensors();
+//  //checkWallSensors();
 //}
 void loop() {
     //Serial.println("entering loop");
@@ -141,14 +155,14 @@ void loop() {
     if (leftSensor < 800  && middleSensor< 800 && rightSensor < 800){
         //FFT IR
         Serial.println("at an intersection");
-//        ADMUX = 0x43;
-//        runFFT();
-//        for (int i = 38; i < 48; i++){
-//          if (fft_log_out[i] > 100){
-//            IRDetected = 1;
-//            break;
-//          }
-//        }
+        runFFT();
+        for (int i = 38; i < 48; i++){
+          if (fft_log_out[i] > 100){
+            IRDetected = 1;
+            break;
+          }
+        }
+       
         
         //What can you see?
         int seen = B0000;
