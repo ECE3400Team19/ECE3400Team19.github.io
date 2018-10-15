@@ -77,6 +77,7 @@ void checkWallSensors(){
 After verifying the output of the Serial monitor, we attached three external LEDs to our Arduino, each LED corresponded to one of the wall sensors and we programmed each LED to turn on when its corresponding wall sensor detected a wall.
 
 ## Part 3 - Avoiding Walls while Staying on the Line
-We took our line following code from Milestone1 and added logic to avoid walls.
+We took our line following code from Milestone1 and added logic to avoid walls. We originally added logic for avoiding robots as well, but took this part out because we found out that the FFT library and the servos use the same timer, which causes nothing to work.
+We will attach the final code at the end, but for now, we will discuss how we avoided walls. When we are not at an intersection, we just follow the line using our logic from Milestone1. When we reach an intersection, we check our surroundings. If there is no wall in front of us, we go straight. If there is a wall in front and on one of the sides, we turn towards the side without a wall. If there is only a wall in the front, we turn left. <<<<<MAYBE false If there is a wall in every direction, we turn around. 
 
 ## Part 3 - Avoiding Walls while Staying on the Line and Avoiding Robots
