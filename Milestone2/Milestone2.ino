@@ -1,6 +1,7 @@
 #include <Servo.h>
 #define LOG_OUT 1 // use the log output function
-#define FFT_N 256 // set to 256 point fft
+//#define FFT_N 256 // set to 256 point fft LEGACY
+#define FFT_N 128 // CHANGED 128 pt FFT
 
 #include <FFT.h> // include the library
 
@@ -37,7 +38,9 @@ void runFFT(){
     ADMUX = 0x43; // use adc3
     DIDR0 = 0x01; // turn off the digital input for adc0
     cli();  // UDRE interrupt slows this way down on arduino1.0
-    for (int i = 0 ; i < 512 ; i += 2) { // save 256 samples
+    //for (int i = 0 ; i < 512 ; i += 2) {  save 256 samples LEGACY
+    
+    for (int i = 0 ; i < 256 ; i += 2) {  //CHANGED
       while(!(ADCSRA & 0x10)); // wait for adc to be ready
       ADCSRA = 0xf5; // restart adc
       byte m = ADCL; // fetch adc data
@@ -57,11 +60,6 @@ void runFFT(){
 //    for (byte i = 0 ; i < FFT_N/2 ; i++) { 
 //      Serial.println(fft_log_out[i]); // send out the data
 //    }
-
-    TIMSK0 = defaultT; 
-    ADCSRA = defaultADC; 
-    ADMUX = defaultADMUX; 
-    DIDR0 = defaultD; 
 }
 
 void goStraight() {
@@ -115,19 +113,17 @@ void setup() {
   right.attach(5);
   left.write(90);
   right.write(90);
+  
+  //wall sensors
   pinMode(lw, INPUT);
   pinMode(fw, INPUT);
   pinMode(rw, INPUT);
+
+  //output LEDs
   pinMode(rightLED, OUTPUT);
   pinMode(leftLED, OUTPUT);
   pinMode(frontLED, OUTPUT);
   pinMode(robotLED, OUTPUT);
-  //fft
-
-//  TIMSK0 = 0; // turn off timer0 for lower jitter
-//  ADCSRA = 0xe5; // set the adc to free running mode
-//  ADMUX = 0x43; // use adc0
-//  DIDR0 = 0x01; // turn off the digital input for adc0
   Serial.println("finished setup");
 }
 //void checkWallSensors(){
@@ -156,15 +152,27 @@ void loop() {
         //FFT IR
         Serial.println("at an intersection");
         runFFT();
-        for (int i = 38; i < 48; i++){
-          if (fft_log_out[i] > 100){
+
+        //reset registers after FFT
+        TIMSK0 = defaultT; 
+        ADCSRA = defaultADC; 
+        ADMUX = defaultADMUX; 
+        DIDR0 = defaultD; 
+
+
+        //check if IR sensor detects another robot based on FFT
+        
+        //for (int i = 38; i < 48; i++){  //LEGACY : 256 bit fft
+        
+        for (int i = 20; i < 30; i++){ //changed
+          if (fft_log_out[i] > 50){
             IRDetected = 1;
             break;
           }
         }
        
         
-        //What can you see?
+        //What can you see?r
         int seen = B0000;
         digitalWrite(leftLED, LOW);
         digitalWrite(rightLED, LOW);
@@ -245,6 +253,7 @@ void loop() {
             //go straight
             goStraight();
             Serial.println("going straight");
+            Serial.println(seen);
             break;
     }
     //straight line following
