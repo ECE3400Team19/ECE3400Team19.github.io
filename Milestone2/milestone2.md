@@ -2,8 +2,11 @@
 [Home](https://ece3400team19.github.io/)
 
 ## Team Tasks
-  * Asena, Cynthia, Laasya:
-  * Nonso, Robert:
+  * Cynthia: Mounting Wall Sensors
+  * Asena, Nonso: Schmitt Trigger
+  * Robert: Code for Wall Following
+  * Laasya: FFT integration
+
 
 ## Milestone Description
 The goal of this milestone was to get our robot to successfully circle an arbitrary set of walls, avoid other robots, and follow lines.
@@ -51,12 +54,29 @@ The low threshold corresponds to when the wall sensor is 20 cm away from an obje
  <img src="schmitt.png" width="439" height="223" alt="schmitt-trigger-circuit">
 
  We built this circuit and tested it by putting input voltages from a DC voltage source and checking the output with an oscilloscope. The output voltages were as expected: when we increased the voltage source slowly from 0 -> 1V, we stayed at an output voltage of around 0 until suddenly we got an output of 3.5V for an input of 1V. Then, we decreased the voltage source slowly from 1V-> 0.5V. We stayed at a high output voltage until we got an output of 0V for an input of 0.5V. Then, we tested that the wall sensor gave us a voltage of 1V or greater when we put an object close to it, and a voltage of .5V or less when an object was far away.
- However, when we put the wall sensor as the input of our schmitt trigger, nothing worked! The output stayed high (3.5V) forever. With the help of multiple TAs, we figured out that our resistor values were too small. The ratio of R2/R2 is what matters, so we switched R2 from 1.5kΩ to 15kΩ and 10kΩ to 100kΩ. We kept Vref the same. Then, our schmitt trigger worked as expected using the wall sensor as an input.
+ However, when we put the wall sensor as the input of our schmitt trigger, nothing worked! The output stayed high (3.5V) forever. With the help of multiple TAs, we figured out that our resistor values were too small. The ratio of R2/R1 is what matters, so we switched R2 from 1.5kΩ to 15kΩ and R1 from 10kΩ to 100kΩ. We kept Vref the same. Then, our schmitt trigger worked as expected using the wall sensor as an input.
 
 ## Part 2 - Avoiding Walls
+After successfully building a Schmitt Trigger circuit, we built two more so that we would have one for every wall sensor. We connected the output of every Schmitt trigger to a digital pin on the Arduino. The digital pins read high when there was a wall in front of the sensor and low when nothing was within 20cm of the sensor. We verified the output of the wall sensors with the following method:
+```
+int lw = 6;
+int fw = 7;
+int rw = 8;
 
+void checkWallSensors(){
+  Serial.print("left wall : ");
+  Serial.print(digitalRead(lw));
+  Serial.print(" front wall : ");
+  Serial.print(digitalRead(fw));
+  Serial.print(" right wall : ");
+  Serial.print(digitalRead(rw));
+  Serial.println();
+  delay(50);
+}
+```
+After verifying the output of the Serial monitor, we attached three external LEDs to our Arduino, each LED corresponded to one of the wall sensors and we programmed each LED to turn on when its corresponding wall sensor detected a wall.
 
 ## Part 3 - Avoiding Walls while Staying on the Line
-
+We took our line following code from Milestone1 and added logic to avoid walls.
 
 ## Part 3 - Avoiding Walls while Staying on the Line and Avoiding Robots
