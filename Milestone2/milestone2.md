@@ -43,7 +43,19 @@ Here is a video of the code in action. Laasya moves her hand farther away from t
 </video>
 
 The Arduino only has 6 analog inputs. We were already using three analog inputs for the three line sensors we implemented in Milestone 1, and two analog inputs for the microphone detection and IR detection.
-This only left us one analog input. We decided to change the an
+This only left us one analog input. We decided to change the analog output from the wall sensor into a digital output that could be read by the Arduino's digital pins. We did this using a Schmitt Trigger. None of us had made a Scmitt Trigger before, so we found a calculator online.
+https://www.random-science-tools.com/electronics/schmitt-trigger-calculator.htm
+
+We decided on a low threshold of 0.56 V and a high threshold of 1.09 V. We chose an output voltage low of 0V and high of 3.5V.
+The low threshold corresponds to when the wall sensor is 20 cm away from an object, and the high threshold corresponds to when the wall sensor is 10 cm away from an object. These inputs to the schmitt trigger calculator gave us that R2 = 1.51 kΩ, R1 = 10 kΩ, and Vref = 0.94.
+
+ <img src="schmitt.png" width="439" height="223" alt="schmitt-trigger-circuit">
+
+ We built this circuit and tested it by putting input voltages from a DC voltage source and checking the output with an oscilloscope. The output voltages were as expected: when we increased the voltage source slowly from 0 -> 1V, we stayed at an output voltage of around 0 until suddenly we got an output of 3.5V for an input of 1V. Then, we decreased the voltage source slowly from 1V-> 0.5V. We stayed at a high output voltage until we got an output of 0V for an input of 0.5V. Then, we tested that the wall sensor gave us a voltage of 1V or greater when we put an object close to it, and a voltage of .5V or less when an object was far away.
+ However, when we put the wall sensor as the input of our schmitt trigger, nothing worked! The output stayed high (3.5V) forever. With the help of multiple TAs, we figured out that our resistor values were too small. The ratio of R2/R2 is what matters, so we switched R2 from 1.5kΩ to 15kΩ and 10kΩ to 100kΩ. We kept Vref the same. Then, our schmitt trigger worked as expected using the wall sensor as an input.
+
+
+
 
 ## Part 2 - Avoiding Walls
 
