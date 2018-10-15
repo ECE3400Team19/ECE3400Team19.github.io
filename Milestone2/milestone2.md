@@ -1,4 +1,4 @@
-# Milestone 1: Wall Following
+# Milestone 2: Wall Following
 [Home](https://ece3400team19.github.io/)
 
 ## Team Tasks
@@ -16,6 +16,7 @@ We connected the line sensor's three pins to ground, power, and an analog input 
 The line sensor outputs a voltage
 Using the following code, we were able to detect how far away the sensor was from a wall.
 
+```
 void setup() {
     Serial.begin(9600);
   }
@@ -33,6 +34,9 @@ void loop() {
     }
     delay(500);
 }
+```
+
+
 Here is a video of the code in action. Laasya moves her hand farther away from the sensor until she is out of range, and then moves back into range.
 <video width="640" height="360" controls muted>
   <source src="IMG_6671.MOV" type="video/mp4">
@@ -47,4 +51,4 @@ This only left us one analog input. We decided to change the an
 ## Part 3 - Avoiding Walls while Staying on the Line
 
 
-## Part 3 - Avoiding Walls while Staying on the Line and Avoiding Robots 
+## Part 3 - Avoiding Walls while Staying on the Line and Avoiding Robots
