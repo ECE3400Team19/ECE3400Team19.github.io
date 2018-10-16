@@ -84,9 +84,15 @@ We will attach the final code at the end, but for now, we will discuss how we av
 ## Part 3 - Avoiding Walls while Staying on the Line and Avoiding Robots
 The FFT library and servos use the same timer which causes the servos to not run. The issue is that to run the FFT, you need to change the values of some registers (TIMSK0, ADCSRA, ADMUX, DIDR0). We worked around this by saving the default values of these registers before they are altered and then resetting them after the FFT is run.
 Our logic for avoiding walls while staying on the line and avoiding robots:
+
 If the robot is not at an intersection, then follow the line.
+
 If the robot is at an intersection, check your surroundings.
-If the robot can go forward without hitting a wall or another robot, go forward.
-If the robot can't go forward, but it can go left, turn left.
-If the robot can't go forward or left, but can go right, turn right.
-If the robot can't go forward, left, or right, turn around. 
+
+    If the robot can go forward without hitting a wall or another robot, go forward.
+
+    If the robot can't go forward, but it can go left, turn left.
+
+    If the robot can't go forward or left, but can go right, turn right.
+    
+    If the robot can't go forward, left, or right, turn around.
