@@ -3,9 +3,10 @@
 
 ## Team Tasks
   * Cynthia: Mounting Wall Sensors
-  * Asena, Nonso: Schmitt Trigger
-  * Robert: Code for Wall Following
-  * Laasya: FFT integration
+  * Asena: Schmitt Trigger, Code debugging
+  * Nonso: Schmitt Trigger debugging
+  * Robert: Programming
+  * Laasya: FFT integration, Code debugging
 
 
 ## Milestone Description
@@ -78,6 +79,14 @@ After verifying the output of the Serial monitor, we attached three external LED
 
 ## Part 3 - Avoiding Walls while Staying on the Line
 We took our line following code from Milestone1 and added logic to avoid walls. We originally added logic for avoiding robots as well, but took this part out because we found out that the FFT library and the servos use the same timer, which causes nothing to work.
-We will attach the final code at the end, but for now, we will discuss how we avoided walls. When we are not at an intersection, we just follow the line using our logic from Milestone1. When we reach an intersection, we check our surroundings. If there is no wall in front of us, we go straight. If there is a wall in front and on one of the sides, we turn towards the side without a wall. If there is only a wall in the front, we turn left. <<<<<MAYBE false If there is a wall in every direction, we turn around. 
+We will attach the final code at the end, but for now, we will discuss how we avoided walls. When we are not at an intersection, we just follow the line using our logic from Milestone1. When we reach an intersection, we check our surroundings. If there is no wall in front of us, we go straight. If there is a wall in front and on one of the sides, we turn towards the side without a wall. If there is only a wall in the front, we turn left. If there is a wall in every direction, we turn around.
 
 ## Part 3 - Avoiding Walls while Staying on the Line and Avoiding Robots
+The FFT library and servos use the same timer which causes the servos to not run. The issue is that to run the FFT, you need to change the values of some registers (TIMSK0, ADCSRA, ADMUX, DIDR0). We worked around this by saving the default values of these registers before they are altered and then resetting them after the FFT is run.
+Our logic for avoiding walls while staying on the line and avoiding robots:
+If the robot is not at an intersection, then follow the line.
+If the robot is at an intersection, check your surroundings.
+If the robot can go forward without hitting a wall or another robot, go forward.
+If the robot can't go forward, but it can go left, turn left.
+If the robot can't go forward or left, but can go right, turn right.
+If the robot can't go forward, left, or right, turn around. 

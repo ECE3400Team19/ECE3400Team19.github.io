@@ -21,7 +21,7 @@ int lw = 6;
 int fw = 7;
 int rw = 8;
 
-int rightLED = 1;
+int rightLED = 12;
 int frontLED = 2;
 int leftLED =  3;
 int robotLED = 4;
@@ -56,7 +56,7 @@ void runFFT(){
     fft_run(); // process the data in the fft
     fft_mag_log(); // take the output of the fft
     sei();
-    Serial.println("start");
+//    Serial.println("start");
 //    for (byte i = 0 ; i < FFT_N/2 ; i++) { 
 //      Serial.println(fft_log_out[i]); // send out the data
 //    }
@@ -67,7 +67,7 @@ void goStraight() {
   rightSpeed =85;
   left.write(leftSpeed);
   right.write(rightSpeed);
-  delay(400);
+  delay(300);
 }
 
 void turnLeft() {
@@ -126,19 +126,23 @@ void setup() {
   pinMode(robotLED, OUTPUT);
   Serial.println("finished setup");
 }
-//void checkWallSensors(){
-//  Serial.print("left wall : ");
-//  Serial.print(digitalRead(lw));
-//  Serial.print(" front wall : ");
-//  Serial.print(digitalRead(fw));
-//  Serial.print(" right wall : ");
-//  Serial.print(digitalRead(rw));
-//  Serial.println();
-//  delay(50);
-//}
+void checkWallSensors(){
+  Serial.print("left wall : ");
+  Serial.print(digitalRead(lw));
+  Serial.print(" front wall : ");
+  Serial.print(digitalRead(fw));
+  Serial.print(" right wall : ");
+  Serial.print(digitalRead(rw));
+  Serial.println();
+  delay(50);
+}
 //void loop(){
-//  //checkWallSensors();
+//  checkWallSensors();
 //}
+//
+////void loop(){
+////  runFFT();
+////}
 void loop() {
     //Serial.println("entering loop");
     //read line sensors
@@ -151,7 +155,7 @@ void loop() {
     if (leftSensor < 800  && middleSensor< 800 && rightSensor < 800){
         //FFT IR
         Serial.println("at an intersection");
-        runFFT();
+//        runFFT();
 
         //reset registers after FFT
         TIMSK0 = defaultT; 
@@ -163,16 +167,17 @@ void loop() {
         //check if IR sensor detects another robot based on FFT
         
         //for (int i = 38; i < 48; i++){  //LEGACY : 256 bit fft
-        
-        for (int i = 20; i < 30; i++){ //changed
-          if (fft_log_out[i] > 50){
-            IRDetected = 1;
-            break;
-          }
-        }
+        IRDetected = 0;
+//        for (int i = 15; i < 25; i++){ //changed
+//          if (fft_log_out[i] > 125){
+//            //Serial.println(fft_log_out[i]);
+//            IRDetected = 1;
+//            break;
+//          }
+//        }
        
         
-        //What can you see?r
+        //What can you see?
         int seen = B0000;
         digitalWrite(leftLED, LOW);
         digitalWrite(rightLED, LOW);
@@ -203,6 +208,15 @@ void loop() {
         }
         
         switch (seen) {
+          case B0010: 
+            //wall in front only!! turn left
+            turnLeft();
+            Serial.println("wall in front");
+            break;
+          case B1000:
+            turnLeft();
+            Serial.println("robot in front");
+            break;
           case B0110:
             //wall in front and left, turn right
             turnRight();
