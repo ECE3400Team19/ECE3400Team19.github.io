@@ -87,12 +87,12 @@ Our logic for avoiding walls while staying on the line and avoiding robots:
 
 If the robot is not at an intersection, then follow the line.
 
-If the robot is at an intersection, check your surroundings.
+Else the robot is at an intersection, so check its surroundings.
 
-    If the robot can go forward without hitting a wall or another robot, go forward.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If the robot can go forward without hitting a wall or another robot, go forward.
 
-    If the robot can't go forward, but it can go left, turn left.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If the robot can't go forward, but it can go left, turn left.
 
-    If the robot can't go forward or left, but can go right, turn right.
-    
-    If the robot can't go forward, left, or right, turn around.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If the robot can't go forward or left, but can go right, turn right.
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If the robot can't go forward, left, or right, turn around.
