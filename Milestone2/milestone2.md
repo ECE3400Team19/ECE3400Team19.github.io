@@ -99,7 +99,7 @@ There is no point in checking for walls if we are not at an intersection because
 
 ## Part 3 - Avoiding Walls while Staying on the Line and Avoiding Robots
 The FFT library and servos use the same timer which causes the servos to not run. The issue is that to run the FFT, you need to change the values of some registers (TIMSK0, ADCSRA, ADMUX, DIDR0). We worked around this by saving the default values of these registers before they are altered and then resetting them after the FFT is run.
-Our next issue is that our code was taking up close to 100% of dynamic memory: we got a warning that the behavior of our Arduino would be unstable. The FFT library took up a major chunk of our memory, we had to figure out how to reduce the memory it required. We did this by _____________
+Our next issue is that our code was taking up close to 100% of dynamic memory: we got a warning that the behavior of our Arduino would be unstable. The FFT library took up a major chunk of our memory, we had to figure out how to reduce the memory it required. We did this by changing the FFT from taking 256 samples to 128. This saved us about 30% of our dynamic memory.
 We only run the FFT when we reach an intersection because we can only turn left or right when we are at intersection.  We run the FFT and then check the proper bin for a peak. If there is a peak, this indicates there is a robot in front of ours and we treat this robot just like a wall. If we see a robot, we will not go straight, the direction we do go depends whether there are walls to our right and left.
 Our logic for avoiding walls while staying on the line and avoiding robots:
 
@@ -114,3 +114,7 @@ Else the robot is at an intersection, so check its surroundings.
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If the robot can't go forward or left, but can go right, turn right.
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If the robot can't go forward, left, or right, turn around.
+
+Here is a video of our robot in action, avoiding walls!
+
+Here is a video of our robot detecting other robots, you can see the yellow debug LED lights up, indicating that a robot is detected.
