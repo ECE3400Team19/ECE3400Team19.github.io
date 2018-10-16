@@ -79,13 +79,18 @@ After verifying the output of the Serial monitor, we attached three external LED
 
 ## Part 3 - Avoiding Walls while Staying on the Line
 We took our line following code from Milestone1 and added logic to avoid walls. We originally added logic for avoiding robots as well, but took this part out because we found out that the FFT library and the servos use the same timer, which causes nothing to work.
-We will attach the final code at the end, but for now, we will discuss how we avoided walls.
+We will attach the final code at the end, but for now, we will discuss how we avoided walls. If the robot has multiple directions it can go, it favors straight over left over right.
 
 When we are not at an intersection, we just follow the line using our logic from Milestone1.
+
 When we reach an intersection, we check our surroundings.
+
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If there is no wall in front of us, we go straight.
+
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If there is a wall in front and on one of the sides, we turn towards the side without a wall.
+
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If there is only a wall in the front, we turn left.
+
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If there is a wall in every direction, we turn around.
 
 We only check for walls at intersections because the walls determine whether we have to turn and in which direction.
@@ -94,13 +99,18 @@ There is no point in checking for walls if we are not at an intersection because
 
 ## Part 3 - Avoiding Walls while Staying on the Line and Avoiding Robots
 The FFT library and servos use the same timer which causes the servos to not run. The issue is that to run the FFT, you need to change the values of some registers (TIMSK0, ADCSRA, ADMUX, DIDR0). We worked around this by saving the default values of these registers before they are altered and then resetting them after the FFT is run.
-Our next issue is that our code was taking up close to 100% of dynamic memory: we got a warning that the behavior of our Arduino would be unstable. The FFT library took up a major chunk of our memory, we had to figure out how to reduce the memory it required. We did this by _____________ 
+Our next issue is that our code was taking up close to 100% of dynamic memory: we got a warning that the behavior of our Arduino would be unstable. The FFT library took up a major chunk of our memory, we had to figure out how to reduce the memory it required. We did this by _____________
 We only run the FFT when we reach an intersection because we can only turn left or right when we are at intersection.  We run the FFT and then check the proper bin for a peak. If there is a peak, this indicates there is a robot in front of ours and we treat this robot just like a wall. If we see a robot, we will not go straight, the direction we do go depends whether there are walls to our right and left.
 Our logic for avoiding walls while staying on the line and avoiding robots:
 
 If the robot is not at an intersection, then follow the line.
+
 Else the robot is at an intersection, so check its surroundings.
+
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If the robot can go forward without hitting a wall or another robot, go forward.
+
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If the robot can't go forward, but it can go left, turn left.
+
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If the robot can't go forward or left, but can go right, turn right.
+
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If the robot can't go forward, left, or right, turn around.
