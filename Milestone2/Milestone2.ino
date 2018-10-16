@@ -33,6 +33,10 @@ int defaultD = DIDR0;
 
 //helper methods
 void runFFT(){
+    defaultT = TIMSK0;
+    defaultADC = ADCSRA;
+    defaultADMUX = ADMUX;
+    defaultD = DIDR0;
     TIMSK0 = 0; // turn off timer0 for lower jitter
     ADCSRA = 0xe5; // set the adc to free running mode
     ADMUX = 0x43; // use adc3
@@ -60,6 +64,10 @@ void runFFT(){
 //    for (byte i = 0 ; i < FFT_N/2 ; i++) { 
 //      Serial.println(fft_log_out[i]); // send out the data
 //    }
+      TIMSK0 = defaultT; 
+      ADCSRA = defaultADC; 
+      ADMUX = defaultADMUX; 
+      DIDR0 = defaultD; 
 }
 
 void goStraight() {
@@ -155,26 +163,19 @@ void loop() {
     if (leftSensor < 800  && middleSensor< 800 && rightSensor < 800){
         //FFT IR
         Serial.println("at an intersection");
-//        runFFT();
-
-        //reset registers after FFT
-        TIMSK0 = defaultT; 
-        ADCSRA = defaultADC; 
-        ADMUX = defaultADMUX; 
-        DIDR0 = defaultD; 
-
+        runFFT();
 
         //check if IR sensor detects another robot based on FFT
         
         //for (int i = 38; i < 48; i++){  //LEGACY : 256 bit fft
         IRDetected = 0;
-//        for (int i = 15; i < 25; i++){ //changed
-//          if (fft_log_out[i] > 125){
-//            //Serial.println(fft_log_out[i]);
-//            IRDetected = 1;
-//            break;
-//          }
-//        }
+        for (int i = 15; i < 25; i++){ //changed
+          if (fft_log_out[i] > 125){
+            //Serial.println(fft_log_out[i]);
+            IRDetected = 1;
+            break;
+          }
+        }
        
         
         //What can you see?
