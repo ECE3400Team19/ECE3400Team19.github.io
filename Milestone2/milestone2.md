@@ -16,8 +16,8 @@ The goal of this milestone was to get our robot to successfully circle an arbitr
 [3 wall sensors](https://www.sparkfun.com/products/12728) (GP2Y0A41SK0F)
 
 ## Part 1 - Hooking up the Wall Sensors
-We connected the line sensor's three pins to ground, power, and an analog input (A2).
-The line sensor outputs a voltage
+We connected the wall sensor's three pins to ground, power, and an analog input (A2).
+The wall sensor outputs an analog voltage, a higher voltage indicates a closer object to the wall sensor.
 Using the following code, we were able to detect how far away the sensor was from a wall.
 
 ```
