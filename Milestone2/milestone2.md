@@ -96,6 +96,8 @@ When we reach an intersection, we check our surroundings.
 We only check for walls at intersections because the walls determine whether we have to turn and in which direction.
 There is no point in checking for walls if we are not at an intersection because we can only turn left or right when we are at an intersection-- We must follow the line!
 
+<iframe width="560" height="315" src="https://www.youtube.com/watch?v=sT4ACEVhcuc&feature=youtu.be" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+
 
 ## Part 3 - Avoiding Walls while Staying on the Line and Avoiding Robots
 The FFT library and servos use the same timer which causes the servos to not run. The issue is that to run the FFT, you need to change the values of some registers (TIMSK0, ADCSRA, ADMUX, DIDR0). We worked around this by saving the default values of these registers before they are altered and then resetting them after the FFT is run.
