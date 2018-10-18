@@ -121,6 +121,10 @@ Else the robot is at an intersection, so check its surroundings.
 
 Here is a video of our robot in action, following lines, avoiding walls, and avoiding robots!!
 The yellow debug LED corresponds to the robot, the green LED next to yellow corresponds to the left wall sensor, the next LED corresponds to the front sensor, and then the final LED (furthest from the yellow LED) corresponds to the right sensor.
+<iframe width="560" height="315" src="https://www.youtube.com/embed/sT4ACEVhcuc" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+
+The robot is moving around the maze and then sees the robot (the IR hat) so turns to avoid it. 
+
 The code for wall avoidance, robot avoidance, and line following:
 
 ```
