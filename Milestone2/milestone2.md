@@ -96,9 +96,6 @@ When we reach an intersection, we check our surroundings.
 We only check for walls at intersections because the walls determine whether we have to turn and in which direction.
 There is no point in checking for walls if we are not at an intersection because we can only turn left or right when we are at an intersection-- We must follow the line!
 
-<iframe width="560" height="315" src="https://youtu.be/sT4ACEVhcuc" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-
-
 ## Part 3 - Avoiding Walls while Staying on the Line and Avoiding Robots
 The FFT library and servos use the same timer which causes the servos to not run. The issue is that to run the FFT, you need to change the values of some registers (TIMSK0, ADCSRA, ADMUX, DIDR0). We worked around this by saving the default values of these registers before they are altered and then resetting them after the FFT is run.
 Our next issue is that our code was taking up close to 100% of dynamic memory: we got a warning that the behavior of our Arduino would be unstable. The FFT library took up a major chunk of our memory, we had to figure out how to reduce the memory it required. We did this by changing the FFT from taking 256 samples to 128. This saved us about 30% of our dynamic memory.
@@ -123,7 +120,7 @@ Here is a video of our robot in action, following lines, avoiding walls, and avo
 The yellow debug LED corresponds to the robot, the green LED next to yellow corresponds to the left wall sensor, the next LED corresponds to the front sensor, and then the final LED (furthest from the yellow LED) corresponds to the right sensor.
 <iframe width="560" height="315" src="https://www.youtube.com/embed/sT4ACEVhcuc" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
 
-The robot is moving around the maze and then sees the robot (the IR hat) so turns to avoid it. 
+The robot is moving around the maze and then sees the robot (the IR hat) so turns to avoid it.
 
 The code for wall avoidance, robot avoidance, and line following:
 
