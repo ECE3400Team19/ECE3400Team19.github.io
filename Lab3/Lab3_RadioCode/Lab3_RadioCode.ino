@@ -57,7 +57,7 @@ typedef enum { role_ping_out = 1, role_pong_back } role_e;
 const char* role_friendly_name[] = { "invalid", "Ping out", "Pong back"};
 
 //Count variable that tracks the square number we are currently working on
-int count=0;
+int count=0; //will go up to 5
 // Variables for GUI
 bool left_wall, front_wall, right_wall, robot_detected;
 
@@ -141,12 +141,11 @@ void loop(void)
   {
     // First, stop listening so we can talk.
     radio.stopListening();
-
-    // Take the time, and send it.  This will block until complete
-    unsigned long time = millis();
-    printf("Now sending %lu...",time);
-    bool ok = radio.write( &time, sizeof(unsigned long) );
-    
+    //create 7-bit sequences for each square and send it.
+    unsigned long seq = generate_sequence();
+    printf("Now sending %lu...",seq);
+    bool ok = radio.write( &seq, sizeof(unsigned long) );
+  
     if (ok)
       printf("ok...");
     else
@@ -161,25 +160,25 @@ void loop(void)
     while ( ! radio.available() && ! timeout )
       if (millis() - started_waiting_at > 200 )
         timeout = true;
-
-    // Describe the results
-    if ( timeout )
-    {
-      printf("Failed, response timed out.\n\r");
+//****Let's take care of this later
+//    // Describe the results
+//    if ( timeout )
+//    {
+//      printf("Failed, response timed out.\n\r");
+//    }
+//    else
+//    {
+//      // Grab the response, compare, and send to debugging spew
+//      unsigned long got_time;
+//      radio.read( &got_time, sizeof(unsigned long) );
+//
+//      // Spew it
+//      printf("Got response %lu, round-trip delay: %lu\n\r",got_time,millis()-got_time);
+//    }
+//
+//    // Try again 1s later
+//    delay(1000);
     }
-    else
-    {
-      // Grab the response, compare, and send to debugging spew
-      unsigned long got_time;
-      radio.read( &got_time, sizeof(unsigned long) );
-
-      // Spew it
-      printf("Got response %lu, round-trip delay: %lu\n\r",got_time,millis()-got_time);
-    }
-
-    // Try again 1s later
-    delay(1000);
-  }
   //***************PONG BACK ROLE COMPLETELY FINISHED, CODE COMPILES 10/18/18 10:10 PM*****
   //
   // Pong back role.  Receive each packet, dump it out, and send it back
@@ -190,7 +189,6 @@ void loop(void)
     // if there is data ready
     if ( radio.available() ) {
       // Dump the payloads until we've gotten everything
-      unsigned long got_time;
       unsigned long got_response;
       bool done = false;
       while (!done)
@@ -243,6 +241,30 @@ void loop(void)
       radio.openWritingPipe(pipes[1]);
       radio.openReadingPipe(1,pipes[0]);
     }
+  }
+}
+
+unsigned long generate_sequence() {
+  switch(count) {
+    case 0:
+    //wall
+      count++;
+      return B1000110;
+    case 1:
+      count++;
+      return B1000110;
+    case 2:
+      count++;
+      return B1000110;
+    case 3:
+      count++;
+      return B1000110;
+    case 4:
+      count++;
+      return B1000110;
+    case 5:
+      count++;
+      return B1000110;
   }
 }
 
