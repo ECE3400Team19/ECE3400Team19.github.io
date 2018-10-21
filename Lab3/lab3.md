@@ -5,4 +5,9 @@
 * Radio Team: Cynthia, Robert, Laasya
 * Integration Team: Asena, Nonso
 
-## Lab Objective
+## Lab Description
+In this lab, we integrated the work from previous labs and milestones. We integrated the microphone circuit into the robot so that the robot could start on a 660 Hz tone. We then had out robot navigate a maze on its own, and send the maze information wirelessly to a base station. The base station displayed the updates on a screen.
+
+## Radio Communication
+
+## System Integration
