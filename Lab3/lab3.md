@@ -11,3 +11,7 @@ In this lab, we integrated the work from previous labs and milestones. We integr
 ## Radio Communication
 
 ## System Integration
+
+<video width="640" height="360" controls muted>
+  <source src="https://youtu.be/zOxhwYFFuUA" type="video/mp4">
+</video>
