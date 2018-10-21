@@ -23,3 +23,6 @@ In this lab, we integrated the work from previous labs and milestones. We integr
   - send raw maze info or decoded?
 
 ## System Integration
+In this part of the lab, we worked on integrating everything together. We added a new level to our robot to house our microphone circuit. We put the microphone circuit and the three schmitt triggers onto a breadboard on this top level. After this lab, we will focus on tidying up our robot, moving things from 
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/zOxhwYFFuUA" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
