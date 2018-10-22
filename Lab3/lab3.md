@@ -20,7 +20,158 @@ In this lab, we integrated the work from previous labs and milestones. We integr
   - shape(0,0) == no treasure
 - update fields accordingly, transmit data in packets
   - if at position 4,5 update 4,5 entry in array
-  - send raw maze info or decoded?
+  - not sure if we should send raw maze info or decoded
+
+We were able to get the Getting Started sketch running on both Arduinos, but ran into problems when editing the code further.  Despite verifying the correct data was sent over, our receiving radio would always read a value full of ones.  
+
+We decided to send a 7-bit package of each square iteration.  The three most significant bits represents the left, front, and right walls.  The least significant bit represents a robot’s IR hat being detected.  The remaining three bits are for treasures, two for its shape and one for the color.  A shape of 00 corresponds to no treasure, in which case the color was ignored.  
+
+```
+//print the position
+Serial.print(posY);
+Serial.print(",");
+Serial.print(posX);
+Serial.print(",");
+
+//decodes walls and prints all valid wall info
+robot_detected = bitRead(got_response, 0);
+left_wall = bitRead(got_response, 6);
+  front_wall = bitRead(got_response, 5);
+  right_wall = bitRead(got_response, 4);
+  back_wall = 0;
+  switch (orient) {
+    case 0:
+      if (front_wall) Serial.print("north=true,");
+      if (left_wall) Serial.print("west=true,");
+      if (right_wall) Serial.print("east=true,");
+      break;
+    case 1:
+      if (front_wall) Serial.print("east=true,");
+      if (left_wall) Serial.print("north=true,");
+      if (right_wall) Serial.print("south=true,");
+      break;
+    case 2:
+      if (front_wall) Serial.print("south=true,");
+      if (left_wall) Serial.print("east=true,");
+      if (right_wall) Serial.print("west=true,");
+      break;
+    case 3:
+      if (front_wall) Serial.print("west=true,");
+      if (left_wall) Serial.print("south=true,");
+      if (right_wall) Serial.print("north=true,");
+      break;
+    default:
+      break;
+  }
+
+//generate seen as in Milestone 2
+int seen = (got_response & B1110000) >> 4;
+if (got_response & B1) seen |= B1000;
+
+//figure out nextOrient based on turning logic
+switch (seen) {
+          case B0010:
+            //wall in front only!! turn left
+            nextOrient--;
+            break;
+          case B1000:
+      //robot in front only, turn left
+            nextOrient--;
+            break;
+          case B0110:
+            //wall in front and left, turn right
+            nextOrient++;
+            break;
+          case B0011:
+            //wall in front and right, turn left
+            nextOrient--;
+            break;
+          case B0111:
+            //wall in front, right and left, turn around
+            nextOrient+=2;
+            break;
+          case B1100:
+            //wall on left, robot in front, turn right
+            nextOrient++;
+            break;
+          case B1001:
+            //wall on right, robot in front, turn left
+            nextOrient--;
+            break;
+          case B1101:
+            //wall on right and left, robot in front, turn around
+            nextOrient+=2;
+            break;
+          //weird cases
+          case B1110:
+            //wall on left and front, robot in front?, turn right
+            nextOrient++;
+            break;
+          case B1011:
+            //wall on right and front, robot in front?, turn left
+            nextOrient--;
+            break;
+          case B1111:
+            //wall on right and left and front, robot in front?, turn around
+            nextOrient+=2;
+            break;
+          default:
+            //go straight
+            break;
+    }
+
+//wrapping around for nextOrient
+if (nextOrient == -1) nextOrient = 3;
+if (nextOrient ==  4) nextOrient = 0;
+if (nextOrient ==  5) nextOrient = 1;
+
+//figure out where we're going based on nextOrient
+  switch (nextOrient) {
+    case 0:
+      nextPosY= posY-1;
+      break;
+    case 1:
+      nextPosX= posX+1;
+      break;
+    case 2:
+      nextPosY= posY+1;
+      break;
+    case 3:
+      nextPosX= posX-1;
+      break;
+    default:
+      break;
+  }
+
+//finally, update pos and n
+posX = nextPosX;
+posY = nextPosY;
+orient = nextOrient;
+
+//print treasure info
+//print if robot seen
+      Serial.print("tshape=");
+      int t_shape = (got_response & B1100) >> 2;
+      if(t_shape == B00) Serial.print("None");
+      else if(t_shape == B01) Serial.print("Circle");
+      else if(t_shape == B10) Serial.print("Triangle");
+      else Serial.print("Square");
+      Serial.print(",tcolor=");
+      int t_color = bitRead(got_response, 1);
+      if(t_shape == B00) Serial.print("None");
+      else if(t_color == B0) Serial.print("Red");
+      else Serial.print("Blue");
+      if (robot_detected) {    
+      Serial.println(",robot=true");
+      }
+      else Serial.println(",robot=false");
+```
+
+We set up logic to interpret the data sent over the radio once received.  It translates the front, left, and right walls in to north, south, east and west walls, as well as updating the position and orientation of the robot in the maze.  
+
+Below is a mock-up, running a series of bit packages through the decoding logic and to the GUI, since we were unable to get the radio transmission working.  
+
+ //VIDEO GOES HERE
 
 ## System Integration
 In this part of the lab, we worked on integrating everything together. We added a new level to our robot to house our microphone circuit. We put the microphone circuit and the three schmitt triggers onto a breadboard on this top level. After this lab, we will focus on tidying up our robot, moving things from breadboards to solderable breadboards or PCBs.
@@ -33,7 +184,7 @@ The last line of our setup function calls a helper function called waitForMic() 
 We are running the FFT for 128 points instead of 256 points. We chose to do this in Milestone2 to save dynamic memory.
 For the IR signal, we used the free running mode for the ADC.
 We use analogRead() instead of running the ADC in free running mode for the microphone because free running mode for 128 points puts 660Hz in a small bin that is difficult to detect because the first few bins are always detect a high number.
-analogRead() runs at a lower sampling frequency so 660Hz ends up in bin 10 for the 128 point FFT. 
+analogRead() runs at a lower sampling frequency so 660Hz ends up in bin 10 for the 128 point FFT.
 
 ```
 void waitForMic(){
@@ -63,5 +214,4 @@ void runMICFFT(){
 
 }
 ```
-
-
+Integration of the Radio transmission onto our robot's arduino was relatively simple.  We included the radio's libraries, set its I/O pins, and transmitted a slight modification of our turning logic's bitstream over the radio at each intersection.  
