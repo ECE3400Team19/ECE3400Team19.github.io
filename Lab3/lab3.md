@@ -26,6 +26,8 @@ We were able to get the Getting Started sketch running on both Arduinos, but ran
 
 We decided to send a 7-bit package of each square iteration.  The three most significant bits represents the left, front, and right walls.  The least significant bit represents a robot’s IR hat being detected.  The remaining three bits are for treasures, two for its shape and one for the color.  A shape of 00 corresponds to no treasure, in which case the color was ignored.  
 
+<img src="encoding protocol.PNG" width="330" height="300" alt="acoustic-circuit">
+
 ```
 //print the position
 Serial.print(posY);
@@ -171,7 +173,9 @@ We set up logic to interpret the data sent over the radio once received.  It tra
 
 Below is a mock-up, running a series of bit packages through the decoding logic and to the GUI, since we were unable to get the radio transmission working.  
 
- //VIDEO GOES HERE
+<video width="480" height="340" controls muted>
+  <source src="Lab3_Radio_GUI_Working.MP4" type="video/mp4">
+</video>
 
 ## System Integration
 In this part of the lab, we worked on integrating everything together. We added a new level to our robot to house our microphone circuit. We put the microphone circuit and the three schmitt triggers onto a breadboard on this top level. After this lab, we will focus on tidying up our robot, moving things from breadboards to solderable breadboards or PCBs.
