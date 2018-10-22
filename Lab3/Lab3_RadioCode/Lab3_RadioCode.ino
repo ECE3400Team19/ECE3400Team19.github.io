@@ -43,6 +43,10 @@ RF24 radio(9,10);
 // Radio pipe addresses for the 2 nodes to communicate.
 const uint64_t pipes[2] = { 0x000000003ELL, 0x000000003FLL };
 
+      //variables for turning logic and decoding
+      unsigned int posX, nextPosX, posY, nextPosY, orient; 
+      int nextOrient;
+
 //
 // Role management
 //
@@ -77,7 +81,7 @@ void setup(void)
   // Print preamble
   //
   
-  Serial.begin(57600);
+  Serial.begin(9600);
   printf_begin();
   printf("\n\rRF24/examples/GettingStarted/\n\r");
   printf("ROLE: %s\n\r",role_friendly_name[role]);
@@ -234,9 +238,7 @@ void loop(void)
     // if there is data ready
     if ( radio.available() ) {
 
-      //variables for turning logic and decoding
-      unsigned int posX, nextPosX, posY, nextPosY, orient; 
-      int nextOrient;
+
       
       // Dump the payloads until we've gotten everything      
       unsigned long got_response;
@@ -252,13 +254,60 @@ void loop(void)
         //printf("Got payload %lu...",got_response);
         delay(20);
       }
-      Serial.println(got_response, BIN);
+      //Serial.println(got_response, BIN);
+
+
+      //-----------------------------------------------------------------------------------
+      unsigned long seq = 0;
+      if (inc > 5) {
+        posX = 0;
+        nextPosX = 0;
+        nextPosY = 0;
+        nextOrient =0;
+        posY = 0;
+        orient = 0;
+        inc = 0;
+      }
+      switch(inc) {
+    case 0:
+    //wall
+      //count++;
+      seq = B1110000;
+      break;
+    case 1:
+      //count++;
+      seq = B0110110;
+      break;
+    case 2:
+      //count++;
+      seq = B0110000;
+      break;
+    case 3:
+      //count++;
+      seq = B1101010;
+      break;
+    case 4:
+      //count++;
+      seq = B1100100;
+      break;
+    case 5:
+      //count++;
+      seq = B1110001;
+      break;
+    default:
+      seq = B0000000;
+      break;
+      }
+      inc++;
+      got_response = seq;
+      //-----------------------------------------------------------------------------------
+      
  //Decode got_response
       //Walls --> got_response[6:4]
 //print the position
-Serial.print(posX);
-Serial.print(",");
 Serial.print(posY);
+Serial.print(",");
+Serial.print(posX);
 Serial.print(",");
 
 //decodes walls and prints all valid wall info
@@ -392,7 +441,8 @@ orient = nextOrient;
       if (robot_detected) {    
       Serial.println(",robot=true");
       }
-      delay(100);
+      else Serial.println(",robot=false");
+      delay(1000);
       
 //      //***********DON'T THINK THIS IS RELEVANT TO US*************
 //      // First, stop listening so we can talk
