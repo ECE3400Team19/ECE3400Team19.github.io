@@ -50,6 +50,9 @@ const uint64_t pipes[2] = { 0x000000003ELL, 0x000000003FLL };
 // in this system.  Doing so greatly simplifies testing.  
 //
 
+
+
+
 // The various roles supported by this sketch
 typedef enum { role_ping_out = 1, role_pong_back } role_e;
 
@@ -59,10 +62,14 @@ const char* role_friendly_name[] = { "invalid", "Ping out", "Pong back"};
 //Count variable that tracks the square number we are currently working on
 int count=0; //will go up to 5
 // Variables for GUI
-bool left_wall, front_wall, right_wall, robot_detected;
+bool left_wall, front_wall, right_wall, back_wall, robot_detected;
 
 // The role of the current running sketch
 role_e role = role_pong_back;
+
+//global fields for decoding
+
+
 
 void setup(void)
 {
@@ -126,15 +133,12 @@ void setup(void)
 
   radio.printDetails();
 }
-
+    int inc = 0;
 void loop(void)
 {
   
-  //**************PING OUT ROLE CODE NOT YET MODIFIED!!!******************
-  //*****Has to take what is in the current square and send the appropriate 7-bit sequence****
-  //***We have to determine parameter values for each square. We will work with a virtual 2x3 maze.
   //
-  // Ping out role.  Repeatedly send the current time
+  // Ping out role
   //
 
   if (role == role_ping_out)
@@ -142,25 +146,64 @@ void loop(void)
     // First, stop listening so we can talk.
     radio.stopListening();
     //create 7-bit sequences for each square and send it.
-    unsigned long seq = generate_sequence();
-    printf("Now sending %lu...",seq);
-    bool ok = radio.write( &seq, sizeof(unsigned long) );
+
+      if (inc > 5) inc = 0;
+      unsigned long seq = 0;
+      switch(inc) {
+    case 0:
+    //wall
+      //count++;
+      seq = B1110000;
+      break;
+    case 1:
+      //count++;
+      seq = B0110110;
+      break;
+    case 2:
+      //count++;
+      seq = B0110000;
+      break;
+    case 3:
+      //count++;
+      seq = B1101010;
+      break;
+    case 4:
+      //count++;
+      seq = B1100100;
+      break;
+    case 5:
+      //count++;
+      seq = B1110001;
+      break;
+    default:
+      seq = B0000000;
+      break;
+      }
+          Serial.println(seq, BIN);
+    radio.write( &seq, sizeof(unsigned long) );
+    inc++;
+
   
-    if (ok)
-      printf("ok...");
-    else
-      printf("failed.\n\r");
+//    if (ok) {
+//      printf("ok...");
+//      count++;
+//      printf("\n");
+//      delay(30);
+//    }
+//    else
+//      printf("failed.\n\r");
 
     // Now, continue listening
-    radio.startListening();
-
-    // Wait here until we get a response, or timeout (250ms)
-    unsigned long started_waiting_at = millis();
-    bool timeout = false;
-    while ( ! radio.available() && ! timeout )
-      if (millis() - started_waiting_at > 200 )
-        timeout = true;
-//****Let's take care of this later
+    //radio.startListening();
+//
+//    
+//    //Wait here until we get a response, or timeout (250ms)
+//    unsigned long started_waiting_at = millis();
+//    bool timeout = false;
+//    while ( ! radio.available() && ! timeout )
+//      if (millis() - started_waiting_at > 200 )
+//        timeout = true;
+////****Let's take care of this later
 //    // Describe the results
 //    if ( timeout )
 //    {
@@ -175,35 +218,182 @@ void loop(void)
 //      // Spew it
 //      printf("Got response %lu, round-trip delay: %lu\n\r",got_time,millis()-got_time);
 //    }
-//
-//    // Try again 1s later
-//    delay(1000);
+
+    // Try again 1s later
+    delay(1000);
     }
-  //***************PONG BACK ROLE COMPLETELY FINISHED, CODE COMPILES 10/18/18 10:10 PM*****
-  //
-  // Pong back role.  Receive each packet, dump it out, and send it back
+
+
+
+    
+  // Pong back role
   //
 
   if ( role == role_pong_back )
   {
     // if there is data ready
     if ( radio.available() ) {
-      // Dump the payloads until we've gotten everything
+
+      //variables for turning logic and decoding
+      unsigned int posX, nextPosX, posY, nextPosY, orient; 
+      int nextOrient;
+      
+      // Dump the payloads until we've gotten everything      
       unsigned long got_response;
       bool done = false;
       while (!done)
       {
+      
         // Fetch the data from robot Arduino, and see if this was the last one.
         done = radio.read( &got_response, sizeof(unsigned long) );
- 
-        print_to_GUI(got_response);
-        // Spew it
-        printf("Got payload %lu...",got_response);
 
-	// Delay just a little bit to let the other unit
-	// make the transition to receiver
-	delay(20);
+
+        // Spew it
+        //printf("Got payload %lu...",got_response);
+        delay(20);
       }
+      Serial.println(got_response, BIN);
+ //Decode got_response
+      //Walls --> got_response[6:4]
+//print the position
+Serial.print(posX);
+Serial.print(",");
+Serial.print(posY);
+Serial.print(",");
+
+//decodes walls and prints all valid wall info
+robot_detected = bitRead(got_response, 0);
+left_wall = bitRead(got_response, 6);
+  front_wall = bitRead(got_response, 5);
+  right_wall = bitRead(got_response, 4);
+  back_wall = 0;
+  switch (orient) {
+    case 0: 
+      if (front_wall) Serial.print("north=true,");
+      if (left_wall) Serial.print("west=true,");
+      if (right_wall) Serial.print("east=true,");
+      break;
+    case 1: 
+      if (front_wall) Serial.print("east=true,");
+      if (left_wall) Serial.print("north=true,");
+      if (right_wall) Serial.print("south=true,");
+      break;
+    case 2: 
+      if (front_wall) Serial.print("south=true,");
+      if (left_wall) Serial.print("east=true,");
+      if (right_wall) Serial.print("west=true,");
+      break;
+    case 3: 
+      if (front_wall) Serial.print("west=true,");
+      if (left_wall) Serial.print("south=true,");
+      if (right_wall) Serial.print("north=true,");
+      break;
+    default:
+      break;
+  }
+
+//generate seen as in Milestone 2
+int seen = (got_response & B1110000) >> 4;
+if (got_response & B1) seen |= B1000;
+
+//figure out nextOrient based on turning logic
+switch (seen) {
+          case B0010: 
+            //wall in front only!! turn left
+            nextOrient--;
+            break;
+          case B1000:
+      //robot in front only, turn left
+            nextOrient--;
+            break;
+          case B0110:
+            //wall in front and left, turn right
+            nextOrient++;
+            break;
+          case B0011:
+            //wall in front and right, turn left
+            nextOrient--;
+            break;
+          case B0111:
+            //wall in front, right and left, turn around
+            nextOrient+=2;
+            break;
+          case B1100:
+            //wall on left, robot in front, turn right
+            nextOrient++;
+            break;
+          case B1001:
+            //wall on right, robot in front, turn left
+            nextOrient--;
+            break;
+          case B1101:
+            //wall on right and left, robot in front, turn around
+            nextOrient+=2;
+            break;
+          //weird cases
+          case B1110:
+            //wall on left and front, robot in front?, turn right
+            nextOrient++;
+            break;
+          case B1011:
+            //wall on right and front, robot in front?, turn left
+            nextOrient--;
+            break;
+          case B1111:
+            //wall on right and left and front, robot in front?, turn around
+            nextOrient+=2;
+            break;
+          default:
+            //go straight
+            break;
+    }
+
+//wrapping around for nextOrient
+if (nextOrient == -1) nextOrient = 3;
+if (nextOrient ==  4) nextOrient = 0;
+if (nextOrient ==  5) nextOrient = 1;
+
+//figure out where we're going based on nextOrient
+  switch (nextOrient) {
+    case 0:
+      nextPosY= posY-1;
+      break;
+    case 1:
+      nextPosX= posX+1;
+      break;
+    case 2:
+      nextPosY= posY+1;
+      break;
+    case 3:
+      nextPosX= posX-1;
+      break;
+    default:
+      break;
+  }
+
+//finally, update pos and n
+posX = nextPosX;
+posY = nextPosY;
+orient = nextOrient;
+
+//print treasure info
+//print if robot seen
+      Serial.print("tshape=");
+      int t_shape = (got_response & B1100) >> 2;
+      if(t_shape == B00) Serial.print("None");
+      else if(t_shape == B01) Serial.print("Circle");
+      else if(t_shape == B10) Serial.print("Triangle");
+      else Serial.print("Square");
+      Serial.print(",tcolor=");
+      int t_color = bitRead(got_response, 1);
+      if(t_shape == B00) Serial.print("None");
+      else if(t_color == B0) Serial.print("Red");
+      else Serial.print("Blue");
+      if (robot_detected) {    
+      Serial.println(",robot=true");
+      }
+      delay(100);
+      
 //      //***********DON'T THINK THIS IS RELEVANT TO US*************
 //      // First, stop listening so we can talk
 //      radio.stopListening();
@@ -248,80 +438,174 @@ unsigned long generate_sequence() {
   switch(count) {
     case 0:
     //wall
-      count++;
-      return B1000110;
+      //count++;
+      return B1110000;
+      break;
     case 1:
-      count++;
-      return B1000110;
+      //count++;
+      return B0110110;
+      break;
     case 2:
-      count++;
-      return B1000110;
+      //count++;
+      return B0110000;
+      break;
     case 3:
-      count++;
-      return B1000110;
+      //count++;
+      return B1101010;
+      break;
     case 4:
-      count++;
-      return B1000110;
+      //count++;
+      return B1100100;
+      break;
     case 5:
-      count++;
-      return B1000110;
+      //count++;
+      return B1110001;
+      break;
+    default:
+      return B0000000;
+      break;
   }
 }
-
-void print_to_GUI(unsigned long get_response) {
-      //Decode got_response
-      unsigned long got_response = B1010111;
-      //Walls --> got_response[6:4]
-      left_wall = bitRead(got_response, 6);
-      front_wall = bitRead(got_response, 5);
-      right_wall = bitRead(got_response, 4);    
-      robot_detected = bitRead(got_response, 0);
-      //Print out where the robot is
-      
-      switch(count) {
-        case 0:
-          Serial.print("0,0,north=");
-          break;
-        case 1:
-          Serial.print("0,1,north=");
-          break;
-        case 2:
-          Serial.print("0,2,north=");
-          break;
-        case 3:
-          Serial.print("1,2,north=");
-          break;
-        case 4:
-          Serial.print("1,1,north=");
-          break;
-        case 5:
-          Serial.print("1,0,north=");
-          break;
-        default:
-          break;
-      }
-      if(front_wall) Serial.print("true");
-      else Serial.print("false");
-      Serial.print(",west=");
-      if(left_wall) Serial.print("true");
-      else Serial.print("false");
-      Serial.print(",east=");
-      if(right_wall) Serial.print("true");
-      else Serial.print("false");
-      Serial.print(",tshape=");
-      int t_shape = (got_response & B1100) >> 2;
-      if(t_shape == B00) Serial.print("None");
-      else if(t_shape == B01) Serial.print("Circle");
-      else if(t_shape == B10) Serial.print("Triangle");
-      else Serial.print("Square");
-      Serial.print(",tcolor=");
-      int t_color = bitRead(got_response, 1);
-      if(t_shape == B00) Serial.print("None");
-      else if(t_color == B0) Serial.print("Red");
-      else Serial.print("Blue");    
-      Serial.print(",robot=");
-      Serial.println(robot_detected);
-      delay(1000);
-}
-
-// vim:cin:ai:sts=2 sw=2 ft=cpp
+//
+//void print_to_GUI(unsigned long got_response) {
+//      //Decode got_response
+//      //Walls --> got_response[6:4]
+////print the position
+//Serial.print(posX);
+//Serial.print(",");
+//Serial.print(posY);
+//Serial.print(",");
+//
+////decodes walls and prints all valid wall info
+//left_wall = bitRead(got_response, 6);
+//  front_wall = bitRead(got_response, 5);
+//  right_wall = bitRead(got_response, 4);
+//  back_wall = 0;
+//  switch (orient) {
+//    case 0: 
+//      if (front_wall) Serial.print("north=true,");
+//      if (left_wall) Serial.print("west=true,");
+//      if (right_wall) Serial.print("east=true,");
+//      break;
+//    case 1: 
+//      if (front_wall) Serial.print("east=true,");
+//      if (left_wall) Serial.print("north=true,");
+//      if (right_wall) Serial.print("south=true,");
+//      break;
+//    case 2: 
+//      if (front_wall) Serial.print("south=true,");
+//      if (left_wall) Serial.print("east=true,");
+//      if (right_wall) Serial.print("west=true,");
+//      break;
+//    case 3: 
+//      if (front_wall) Serial.print("west=true,");
+//      if (left_wall) Serial.print("south=true,");
+//      if (right_wall) Serial.print("north=true,");
+//      break;
+//    default:
+//      break;
+//  }
+//
+////generate seen as in Milestone 2
+//int seen = (got_response & B1110000) >> 4;
+//if (got_response & B1) seen |= B1000;
+//
+////figure out nextOrient based on turning logic
+//switch (seen) {
+//          case B0010: 
+//            //wall in front only!! turn left
+//            nextOrient--;
+//            break;
+//          case B1000:
+//      //robot in front only, turn left
+//            nextOrient--;
+//            break;
+//          case B0110:
+//            //wall in front and left, turn right
+//            nextOrient++;
+//            break;
+//          case B0011:
+//            //wall in front and right, turn left
+//            nextOrient--;
+//            break;
+//          case B0111:
+//            //wall in front, right and left, turn around
+//            nextOrient+=2;
+//            break;
+//          case B1100:
+//            //wall on left, robot in front, turn right
+//            nextOrient++;
+//            break;
+//          case B1001:
+//            //wall on right, robot in front, turn left
+//            nextOrient--;
+//            break;
+//          case B1101:
+//            //wall on right and left, robot in front, turn around
+//            nextOrient+=2;
+//            break;
+//          //weird cases
+//          case B1110:
+//            //wall on left and front, robot in front?, turn right
+//            nextOrient++;
+//            break;
+//          case B1011:
+//            //wall on right and front, robot in front?, turn left
+//            nextOrient--;
+//            break;
+//          case B1111:
+//            //wall on right and left and front, robot in front?, turn around
+//            nextOrient+=2;
+//            break;
+//          default:
+//            //go straight
+//            break;
+//    }
+//
+////wrapping around for nextOrient
+//if (nextOrient == -1) nextOrient = 3;
+//if (nextOrient ==  4) nextOrient = 0;
+//if (nextOrient ==  5) nextOrient = 1;
+//
+////figure out where we're going based on nextOrient
+//  switch (nextOrient) {
+//    case 0:
+//      nextPosY= posY-1;
+//      break;
+//    case 1:
+//      nextPosX= posX+1;
+//      break;
+//    case 2:
+//      nextPosY= posY+1;
+//      break;
+//    case 3:
+//      nextPosX= posX-1;
+//      break;
+//    default:
+//      break;
+//  }
+//
+////finally, update pos and n
+//posX = nextPosX;
+//posY = nextPosY;
+//orient = nextOrient;
+//
+////print treasure info
+////print if robot seen
+//      Serial.print("tshape=");
+//      int t_shape = (got_response & B1100) >> 2;
+//      if(t_shape == B00) Serial.print("None");
+//      else if(t_shape == B01) Serial.print("Circle");
+//      else if(t_shape == B10) Serial.print("Triangle");
+//      else Serial.print("Square");
+//      Serial.print(",tcolor=");
+//      int t_color = bitRead(got_response, 1);
+//      if(t_shape == B00) Serial.print("None");
+//      else if(t_color == B0) Serial.print("Red");
+//      else Serial.print("Blue");    
+//      Serial.print(",robot=");
+//      Serial.println(robot_detected);
+//      delay(1000);
+//}
+//
+//vim:cin:ai:sts=2 sw=2 ft=cpp
