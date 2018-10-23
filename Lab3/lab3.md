@@ -174,7 +174,7 @@ We set up logic to interpret the data sent over the radio once received.  It tra
 Below is a mock-up, running a series of bit packages through the decoding logic and to the GUI, since we were unable to get the radio transmission working.  
 
 <video width="480" height="340" controls muted>
-  <source src="Lab3_Radio_GUI_Working.MP4" type="video/mp4">
+  <source src="Lab3_Radio_GUI_working.mp4" type="video/mp4">
 </video>
 
 ## System Integration
