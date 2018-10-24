@@ -26,7 +26,7 @@ We were able to get the Getting Started sketch running on both Arduinos, but ran
 
 We decided to send a 7-bit package of each square iteration.  The three most significant bits represents the left, front, and right walls.  The least significant bit represents a robot’s IR hat being detected.  The remaining three bits are for treasures, two for its shape and one for the color.  A shape of 00 corresponds to no treasure, in which case the color was ignored.  
 
-<img src="encoding protocol.PNG" width="480" height="330" alt="acoustic-circuit">
+<img src="encoding protocol.PNG" width="540" height="330" alt="acoustic-circuit">
 
 ```
 //print the position
