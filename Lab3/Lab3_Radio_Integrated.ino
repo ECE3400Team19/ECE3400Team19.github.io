@@ -14,6 +14,23 @@ RF24 radio(9,10);
 // Radio pipe addresses for the 2 nodes to communicate.
 const uint64_t pipes[2] = { 0x000000003ELL, 0x000000003FLL };
 
+//Data Structure for Map Storage
+//struct Square {
+//  //includes color and shape, 3 bits
+//  unsigned int treasure;
+//  
+//  unsigned int robot;
+//  unsigned int northWall;
+//  unsigned int southWall;
+//  unsigned int eastWall;
+//  unsigned int westWall;
+//} pack;
+
+//struct Square maze[81];
+unsigned long transmission;
+unsigned int posX, nextPosX, posY, nextPosY, orient; 
+int nextOrient;
+
 int leftPin = A0; //left
 int middlePin = A5; //center
 int rightPin = A1; //right
@@ -31,7 +48,6 @@ int rw = 4;
 //int leftLED =  3;
 //int robotLED = 4;
 boolean IRDetected;
-unsigned long transmission;
 int defaultT = TIMSK0;
 int defaultADC = ADCSRA;
 int defaultADMUX = ADMUX;
@@ -39,6 +55,9 @@ int defaultD = DIDR0;
 
 // MICROPHONE is in A2
 // IR is in A3
+
+
+
 
 //helper methods
 void runFFT(){
@@ -107,6 +126,8 @@ void turnLeft() {
   //go straight for 200 ms and then turn left
   left.write(95);
   right.write(85);
+  nextOrient = orient --;
+  if (nextOrient == -1) nextOrient = 3;
   delay(200);
   leftSpeed = 85;
   rightSpeed = 85;
@@ -119,6 +140,8 @@ void turnRight() {
   //go straight for 200 ms and then turn right
   left.write(95);
   right.write(85);
+  nextOrient = orient ++;
+  if (nextOrient == 4) nextOrient = 0;
   delay(200);
   leftSpeed = 95;
   rightSpeed = 95;
@@ -131,6 +154,9 @@ void turnAround() {
   //straight for 200 ms and then turn around
   leftSpeed = 95;
   rightSpeed = 95;
+  nextOrient = orient + 2;
+  if (nextOrient == 4) nextOrient = 0;
+  if (nextOrient == 5) nextOrient = 1;
   left.write(95);
   right.write(85);
   delay(200);
@@ -138,6 +164,38 @@ void turnAround() {
   right.write(rightSpeed);
   delay(1400); 
 }
+
+//void updateMap(int seen) {
+//  unsigned int addr = 9*posY + posX;
+//  maze[addr].robot = (seen >> 3);
+//  unsigned int leftWall = seen >> 2 & B01;
+//  unsigned int frontWall = seen >> 1 & B001;
+//  unsigned int rightWall = seen & B001;
+//  switch (orient){
+//    case (0):
+//        maze[addr].westWall = leftWall;
+//        maze[addr].northWall = frontWall;
+//        maze[addr].eastWall = rightWall;
+//        break;
+//    case (1):
+//        maze[addr].northWall = leftWall;
+//        maze[addr].eastWall = frontWall;
+//        maze[addr].southWall = rightWall;
+//        break;
+//    case (2):
+//        maze[addr].eastWall = leftWall;
+//        maze[addr].southWall = frontWall;
+//        maze[addr].westWall = rightWall;
+//        break;
+//    case (3):
+//        maze[addr].southWall = leftWall;
+//        maze[addr].westWall = frontWall;
+//        maze[addr].northWall = rightWall;
+//        break;
+//    default:
+//        break;
+//  }
+//}
 
 void setup() {
   // put your setup code here, to run once:
@@ -162,6 +220,8 @@ void setup() {
   //radio setup
   radio.begin();
   radio.setRetries(15,15);
+  radio.openWritingPipe(pipes[0]);
+  radio.openReadingPipe(1,pipes[1]);
   
   Serial.println("finished setup");
   waitForMic();
@@ -247,6 +307,10 @@ void loop() {
           //digitalWrite(rightLED, HIGH);
         }
         
+        //Update the map in Storage based on current orientation
+        //updateMap(seen);
+
+        //turn accordingly
         switch (seen) {
           case B0010: 
             //wall in front only!! turn left
@@ -309,14 +373,108 @@ void loop() {
             Serial.println("going straight");
             Serial.println(seen);
             break;
+    }    
+    //figure out where we're going based on how we turned
+      switch (nextOrient) {
+        case (0):
+          nextPosY= posY-1;
+          break;
+        case (1):
+          nextPosX= posX+1;
+          break;
+        case (2):
+          nextPosY= posY+1;
+          break;
+        case (3):
+          nextPosX= posX-1;
+          break;
+        default:
+          break;
     }
-    //tell the other side what you saw
-    transmission = seen & B0111;
-    transmission = transmission << 4;
-    if (IRDetected) transmission |= B1;
-    //the rest is treasure stuff we haven't gotten to yet
-    radio.write( &transmission, sizeof(unsigned long) );
+
     
+    //Radio Transmission
+    //set up the message to transmit
+    transmission = 0;
+    transmission |= posY << 12;
+    transmission |= posX << 8;
+    //the rest is treasure stuff we haven't gotten to yet
+    transmission |= IRDetected << 4;
+    unsigned int leftWall = seen >> 2 & B01;
+    unsigned int frontWall = seen >> 1 & B001;
+    unsigned int rightWall = seen & B001;
+    unsigned int northWall;
+    unsigned int southWall;
+    unsigned int eastWall;
+    unsigned int westWall;
+  switch (orient){
+    case (0):
+        westWall = leftWall;
+        northWall = frontWall;
+        eastWall = rightWall;
+        break;
+    case (1):
+        northWall = leftWall;
+        eastWall = frontWall;
+        southWall = rightWall;
+        break;
+    case (2):
+        eastWall = leftWall;
+        southWall = frontWall;
+        westWall = rightWall;
+        break;
+    case (3):
+        southWall = leftWall;
+        westWall = frontWall;
+        northWall = rightWall;
+        break;
+    default:
+        break;
+  }
+    transmission |= northWall << 3;
+    transmission |= southWall << 2;
+    transmission |= eastWall << 1;
+    transmission |= westWall;
+
+
+    
+    //send over Radio and wait for a response
+    radio.stopListening();
+    
+    bool ok = radio.write( &transmission, sizeof(unsigned long) );
+    if (ok) Serial.print("ok...");
+    else Serial.println("failed");
+
+    //-------------------------------------------------------------------------------------------------------------------------
+    //response waiting loop, may change it / remove it if it hampers performance too much or line following gets thrown off
+    unsigned long started_waiting_at = millis();
+    bool timeout = false;
+    while ( ! radio.available() && ! timeout )
+      if (millis() - started_waiting_at > 200 )
+        timeout = true;
+
+    // Describe the results
+    if ( timeout )
+    {
+      printf("Failed, response timed out.\n\r");
+    }
+    else
+    {
+      // Grab the response, compare, and send to debugging spew
+      unsigned long got_time;
+      radio.read( &got_time, sizeof(unsigned long) );
+
+      // Spew it
+      Serial.print("Got response");
+      Serial.println(got_time, BIN);
+    }
+    //--------------------------------------------------------------------------------------------------------------------
+    
+    //lastly, update the position and orientation accordingly
+    orient = nextOrient;
+    posY = nextPosY;
+    posX = nextPosX;
+        
     }
     //straight line following
     else if ( middleSensor < 800){
