@@ -14,6 +14,16 @@ void setup() {
   Serial.begin(9600);
   radio.begin();
   radio.setRetries(15,15);
+  
+  radio.setAutoAck(true);
+  // set the channel
+  radio.setChannel(0x50);
+  // set the power
+  // RF24_PA_MIN=-18dBm, RF24_PA_LOW=-12dBm, RF24_PA_MED=-6dBM, and RF24_PA_HIGH=0dBm.
+  radio.setPALevel(RF24_PA_MIN);
+  //RF24_250KBPS for 250kbs, RF24_1MBPS for 1Mbps, or RF24_2MBPS for 2Mbps
+  radio.setDataRate(RF24_250KBPS);
+  
   radio.openWritingPipe(pipes[1]);
   radio.openReadingPipe(1,pipes[0]);
 
@@ -59,6 +69,7 @@ void genGUIPrints(unsigned long got_response) {
   else Serial.print("Blue");
   
   if (bitRead(got_response, 4)) Serial.println(",robot=true");
+  else Serial.println(",robot=false");
 }
 
 void loop() {
@@ -66,6 +77,7 @@ void loop() {
     if ( radio.available() )
     {
       // Dump the payloads until we've gotten everything
+
       done = false;
       while (!done)
       {
