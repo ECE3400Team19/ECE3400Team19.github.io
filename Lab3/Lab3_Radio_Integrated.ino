@@ -28,8 +28,8 @@ const uint64_t pipes[2] = { 0x000000003ELL, 0x000000003FLL };
 
 //struct Square maze[81];
 unsigned long transmission;
-unsigned int posX, nextPosX, posY, nextPosY, orient; 
-int nextOrient;
+unsigned int posX, nextPosX, posY, nextPosY; 
+int nextOrient, orient;
 
 int leftPin = A0; //left
 int middlePin = A5; //center
@@ -40,9 +40,9 @@ int rightSensor;
 int middleSensor;
 int leftSpeed;
 int rightSpeed;
-int lw = 2;
-int fw = 3;
-int rw = 4;
+int lw = 3;
+int fw = 4;
+int rw = 2;
 //int rightLED = 12;
 //int frontLED = 2;
 //int leftLED =  3;
@@ -55,9 +55,6 @@ int defaultD = DIDR0;
 
 // MICROPHONE is in A2
 // IR is in A3
-
-
-
 
 //helper methods
 void runFFT(){
@@ -87,10 +84,10 @@ void runFFT(){
     fft_run(); // process the data in the fft
     fft_mag_log(); // take the output of the fft
     sei();
-    Serial.println("start");
-    for (byte i = 0 ; i < FFT_N/2 ; i++) { 
-      Serial.println(fft_log_out[i]); // send out the data
-    }
+//    Serial.println("start");
+//    for (byte i = 0 ; i < FFT_N/2 ; i++) { 
+//      Serial.println(fft_log_out[i]); // send out the data
+//    }
     TIMSK0 = defaultT; 
     ADCSRA = defaultADC; 
     ADMUX = defaultADMUX; 
@@ -115,6 +112,7 @@ void runMICFFT(){
 }
 
 void goStraight() {
+  nextOrient = orient;
   leftSpeed = 95;
   rightSpeed =85;
   left.write(leftSpeed);
@@ -126,7 +124,7 @@ void turnLeft() {
   //go straight for 200 ms and then turn left
   left.write(95);
   right.write(85);
-  nextOrient = orient --;
+  nextOrient = orient - 1;
   if (nextOrient == -1) nextOrient = 3;
   delay(200);
   leftSpeed = 85;
@@ -140,7 +138,7 @@ void turnRight() {
   //go straight for 200 ms and then turn right
   left.write(95);
   right.write(85);
-  nextOrient = orient ++;
+  nextOrient = orient +1;
   if (nextOrient == 4) nextOrient = 0;
   delay(200);
   leftSpeed = 95;
@@ -162,7 +160,7 @@ void turnAround() {
   delay(200);
   left.write(leftSpeed);
   right.write(rightSpeed);
-  delay(1400); 
+  delay(1800); 
 }
 
 //void updateMap(int seen) {
@@ -199,7 +197,7 @@ void turnAround() {
 
 void setup() {
   // put your setup code here, to run once:
-  Serial.begin(115200); // use the serial port
+  Serial.begin(9600); // use the serial port
   Serial.println("starting");
   left.attach(6);
   right.attach(5);
@@ -220,8 +218,13 @@ void setup() {
   //radio setup
   radio.begin();
   radio.setRetries(15,15);
+  radio.setAutoAck(true);
+  radio.setChannel(0x50);
+  radio.setPALevel(RF24_PA_MIN);
+  radio.setDataRate(RF24_250KBPS);
   radio.openWritingPipe(pipes[0]);
   radio.openReadingPipe(1,pipes[1]);
+  radio.startListening();
   
   Serial.println("finished setup");
   waitForMic();
@@ -447,16 +450,42 @@ void loop() {
 
     //-------------------------------------------------------------------------------------------------------------------------
     //response waiting loop, may change it / remove it if it hampers performance too much or line following gets thrown off
+    radio.startListening();
     unsigned long started_waiting_at = millis();
     bool timeout = false;
-    while ( ! radio.available() && ! timeout )
-      if (millis() - started_waiting_at > 200 )
-        timeout = true;
+    while ( ! radio.available() && ! timeout ) {
+      if (millis() - started_waiting_at > 200 ) timeout = true;
 
+        //--------------------------------------------
+        if ( middleSensor < 800){
+        //Serial.println("going straight");
+        leftSpeed = 95;
+        rightSpeed = 85;
+        left.write(leftSpeed);
+        right.write(rightSpeed);
+      }
+      else {
+        if (leftSensor < 800){
+          //TURN LEFT
+          //Serial.println("turning left onto line");
+          leftSpeed = 85;
+          rightSpeed = 85;
+        }
+        if (rightSensor < 800){
+          //TURN RIGHT
+         // Serial.println("turning right onto line")
+          leftSpeed = 95;
+          rightSpeed = 95;
+        }
+        left.write(leftSpeed);
+        right.write(rightSpeed);
+      }
+      //-----------------------------------------------
+    }
     // Describe the results
     if ( timeout )
     {
-      printf("Failed, response timed out.\n\r");
+      Serial.println("Failed, response timed out.\n\r");
     }
     else
     {
@@ -471,9 +500,23 @@ void loop() {
     //--------------------------------------------------------------------------------------------------------------------
     
     //lastly, update the position and orientation accordingly
+    Serial.print("orient ");
+    Serial.print(orient);
     orient = nextOrient;
+    Serial.print(" nextOrient ");
+    Serial.print(orient);
+    Serial.print(" posX ");
+    Serial.print(posX);
+    Serial.print(" posY ");
+    Serial.print(posY);
     posY = nextPosY;
     posX = nextPosX;
+    Serial.print(" nextPosX ");
+    Serial.print(posX);
+    Serial.print(" nextPosY ");
+    Serial.print(posY);
+    Serial.println();
+    
         
     }
     //straight line following
@@ -500,5 +543,7 @@ void loop() {
         left.write(leftSpeed);
         right.write(rightSpeed);
       }
-
+        //role = role_ping_out;
+      radio.openWritingPipe(pipes[0]);
+      radio.openReadingPipe(1,pipes[1]);
 }
