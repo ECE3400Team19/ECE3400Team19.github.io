@@ -10,6 +10,8 @@ In this lab, we integrated the work from previous labs and milestones. We integr
 
 ## Radio Communication
 
+The structure we devised to store the information about the maze was as follows:
+
 - store maze info in 81 long (9x9) byte array of Square data struct
 - each square contains 8 bits of information packed into a struct
   - 4 bits (1 for each wall)
@@ -21,8 +23,6 @@ In this lab, we integrated the work from previous labs and milestones. We integr
 - update fields accordingly, transmit data in packets
   - if at position 4,5 update 4,5 entry in array
   - not sure if we should send raw maze info or decoded
-
-We were able to get the Getting Started sketch running on both Arduinos, but ran into problems when editing the code further.  Despite verifying the correct data was sent over, our receiving radio would always read a value full of ones.  
 
 We decided to send a 7-bit package of each square iteration.  The three most significant bits represents the left, front, and right walls.  The least significant bit represents a robot’s IR hat being detected.  The remaining three bits are for treasures, two for its shape and one for the color.  A shape of 00 corresponds to no treasure, in which case the color was ignored.  
 
@@ -171,11 +171,9 @@ orient = nextOrient;
 
 We set up logic to interpret the data sent over the radio once received.  It translates the front, left, and right walls in to north, south, east and west walls, as well as updating the position and orientation of the robot in the maze.  
 
-Below is a mock-up, running a series of bit packages through the decoding logic and to the GUI, since we were unable to get the radio transmission working.  
+We set up a sequence of fake data packets formatted as described above to be transmitted over the radio to simulate our robot going through the maze.  The base station then decoded these packets and generated the serial prints to interface with the GUI.  
 
-<video width="480" height="340" controls muted>
-  <source src="Lab3_Radio_GUI_working.mp4" type="video/mp4">
-</video>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/9CZM2cE7doc" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
 
 ## System Integration
 In this part of the lab, we worked on integrating everything together. We added a new level to our robot to house our microphone circuit. We put the microphone circuit and the three schmitt triggers onto a breadboard on this top level. After this lab, we will focus on tidying up our robot, moving things from breadboards to solderable breadboards or PCBs.
@@ -218,4 +216,8 @@ void runMICFFT(){
 
 }
 ```
-Integration of the Radio transmission onto our robot's arduino was relatively simple.  We included the radio's libraries, set its I/O pins, and transmitted a slight modification of our turning logic's bitstream over the radio at each intersection.  
+To Integrate the radios into our robot, we decided to modify our procedure for sending data.  Due to occasionally dropped packets, we decided to send the coordinates along with the wall, treasure, and robot information.  This meant sending an additional byte containing the x and y coordinates, each consuming 4 bits for values 0-8, but since we had been using unsigned longs to transmit data previously, we were already sending more than one byte.  Since we realized our robot will need to algorithmically decide its path through the maze for later lab tasks, we opted to move the decoding of sensor information from the Base station to the robot and, as such, decided to send the decoded information over the radio, rather than raw sensor data (i.e. sending N, S, E, and W walls as opposed to left, front, and right).  This posed no issue for the radio transmission, as it was only the addition of one bit to our previous seven, meaning this part of the message was still under a one byte limit.  However, the inclusion of the data structure to hold our 9x9 maze information was too large to fit on the robot-side code and we are still pursuing more compact alternatives.  Apart from this change of location for the processing of maze information, the code functions nearly identically to the sequence described above in the Radio Communication section.  
+
+Below is a short demo of the robot starting on a 660 Hz signal, navigating a small maze, and sending the maze information to a base station which updates the GUI.  
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/XUIfUJN0y4s" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
