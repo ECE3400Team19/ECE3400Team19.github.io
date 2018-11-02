@@ -24,7 +24,7 @@ We futher wrote an image to the VGA display, find code below.
 
 <insert VGA code>
   
-And we futher detectied the color of our image.
+And we futher detected the color of our image.
 <insert image color below>
 
 <img src="Lab04_Flag.jpeg" width="620" height="330" alt="SIgnal-Flag">
