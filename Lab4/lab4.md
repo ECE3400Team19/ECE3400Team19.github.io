@@ -7,6 +7,7 @@
 
 
 ## Lab Description
+In this lab, we have split into two teams (Team Arduino and Team FPGA) to develop an FPGA module capable of detecting basic shapes from our camera input, and to pass this information onto our Arduino. This purpose of this would be to mount our device on our robot as to identify shapes on the walls of the maze.
 
 ## Arduino
 2 points: Arduino-Camera communication (writing the correct registers)
