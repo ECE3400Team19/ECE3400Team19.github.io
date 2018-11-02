@@ -12,7 +12,7 @@
 ||
 [Lab 3](Lab3/lab3.md)
 ||
-[Lab 4](Lab3/lab4.md)
+[Lab 4](Lab4/lab4.md)
 
 
 
