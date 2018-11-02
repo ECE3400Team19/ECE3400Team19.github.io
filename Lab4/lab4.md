@@ -20,7 +20,8 @@ In this lab, we have split into two teams (Team Arduino and Team FPGA) to develo
 In the FPGA team, we created a downsampler in Verilog, find code below.
 <insert downsample code>
 
-We futher wrote an image to the VGA display,find code below.
+We futher wrote an image to the VGA display, find code below.
+
 <insert VGA code>
   
 And we futher detectied the color of our image.
