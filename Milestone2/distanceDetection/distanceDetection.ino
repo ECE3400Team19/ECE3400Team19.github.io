@@ -108,10 +108,13 @@ void loop() {
     leftSensor = analogRead(leftPin);
     middleSensor = analogRead(middlePin);
     rightSensor = analogRead(rightPin);    
-
-    
+    Serial.println("new loop");
+    Serial.println(leftSensor);
+    Serial.println(middleSensor);
+    Serial.println(rightSensor);
     //At Intersection, need to decide where to go
     if (leftSensor < 800  && middleSensor< 800 && rightSensor < 800){
+        Serial.println("at intersection");
         //FFT IR
         ADMUX = 0x43;
         runFFT();

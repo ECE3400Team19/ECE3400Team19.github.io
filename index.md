@@ -9,6 +9,11 @@
 [Lab 2](Lab2/lab2.md)
 ||
 [Milestone 2](Milestone2/milestone2.md)
+||
+[Lab 3](Lab3/lab3.md)
+||
+[Lab 4](Lab4/lab4.md)
+
 
 
 ## Team Members: <img src="Team 19.png" width="450" height="265" alt="banner" img align="right"> 

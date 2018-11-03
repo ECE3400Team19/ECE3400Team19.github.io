@@ -1,8 +1,6 @@
 #include <Servo.h>
 #define LOG_OUT 1 // use the log output function
-//#define FFT_N 256 // set to 256 point fft LEGACY
 #define FFT_N 128 // CHANGED 128 pt FFT
-
 #include <FFT.h> // include the library
 
 Servo left; //180 turns wheel backward
@@ -17,10 +15,9 @@ int rightSensor;
 int middleSensor;
 int leftSpeed;
 int rightSpeed;
-int lw = 6;
+int lw = 8;
 int fw = 7;
-int rw = 8;
-
+int rw = 6;
 int rightLED = 12;
 int frontLED = 2;
 int leftLED =  3;
@@ -30,6 +27,9 @@ int defaultT = TIMSK0;
 int defaultADC = ADCSRA;
 int defaultADMUX = ADMUX;
 int defaultD = DIDR0;
+
+// MICROPHONE is in A2
+// IR is in A3
 
 //helper methods
 void runFFT(){
@@ -42,7 +42,6 @@ void runFFT(){
     ADMUX = 0x43; // use adc3
     DIDR0 = 0x01; // turn off the digital input for adc0
     cli();  // UDRE interrupt slows this way down on arduino1.0
-    //for (int i = 0 ; i < 512 ; i += 2) {  save 256 samples LEGACY
     
     for (int i = 0 ; i < 256 ; i += 2) {  //CHANGED
       while(!(ADCSRA & 0x10)); // wait for adc to be ready
@@ -60,14 +59,31 @@ void runFFT(){
     fft_run(); // process the data in the fft
     fft_mag_log(); // take the output of the fft
     sei();
-//    Serial.println("start");
-//    for (byte i = 0 ; i < FFT_N/2 ; i++) { 
-//      Serial.println(fft_log_out[i]); // send out the data
-//    }
-      TIMSK0 = defaultT; 
-      ADCSRA = defaultADC; 
-      ADMUX = defaultADMUX; 
-      DIDR0 = defaultD; 
+    Serial.println("start");
+    for (byte i = 0 ; i < FFT_N/2 ; i++) { 
+      Serial.println(fft_log_out[i]); // send out the data
+    }
+    TIMSK0 = defaultT; 
+    ADCSRA = defaultADC; 
+    ADMUX = defaultADMUX; 
+    DIDR0 = defaultD; 
+}
+
+void runMICFFT(){
+  cli();  // UDRE interrupt slows this way down on arduino1.0
+  for (int i = 0 ; i < 256 ; i += 2) { // save 256 samples
+    fft_input[i] = analogRead(A2); // put analog input (pin A0) into even bins
+    fft_input[i + 1] = 0; // set odd bins to 0
+  }
+
+  fft_window(); // window the data for better frequency response
+  fft_reorder(); // reorder the data before doing the fft
+  fft_run(); // process the data in the fft
+  fft_mag_log(); // take the output of the fft
+  sei();
+//  for (byte i = 0 ; i < FFT_N / 2 ; i++) {
+//    Serial.println(fft_log_out[i]); // send out the data
+//  }
 }
 
 void goStraight() {
@@ -103,7 +119,8 @@ void turnRight() {
 }
 
 void turnAround() {
- leftSpeed = 95;
+  //straight for 200 ms and then turn around
+  leftSpeed = 95;
   rightSpeed = 95;
   left.write(95);
   right.write(85);
@@ -133,7 +150,9 @@ void setup() {
   pinMode(frontLED, OUTPUT);
   pinMode(robotLED, OUTPUT);
   Serial.println("finished setup");
+  waitForMic();
 }
+
 void checkWallSensors(){
   Serial.print("left wall : ");
   Serial.print(digitalRead(lw));
@@ -144,13 +163,20 @@ void checkWallSensors(){
   Serial.println();
   delay(50);
 }
-//void loop(){
-//  checkWallSensors();
-//}
-//
-////void loop(){
-////  runFFT();
-////}
+
+void waitForMic(){
+  while(1){
+    runMICFFT(); //false indicates run FFT for microphone
+    Serial.println("waiting for 660 tone");
+    if (fft_log_out[10] > 60){
+      //Serial.println(fft_log_out[10]);
+      Serial.println("660 Hz signal detected");
+      break;
+      }
+   delay(50);
+  }
+}
+
 void loop() {
     //Serial.println("entering loop");
     //read line sensors
@@ -163,7 +189,7 @@ void loop() {
     if (leftSensor < 800  && middleSensor< 800 && rightSensor < 800){
         //FFT IR
         Serial.println("at an intersection");
-        runFFT();
+        runFFT(); //true indicates run FFT for IR
 
         //check if IR sensor detects another robot based on FFT
         
@@ -176,7 +202,6 @@ void loop() {
             break;
           }
         }
-       
         
         //What can you see?
         int seen = B0000;
@@ -288,7 +313,7 @@ void loop() {
         }
         if (rightSensor < 800){
           //TURN RIGHT
-         // Serial.println("turning right onto line");
+         // Serial.println("turning right onto line")
           leftSpeed = 95;
           rightSpeed = 95;
         }
