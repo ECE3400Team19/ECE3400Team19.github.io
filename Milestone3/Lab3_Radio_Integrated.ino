@@ -6,6 +6,7 @@
 #include <SPI.h>
 #include "nRF24L01.h"
 #include "RF24.h"
+#include <StackArray.h>
 
 Servo left; //180 turns wheel backward
 Servo right; //180 turns wheel forward
@@ -53,6 +54,10 @@ int defaultADC = ADCSRA;
 int defaultADMUX = ADMUX;
 int defaultD = DIDR0;
 
+
+boolean visited[80];
+byte backpointer[80];
+StackArray <byte> frontier; 
 // MICROPHONE is in A2
 // IR is in A3
 
@@ -230,10 +235,8 @@ void setup() {
   waitForMic();
 
   //DFS stack setup
-  StackArray <byte> frontier; 
   frontier.push(0);
-  boolean visited[20];
-  
+
 }
 
 void checkWallSensors(){
@@ -249,7 +252,7 @@ void checkWallSensors(){
 
 void waitForMic(){
   while(1){
-    runMICFFT(); //false indicates run FFT for microphone
+    runMICFFT(); 
     Serial.println("waiting for 660 tone");
     if (fft_log_out[10] > 60){
       //Serial.println(fft_log_out[10]);
@@ -315,215 +318,219 @@ void loop() {
           seen |= B0001;
           //digitalWrite(rightLED, HIGH);
         }
-        
+
+        runDFS(posX, posY, seen, orient, IRDetected);
         //Update the map in Storage based on current orientation
         //updateMap(seen);
-
+//______________________old code___________________________________________
         //turn accordingly
-        switch (seen) {
-          case B0010: 
-            //wall in front only!! turn left
-            turnLeft();
-            Serial.println("wall in front");
-            break;
-          case B1000:
-            turnLeft();
-            Serial.println("robot in front");
-            break;
-          case B0110:
-            //wall in front and left, turn right
-            turnRight();
-            Serial.println("wall in front and left, turn right");
-            break;
-          case B0011:
-            //wall in front and right, turn left
-            turnLeft();
-            Serial.println("wall in front and right, turn left");
-            break;
-          case B0111:
-            //wall in front, right and left, turn around
-            turnAround();
-            Serial.println("wall in front, right and left, turn around");
-            break;
-          case B1100:
-            //wall on left, robot in front, turn right
-            turnRight();
-            Serial.println("wall on left, robot in front, turn right");
-            break;
-          case B1001:
-            //wall on right, robot in front, turn left
-            turnLeft();
-            Serial.println("wall on right, robot in front, turn left");
-            break;
-          case B1101:
-            //wall on right and left, robot in front, turn around
-            turnAround();
-            Serial.println("wall on right and left, robot in front, turn around");
-            break;
-          //weird cases
-          case B1110:
-            //wall on left and front, robot in front?, turn right
-            turnRight();
-            Serial.println("wall on left and front, robot in front?, turn right");
-            break;
-          case B1011:
-            //wall on right and front, robot in front?, turn left
-            turnLeft();
-            Serial.println("wall on right and front, robot in front?, turn left");
-            break;
-          case B1111:
-            //wall on right and left and front, robot in front?, turn around
-            turnAround();
-            Serial.println("wall on right and left and front, robot in front?, turn around");
-            break;
-          default:
-            //go straight
-            goStraight();
-            Serial.println("going straight");
-            Serial.println(seen);
-            break;
-    }    
+//        switch (seen) {
+//          case B0010: 
+//            //wall in front only!! turn left
+//            turnLeft();
+//            Serial.println("wall in front");
+//            break;
+//          case B1000:
+//            turnLeft();
+//            Serial.println("robot in front");
+//            break;
+//          case B0110:
+//            //wall in front and left, turn right
+//            turnRight();
+//            Serial.println("wall in front and left, turn right");
+//            break;
+//          case B0011:
+//            //wall in front and right, turn left
+//            turnLeft();
+//            Serial.println("wall in front and right, turn left");
+//            break;
+//          case B0111:
+//            //wall in front, right and left, turn around
+//            turnAround();
+//            Serial.println("wall in front, right and left, turn around");
+//            break;
+//          case B1100:
+//            //wall on left, robot in front, turn right
+//            turnRight();
+//            Serial.println("wall on left, robot in front, turn right");
+//            break;
+//          case B1001:
+//            //wall on right, robot in front, turn left
+//            turnLeft();
+//            Serial.println("wall on right, robot in front, turn left");
+//            break;
+//          case B1101:
+//            //wall on right and left, robot in front, turn around
+//            turnAround();
+//            Serial.println("wall on right and left, robot in front, turn around");
+//            break;
+//          //weird cases
+//          case B1110:
+//            //wall on left and front, robot in front?, turn right
+//            turnRight();
+//            Serial.println("wall on left and front, robot in front?, turn right");
+//            break;
+//          case B1011:
+//            //wall on right and front, robot in front?, turn left
+//            turnLeft();
+//            Serial.println("wall on right and front, robot in front?, turn left");
+//            break;
+//          case B1111:
+//            //wall on right and left and front, robot in front?, turn around
+//            turnAround();
+//            Serial.println("wall on right and left and front, robot in front?, turn around");
+//            break;
+//          default:
+//            //go straight
+//            goStraight();
+//            Serial.println("going straight");
+//            Serial.println(seen);
+//            break;
+//    }    
+    
     //figure out where we're going based on how we turned
-      switch (nextOrient) {
-        case (0):
-          nextPosY= posY-1;
-          break;
-        case (1):
-          nextPosX= posX+1;
-          break;
-        case (2):
-          nextPosY= posY+1;
-          break;
-        case (3):
-          nextPosX= posX-1;
-          break;
-        default:
-          break;
-    }
+//      switch (nextOrient) {
+//        case (0):
+//          nextPosY= posY-1;
+//          break;
+//        case (1):
+//          nextPosX= posX+1;
+//          break;
+//        case (2):
+//          nextPosY= posY+1;
+//          break;
+//        case (3):
+//          nextPosX= posX-1;
+//          break;
+//        default:
+//          break;
+//    }
 
     
     //Radio Transmission
     //set up the message to transmit
-    transmission = 0;
-    transmission |= posY << 12;
-    transmission |= posX << 8;
-    //the rest is treasure stuff we haven't gotten to yet
-    transmission |= IRDetected << 4;
-    unsigned int leftWall = seen >> 2 & B01;
-    unsigned int frontWall = seen >> 1 & B001;
-    unsigned int rightWall = seen & B001;
-    unsigned int northWall;
-    unsigned int southWall;
-    unsigned int eastWall;
-    unsigned int westWall;
-  switch (orient){
-    case (0):
-        westWall = leftWall;
-        northWall = frontWall;
-        eastWall = rightWall;
-        break;
-    case (1):
-        northWall = leftWall;
-        eastWall = frontWall;
-        southWall = rightWall;
-        break;
-    case (2):
-        eastWall = leftWall;
-        southWall = frontWall;
-        westWall = rightWall;
-        break;
-    case (3):
-        southWall = leftWall;
-        westWall = frontWall;
-        northWall = rightWall;
-        break;
-    default:
-        break;
-  }
-    transmission |= northWall << 3;
-    transmission |= southWall << 2;
-    transmission |= eastWall << 1;
-    transmission |= westWall;
-
-
-    
-    //send over Radio and wait for a response
-    radio.stopListening();
-    
-    bool ok = radio.write( &transmission, sizeof(unsigned long) );
-    if (ok) Serial.print("ok...");
-    else Serial.println("failed");
-
-    //-------------------------------------------------------------------------------------------------------------------------
-    //response waiting loop, may change it / remove it if it hampers performance too much or line following gets thrown off
-    radio.startListening();
-    unsigned long started_waiting_at = millis();
-    bool timeout = false;
-    while ( ! radio.available() && ! timeout ) {
-      if (millis() - started_waiting_at > 200 ) timeout = true;
-
-        //--------------------------------------------
-        if ( middleSensor < 800){
-        //Serial.println("going straight");
-        leftSpeed = 95;
-        rightSpeed = 85;
-        left.write(leftSpeed);
-        right.write(rightSpeed);
-      }
-      else {
-        if (leftSensor < 800){
-          //TURN LEFT
-          //Serial.println("turning left onto line");
-          leftSpeed = 85;
-          rightSpeed = 85;
-        }
-        if (rightSensor < 800){
-          //TURN RIGHT
-         // Serial.println("turning right onto line")
-          leftSpeed = 95;
-          rightSpeed = 95;
-        }
-        left.write(leftSpeed);
-        right.write(rightSpeed);
-      }
-      //-----------------------------------------------
-    }
-    // Describe the results
-    if ( timeout )
-    {
-      Serial.println("Failed, response timed out.\n\r");
-    }
-    else
-    {
-      // Grab the response, compare, and send to debugging spew
-      unsigned long got_time;
-      radio.read( &got_time, sizeof(unsigned long) );
-
-      // Spew it
-      Serial.print("Got response");
-      Serial.println(got_time, BIN);
-    }
-    //--------------------------------------------------------------------------------------------------------------------
-    
-    //lastly, update the position and orientation accordingly
-    Serial.print("orient ");
-    Serial.print(orient);
-    orient = nextOrient;
-    Serial.print(" nextOrient ");
-    Serial.print(orient);
-    Serial.print(" posX ");
-    Serial.print(posX);
-    Serial.print(" posY ");
-    Serial.print(posY);
-    posY = nextPosY;
-    posX = nextPosX;
-    Serial.print(" nextPosX ");
-    Serial.print(posX);
-    Serial.print(" nextPosY ");
-    Serial.print(posY);
-    Serial.println();
-    
-        
+//    transmission = 0;
+//    transmission |= posY << 12;
+//    transmission |= posX << 8;
+//    //the rest is treasure stuff we haven't gotten to yet
+//    transmission |= IRDetected << 4;
+//    unsigned int leftWall = seen >> 2 & B01;
+//    unsigned int frontWall = seen >> 1 & B001;
+//    unsigned int rightWall = seen & B001;
+//    unsigned int northWall;
+//    unsigned int southWall;
+//    unsigned int eastWall;
+//    unsigned int westWall;
+//  switch (orient){
+//    case (0):
+//        westWall = leftWall;
+//        northWall = frontWall;
+//        eastWall = rightWall;
+//        break;
+//    case (1):
+//        northWall = leftWall;
+//        eastWall = frontWall;
+//        southWall = rightWall;
+//        break;
+//    case (2):
+//        eastWall = leftWall;
+//        southWall = frontWall;
+//        westWall = rightWall;
+//        break;
+//    case (3):
+//        southWall = leftWall;
+//        westWall = frontWall;
+//        northWall = rightWall;
+//        break;
+//    default:
+//        break;
+//  }
+  
+//    transmission |= northWall << 3;
+//    transmission |= southWall << 2;
+//    transmission |= eastWall << 1;
+//    transmission |= westWall;
+//
+//
+//    
+//    //send over Radio and wait for a response
+//    radio.stopListening();
+//    
+//    bool ok = radio.write( &transmission, sizeof(unsigned long) );
+//    if (ok) Serial.print("ok...");
+//    else Serial.println("failed");
+//
+//    //-------------------------------------------------------------------------------------------------------------------------
+//    //response waiting loop, may change it / remove it if it hampers performance too much or line following gets thrown off
+//    radio.startListening();
+//    unsigned long started_waiting_at = millis();
+//    bool timeout = false;
+//    while ( ! radio.available() && ! timeout ) {
+//      if (millis() - started_waiting_at > 200 ) timeout = true;
+//
+//        //--------------------------------------------
+//        if ( middleSensor < 800){
+//        //Serial.println("going straight");
+//        leftSpeed = 95;
+//        rightSpeed = 85;
+//        left.write(leftSpeed);
+//        right.write(rightSpeed);
+//      }
+//      else {
+//        if (leftSensor < 800){
+//          //TURN LEFT
+//          //Serial.println("turning left onto line");
+//          leftSpeed = 85;
+//          rightSpeed = 85;
+//        }
+//        if (rightSensor < 800){
+//          //TURN RIGHT
+//         // Serial.println("turning right onto line")
+//          leftSpeed = 95;
+//          rightSpeed = 95;
+//        }
+//        left.write(leftSpeed);
+//        right.write(rightSpeed);
+//      }
+//      //-----------------------------------------------
+//    }
+//    // Describe the results
+//    if ( timeout )
+//    {
+//      Serial.println("Failed, response timed out.\n\r");
+//    }
+//    else
+//    {
+//      // Grab the response, compare, and send to debugging spew
+//      unsigned long got_time;
+//      radio.read( &got_time, sizeof(unsigned long) );
+//
+//      // Spew it
+//      Serial.print("Got response");
+//      Serial.println(got_time, BIN);
+//    }
+//    //--------------------------------------------------------------------------------------------------------------------
+//    
+//    //lastly, update the position and orientation accordingly
+//    Serial.print("orient ");
+//    Serial.print(orient);
+//    orient = nextOrient;
+//    Serial.print(" nextOrient ");
+//    Serial.print(orient);
+//    Serial.print(" posX ");
+//    Serial.print(posX);
+//    Serial.print(" posY ");
+//    Serial.print(posY);
+//    posY = nextPosY;
+//    posX = nextPosX;
+//    Serial.print(" nextPosX ");
+//    Serial.print(posX);
+//    Serial.print(" nextPosY ");
+//    Serial.print(posY);
+//    Serial.println();
+//    
+//   
+//______________________old code ^^^^^ ________________-     
     }
     //straight line following
     else if ( middleSensor < 800){
