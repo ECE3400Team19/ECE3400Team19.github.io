@@ -7,6 +7,8 @@
 
 void loop() { // run over and over
 
+  //Serial.println(read_register_value(0x12));
+
 }
 ///////// Main Program //////////////
 void setup() {
@@ -16,17 +18,18 @@ void setup() {
    
   // TODO: READ KEY REGISTERS
   OV7670_write_register(0x12, 128); //reset all registers, COM7
-  delay(1000);
-  OV7670_write_register(0x12, 6); //enable color bar and RGB 
+  delay(100);
+  //OV7670_write_register(0x12, 6); //enable color bar and RGB 
+  OV7670_write_register(0x12, 12); //enable color bar and RGB, output format QCIF too? 
   delay(100);
   OV7670_write_register(0x0C, 8); //COM3 enable scaling, set bit[3]
-  delay(100);
-  //default reg values
-  byte com14 = 0x0E;
-  byte com17 = 8;
+//  delay(100);
+//  //default reg values
+  //byte com14 = 0x0E; //|8
+  byte com17 = 0;
   byte com15 = 0xC0;
   byte clk = 0x80;
-  OV7670_write_register(0x3E, com14 |= 8); //COM14 enable manual scaling, set bit[3]
+  //OV7670_write_register(0x3E, 14 ); //COM14 enable manual scaling, set bit[3]
   delay(100);
   //OV7670_write_register(0x11, clk |= 64); //use internal clk as external clk, set bit[6]
   OV7670_write_register(0x11, clk); //use internal clk as external clk, set bit[6]
@@ -37,7 +40,12 @@ void setup() {
   delay(100);
   OV7670_write_register(0x40, com15 |= 16); //set fourth bit of com15 for RGB 565
   delay(100);
-
+//
+//  //auto gain scaling
+  OV7670_write_register(0x14, 15); //enable auto gain scaling
+  delay(100);
+  OV7670_write_register(0x1E, 18); //enable auto gain scaling
+  delay(100);
   
 //  com14 = read_register_value(0x3E);
 //  delay(100);
