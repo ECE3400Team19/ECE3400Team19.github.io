@@ -13,14 +13,14 @@
 [Lab 3](Lab3/lab3.md)
 ||
 [Lab 4](Lab4/lab4.md)
+||
+[Milestone 3](Milestone3/milestone3.md)
 
 
 
-## Team Members: <img src="Team 19.png" width="450" height="265" alt="banner" img align="right"> 
+## Team Members: <img src="Team 19.png" width="450" height="265" alt="banner" img align="right">
 * Asena Ulug          
-* Cynthia Zelga 
-* John Chukwunonso Nwankwo 
-* Robert Morgowicz 
-* Laasya Renganathan 
-
-
+* Cynthia Zelga
+* John Chukwunonso Nwankwo
+* Robert Morgowicz
+* Laasya Renganathan
