@@ -11,8 +11,8 @@ For this lab, we split into two teams (Team Arduino and Team FPGA).  One to deve
  This lab was the first step in adding a treasure detection system to our robot capable of recognizing basic shapes.  In this lab we became familiar with the camera and working on FPGA, reading the camera and creating a basic image processor capable of detecting colors.  
 
 ## Arduino
-2 points: Arduino-Camera communication (writing the correct registers)
-3 points: Arduino-FPGA communication (communicating treasure/no treasure + shape and color)
+ The first step for the Arduino side of the lab was to determine and write to the correct registers in order to do the camera setup. In order to do so, we dug through the OV7670's camera documentation, and matched up each register description with the lab's specifications as detailed in the [prelab google.com] .
+ We first 
 
 ## FPGA
 On the FPGA side, we first wrote an image into memory, then spit this image back out to the VGA display this required writing specific colors to memory at given times and hooking the output of the memory up to the VGA module.  We created a flag.  
