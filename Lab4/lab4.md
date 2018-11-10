@@ -11,8 +11,10 @@ For this lab, we split into two teams (Team Arduino and Team FPGA).  One to deve
  This lab was the first step in adding a treasure detection system to our robot capable of recognizing basic shapes.  In this lab we became familiar with the camera and working on FPGA, reading the camera and creating a basic image processor capable of detecting colors.  
 
 ## Arduino
- The first step for the Arduino side of the lab was to determine and write to the correct registers in order to do the camera setup. In order to do so, we dug through the OV7670's camera documentation, and matched up each register description with the lab's specifications as detailed in the [prelab google.com] .
- We first 
+ The first step for the Arduino side of the lab was to determine and write to the correct registers in order to do the camera setup. In order to do so, we dug through the OV7670's camera documentation, and matched up each register description with the lab's specifications as detailed in the [prelab](https://docs.google.com/document/d/1JkrnMshaF4_Zh5bovh0Lob4HR2Z2JvsXUaYAb1SBo-s/edit?usp=sharing).
+ We first needed to find the register that would enable reset of all previous register values. After this, we found registers that would enable the correct resolution format (QCIF) and our desired pixel pattern (RGB 565). We additionally adjusted scaling, enabled the use of an internal clock as external, mirror flipped the image, and changed the automatic gain scaling of the image using various registers on the camera. 
+ In order to actually change the register contents, we used the ```OV7670_write_register(reg,val);``` function with the register hex id and desired value. We then iterated over the registers we edited and printed out the contents of those registers in our ```read_key_registers()``` function. Our main issue with this portion of the lab was that we could not actually write or read from these registers as the camera needed to be clocked externally from the FPGA; simply having the Arduino and camera connected did not suffice. Once we integrated all three components, this Arduino portion of the lab went smoothly. Finally, we implemented rudimentary color detection with LED feedback, which we'll describe further in the [integratin](#integration) section.
+ 
 
 ## FPGA
 On the FPGA side, we first wrote an image into memory, then spit this image back out to the VGA display this required writing specific colors to memory at given times and hooking the output of the memory up to the VGA module.  We created a flag.  
