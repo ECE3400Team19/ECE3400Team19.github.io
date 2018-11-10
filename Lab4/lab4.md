@@ -48,6 +48,39 @@ The FSM waits in idle until a row transmission begins.  Once there, it alternate
 ## Integration
 With the two halves done, all that was left was putting them together (and a considerable amount of debugging).  We hooked the 8 data pins, HREF, PCLK, and VSYNC up to the FPGA as GPIO inputs and a single 24 MHz clock signal as an output to the camera to drive it.  We ran the register setup script that we created in the Arduino portion of the lab to initialize the correct register content. We additionally enabled the two registers required for the camera to output a "color bar" test image (as opposed to a live feed). With this test image setup, we observed correct operation, the camera updating a monitor with the color bar test image over VGA.  
 
-[] put an image
+[] put an image of color bar; i don't have one -Laasya
 
-From here, we needed only set a few registers to get live video feed from the camera.  To detect colors, we wrote a rudimentary verilog program to increment counters based on values of red or blue in excess of a threshold. This program sent 2 bits of output over GPIO to the Arduino, which updated correspondingly colored LEDs accordingly.  
+From here, we needed only disable a few registers to get live video feed from the camera.  To detect colors, we wrote a rudimentary verilog program to increment counters based on values of red or blue in excess of a threshold. This program sent 2 bits of output over GPIO to the Arduino. The Arduino recieved the "valid" and "color" bits sent over, and lit up red and blue LEDs according to this simple program:
+
+```
+int ackPin = 9;
+int colorPin =10;
+int redLED = 11;
+int blueLED = 12;
+void setup() {
+  // put your setup code here, to run once:
+  Serial.begin(9600);
+  Serial.print("start");
+  pinMode(ackPin, INPUT);
+  pinMode(colorPin, INPUT);
+  pinMode(redLED, OUTPUT);
+  pinMode(blueLED, OUTPUT);
+}
+
+void loop() {
+    if (digitalRead(ackPin)){
+      if (digitalRead(colorPin)) digitalWrite(blueLED, HIGH);
+      else digitalWrite(redLED, HIGH);
+      delay(100);
+      digitalWrite(redLED, LOW);
+      digitalWrite(blueLED, LOW);
+    }
+}
+```
+
+Here is a video of our color detection in action:
+<video width="480" height="640" controls muted>
+  <source src="color_detection.mp4" type="video/mp4">
+</video>
+
+The color displayed on the VGA monitor output is very clear, and improved once we powered the FPGA off of the Arduino and synced it with a common ground. This dissipated some of the noise in the heavy wiring required for this project.
