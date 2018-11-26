@@ -1,6 +1,7 @@
 int incomingByte;
-int ackPin = 9;
-int colorPin =10;
+int colorPin =8;
+int shapePin1 = 9;
+int shapePin0 = 10;
 int redLED = 11;
 int blueLED = 12;
 void setup() {
@@ -13,24 +14,54 @@ void setup() {
   pinMode(blueLED, OUTPUT);
 }
 
-void loop() {
-  // put your main code here, to run repeatedly:
-//  if (Serial.available()){
-//    incomingByte = Serial.read();
-//    // say what you got:
-//    Serial.print("I received: ");
-//    Serial.println(incomingByte, DEC); }
+//  KEY: MSB = color; bits[0:1] = shape
+//  000 = nothing detected
+//  001 = red triangle
+//  010 = red circle
+//  011 = red diamond
+//  100 = nothing detected
+//  101 = red triangle
+//  110 = red circle
+//  111 = red diamond
 
-    Serial.println(digitalRead(ackPin));
+void loop() {
     
-    if (digitalRead(ackPin)){
-      if (digitalRead(colorPin)) digitalWrite(blueLED, HIGH);
-      else digitalWrite(redLED, HIGH);
+    if (digitalRead(shapePin1) || digitalRead(shapePin0)  ){
+      if (digitalRead(colorPin)) {
+        digitalWrite(blueLED, HIGH);
+        Serial.print("blue"); 
+        printShape();
+      }
+      else {
+        digitalWrite(redLED, HIGH);
+        Serial.print("red"); 
+        printShape();
+        
+      }
       delay(100);
       digitalWrite(redLED, LOW);
       digitalWrite(blueLED, LOW);
     }
+    
+}
 
+void printShape() {
+  if (!digitalRead(shapePin1) && digitalRead(shapePin0) ) {
+    Serial.println(" triangle");
+  }
+  if (digitalRead(shapePin1) && !digitalRead(shapePin0) ) {
+    Serial.println(" circle");
+  }
+  if (digitalRead(shapePin1) && digitalRead(shapePin0) ) {
+    Serial.println(" diamond");
+  }
 
   
 }
+
+
+
+
+
+
+
