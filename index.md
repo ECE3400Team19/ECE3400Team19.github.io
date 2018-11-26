@@ -15,6 +15,8 @@
 [Lab 4](Lab4/lab4.md)
 ||
 [Milestone 3](Milestone3/milestone3.md)
+||
+[Milestone 4](Milestone4/milestone4.md)
 
 
 
