@@ -4,10 +4,9 @@
 //  StackArray <byte> frontier; 
 //  frontier.push(0);
 byte n;
-int mazeWidth = 4;
 byte currentPos;
 
-void runDFS(int posX, int posY, int seen, int orient, int robotDetected){
+unsigned long runDFS(int posX, int posY, int seen, int orient, int robotDetected){
   // seen = B1111, robot, left, front, right
   // orient = 0 -> North, orient = 1 -> East, orient = 2 -> South, orient = 3 -> West
   
@@ -19,14 +18,16 @@ void runDFS(int posX, int posY, int seen, int orient, int robotDetected){
   //      figure out which places we can visit based on walls and robot
   //      add these places to frontier if they have not been visited
   //  
-
-    unsigned int leftWall = seen >> 2 & B01;
-    unsigned int frontWall = seen >> 1 & B001;
-    unsigned int rightWall = seen & B001;
-    unsigned int northWall;
-    unsigned int southWall;
-    unsigned int eastWall;
-    unsigned int westWall;
+  Serial.println("____________________ entering DFS_____________");
+  left.write(90); //stop the robot 
+  right.write(90);
+  unsigned int leftWall = seen >> 2 & B01;
+  unsigned int frontWall = seen >> 1 & B001;
+  unsigned int rightWall = seen & B001;
+  unsigned int northWall;
+  unsigned int southWall;
+  unsigned int eastWall;
+  unsigned int westWall;
     
   switch (orient){
     case (0):
@@ -53,101 +54,178 @@ void runDFS(int posX, int posY, int seen, int orient, int robotDetected){
         break;
   }
   n = frontier.pop();
+  inFrontier[n] = 0;
+  Serial.print("frontier pos : ");
+  Serial.println(n);
+//  Serial.print("northWall ");
+//  Serial.print(northWall);
+//  Serial.print("  eastWall ");
+//  Serial.print(eastWall);
+//  Serial.print("  southWall ");
+//  Serial.print(southWall);
+//  Serial.print("  westWall ");
+//  Serial.print(westWall);
+  
   if (n != 0){
     // move robot to position n
+    currentPos = encodePos(posX, posY);
+    unsigned long orientPosition;
     while (currentPos != n){
-      currentPos = encodePos(posX, posY);
+      Serial.print("current pos ");
+      Serial.println(currentPos);
       if (backpointer[n] == currentPos){
-        moveToNode(currentPos, n, orient, seen);
+        orientPosition = moveToNode(currentPos, n, orient, seen);
+        orient = orientPosition >> 8;
+        currentPos = orientPosition & B11111111;
       }
       else{
-        moveToNode(currentPos, backpointer[currentPos], orient, seen);
+        orientPosition = moveToNode(currentPos, backpointer[currentPos], orient, seen);
+        orient = orientPosition >> 8;
+        currentPos = orientPosition & B11111111;        
       }
     }
   }
+  seen = checkWalls();
+  leftWall = seen >> 2 & B01;
+  frontWall = seen >> 1 & B001;
+  rightWall = seen & B001;
+  switch (orient){
+    case (0):
+        westWall = leftWall;
+        northWall = frontWall;
+        eastWall = rightWall;
+        break;
+    case (1):
+        northWall = leftWall;
+        eastWall = frontWall;
+        southWall = rightWall;
+        break;
+    case (2):
+        eastWall = leftWall;
+        southWall = frontWall;
+        westWall = rightWall;
+        break;
+    case (3):
+        southWall = leftWall;
+        westWall = frontWall;
+        northWall = rightWall;
+        break;
+    default:
+        break;
+  }
   visited[n] = 1;
+  Serial.println("adding things to frontier");
   switch (orient){
     case (0):
       //facing North
-      if (!(southWall || visited[n- mazeWidth] == 0)){
-        frontier.push(n - mazeWidth);
-        backpointer[n - mazeWidth] = n;
-      }
-      if (!(westWall || visited[n-1] == 0)){
+      Serial.println("facing North");
+      
+      if (!(westWall || visited[n-1] == 1 || inFrontier[n-1] )){
+        Serial.print("adding pos : ");
+        Serial.println(n - mazeWidth);
         frontier.push(n - 1);
         backpointer[n-1] = n;
+        inFrontier[n-1] = 1;
       }
-      if (!(eastWall|| visited[n+ 1] == 0)){
+      if (!(eastWall|| visited[n+ 1] == 1 || inFrontier[n+1] )){
+        Serial.print("adding pos : ");
+        Serial.println(n + 1);
         frontier.push(n + 1);
         backpointer[n+1]=n;
+        inFrontier[n+1] = 1;
       }
-      if (!(northWall || robotDetected || visited[n+mazeWidth] == 0)){
-        frontier.push(n+mazeWidth);
-        backpointer[n+mazeWidth]=n;
+      if (!(northWall || robotDetected || visited[n-mazeWidth] == 1 || inFrontier[n - mazeWidth])){
+        Serial.print("adding pos : ");
+        Serial.println(n - mazeWidth);
+        frontier.push(n-mazeWidth);
+        backpointer[n-mazeWidth]=n;
+        inFrontier[n - mazeWidth] = 1;
       }
       break;
     case (1):
       //facing East
-      if (!(westWall || visited[n - 1] == 0)){
-        frontier.push(n -1);
-        backpointer[n-1]=n;
-      }
-      if (!(northWall || visited[n + mazeWidth] == 0)){
-        frontier.push(n+mazeWidth); 
-        backpointer[n+mazeWidth]=n;
-      }
-      if (!(southWall || visited[n - mazeWidth] == 0)){
-        frontier.push(n - mazeWidth);
+      Serial.println("facing east");
+      if (!(northWall || visited[n - mazeWidth] == 1 || inFrontier[n - mazeWidth])){
+        Serial.print("adding pos : ");
+        Serial.println(n - mazeWidth);
+        frontier.push(n-mazeWidth); 
         backpointer[n-mazeWidth]=n;
+        inFrontier[n - mazeWidth] = 1;
       }
-      if (!(eastWall || robotDetected || visited[n + 1] == 0)){
+      if (!(southWall || visited[n + mazeWidth] == 1 || inFrontier[n + mazeWidth] )){
+        Serial.print("adding pos : ");
+        Serial.println(n + mazeWidth);
+        frontier.push(n + mazeWidth);
+        backpointer[n+mazeWidth]=n;
+        inFrontier[n + mazeWidth] = 1;
+      }
+      if (!(eastWall || robotDetected || visited[n + 1] == 1 || inFrontier[n + 1] )){
+        Serial.print("adding pos : ");
+        Serial.println(n + 1);
         frontier.push(n + 1);
         backpointer[n+1]=n;
+        inFrontier[n +1] = 1;
       }
       break;
 
     case (2):
       //facing South
-      if (!(northWall || visited[n + mazeWidth] == 0)){
-        frontier.push(n+mazeWidth);
-        backpointer[n+mazeWidth]=n;
-      }
-      if (!(eastWall || visited[n + 1] == 0)){
-        frontier.push(n + 1);
-        backpointer[n+1]=n;
-      }
-      if (!(westWall || visited[n - 1] == 0)){
+      Serial.println("facing south");
+      if (!(westWall || visited[n - 1] == 1 || inFrontier[n - 1] )){
+        Serial.print("adding pos : ");
+        Serial.println(n -1);        
         frontier.push(n -1);
         backpointer[n - 1]=n;
+        inFrontier[n - 1] =1;
       }
-      if (!(southWall || robotDetected || visited[n-mazeWidth] == 0)){
-        frontier.push(n-mazeWidth);
-        backpointer[n-mazeWidth]=n;
+      if (!(eastWall || visited[n + 1] == 1 || inFrontier[n + 1])){
+        Serial.print("adding pos : ");
+        Serial.println(n + 1);
+        frontier.push(n + 1);
+        backpointer[n+1]=n;
+        inFrontier[n + 1] = 1;
+      }
+
+      if (!(southWall || robotDetected || visited[n+mazeWidth] == 1 || inFrontier[n + mazeWidth])){
+        Serial.print("adding pos : ");
+        Serial.println(n + mazeWidth);        
+        frontier.push(n+mazeWidth);
+        backpointer[n+mazeWidth]=n;
+        inFrontier[n + mazeWidth] = 1;
       }
       break;
       case (3):
       //facing West
-      if (!(eastWall || visited[n + 1] == 0)){
-        frontier.push(n + 1);
-        backpointer[n+1]=n;
-      }
-      if (!(southWall || visited[n - mazeWidth] == 0)){
-        frontier.push(n - mazeWidth); 
-        backpointer[n-mazeWidth]=n;
-      }
-      if (!(northWall || visited[n + mazeWidth] == 0)){
-        frontier.push(n+mazeWidth);
+      Serial.println("facing west");
+      if (!(southWall || visited[n + mazeWidth] == 1 || inFrontier[n + mazeWidth])){
+        Serial.print("adding pos : ");
+        Serial.println(n + mazeWidth);        
+        frontier.push(n + mazeWidth); 
         backpointer[n+mazeWidth]=n;
+        inFrontier[n + mazeWidth] = 1;
       }
-      if (!(westWall || robotDetected || visited[n - 1] == 0)){
+      if (!(northWall || visited[n - mazeWidth] == 1 || inFrontier[n - mazeWidth])){
+        Serial.print("adding pos : ");
+        Serial.println(n - mazeWidth);        
+        frontier.push(n-mazeWidth);
+        backpointer[n-mazeWidth]=n;
+        inFrontier[n - mazeWidth] = 1;
+      }
+      if (!(westWall || robotDetected || visited[n - 1] == 1 || inFrontier[n - 1])){
+        Serial.print("adding pos : ");
+        Serial.println(n -1);        
         frontier.push(n -1);
         backpointer[n-1]=n;
+        inFrontier[n - 1] = 1;
       }
       break;
     default:
       break;
     
   } 
+    unsigned long value = currentPos;
+    value |= orient << 8; 
+    return value; 
     
 }
 
@@ -156,10 +234,14 @@ byte encodePos(int posX, int posY){
   return posX + posY*mazeWidth;
 }
 
-void moveToNode(byte curr, byte goal, int orient, int seen){
+
+unsigned long moveToNode(byte curr, byte goal, int orient, int seen){
+  posX = curr % mazeWidth;
+  posY = curr/mazeWidth;
   switch (orient){
     case(0):
       //facing North
+      Serial.print("trying to move to node, facing N");
       if (goal - curr == 1){
         //goal is to the East
         turnRight();
@@ -168,17 +250,18 @@ void moveToNode(byte curr, byte goal, int orient, int seen){
         //goal is to the West
         turnLeft();
       }
-      if (goal - curr == mazeWidth){
-        //goal is to the North
-        goStraight();
-      }
       if (curr - goal == mazeWidth){
         //goal is to the South
+        goStraight();
+      }
+      if (goal - curr == mazeWidth){
+        //goal is to the North
         turnAround();
       }
       break;
     case (1):
       //facing East
+      Serial.print("trying to move to node, facing E");
       if (goal - curr == 1){
         //goal is to the East
         goStraight();
@@ -187,16 +270,17 @@ void moveToNode(byte curr, byte goal, int orient, int seen){
         //goal is to the West
         turnAround();
       }
-      if (goal - curr == mazeWidth){
-        //goal is to the North
-        turnLeft();
-      }
       if (curr - goal == mazeWidth){
         //goal is to the South
+        turnLeft();
+      }
+      if (goal - curr == mazeWidth){
+        //goal is to the North
         turnRight();
       }
       break; 
     case (2):
+      Serial.print("trying to move to node, facing S");
       //facing South
       if (goal - curr == 1){
         //goal is to the East
@@ -206,17 +290,18 @@ void moveToNode(byte curr, byte goal, int orient, int seen){
         //goal is to the West
         turnRight();
       }
-      if (goal - curr == mazeWidth){
-        //goal is to the North
+      if (curr - goal == mazeWidth){
+        //goal is to the SOuth
         turnAround();
       }
-      if (curr - goal == mazeWidth){
-        //goal is to the South
+      if (goal - curr == mazeWidth){
+        //goal is to the North
         goStraight();
       }
       break;   
     case (3):
       //facing West
+      Serial.print("trying to move to node, facing W");
       if (goal - curr == 1){
         //goal is to the East
         turnAround();
@@ -225,12 +310,12 @@ void moveToNode(byte curr, byte goal, int orient, int seen){
         //goal is to the West
         goStraight();
       }
-      if (goal - curr == mazeWidth){
-        //goal is to the North
-        turnRight();
-      }
       if (curr - goal == mazeWidth){
         //goal is to the South
+        turnRight();
+      }
+      if (goal - curr == mazeWidth){
+        //goal is to the North
         turnLeft();
       }
       break; 
@@ -253,7 +338,7 @@ void moveToNode(byte curr, byte goal, int orient, int seen){
       default:
         break;
   }
-
+    
     transmission = 0;
     transmission |= posY << 12;
     transmission |= posX << 8;
@@ -302,8 +387,8 @@ void moveToNode(byte curr, byte goal, int orient, int seen){
     radio.stopListening();
     
     bool ok = radio.write( &transmission, sizeof(unsigned long) );
-    if (ok) Serial.print("ok...");
-    else Serial.println("failed");
+    //if (ok) Serial.print("ok...");
+    //else Serial.println("failed");
 
     //-------------------------------------------------------------------------------------------------------------------------
     //response waiting loop, may change it / remove it if it hampers performance too much or line following gets thrown off
@@ -342,7 +427,7 @@ void moveToNode(byte curr, byte goal, int orient, int seen){
     // Describe the results
     if ( timeout )
     {
-      Serial.println("Failed, response timed out.\n\r");
+      //Serial.println("Failed, response timed out.\n\r");
     }
     else
     {
@@ -373,8 +458,88 @@ void moveToNode(byte curr, byte goal, int orient, int seen){
     Serial.print(" nextPosY ");
     Serial.print(posY);
     Serial.println();
-    
-        
+
+    // move to an intersection
+    moveToIntersection();  
+    unsigned long value = encodePos(posX, posY);
+    value |= orient << 8; 
+    return value; 
 }
+
+void moveToIntersection(){
+  while (1){
+    //Serial.println("trying to move to intersection");
+    leftSensor = analogRead(leftPin);
+    middleSensor = analogRead(middlePin);
+    rightSensor = analogRead(rightPin);
+    if (leftSensor < 800  && middleSensor< 800 && rightSensor < 800){
+      
+  //    runFFT(); //true indicates run FFT for IR
+  //    //check if IR sensor detects another robot based on FFT
+  //    IRDetected = 0;
+  //    for (int i = 15; i < 25; i++){ //changed
+  //      if (fft_log_out[i] > 125){
+  //        //Serial.println(fft_log_out[i]);
+  //        IRDetected = 1;
+  //        break;
+  //      }
+  //    }  
+  
+    //TODO: figure out what to do if robot is in path
+      return;
+    }
+    else if ( middleSensor < 800){
+      //Serial.println("going straight");
+      leftSpeed = 95;
+      rightSpeed = 85;
+      left.write(leftSpeed);
+      right.write(rightSpeed);
+    }
+    else {
+      if (leftSensor < 800){
+        //TURN LEFT
+        //Serial.println("turning left onto line");
+        leftSpeed = 85;
+        rightSpeed = 85;
+      }
+      if (rightSensor < 800){
+        //TURN RIGHT
+       // Serial.println("turning right onto line")
+        leftSpeed = 95;
+        rightSpeed = 95;
+      }
+      left.write(leftSpeed);
+      right.write(rightSpeed);
+    }
+  }
+}
+
+int checkWalls(){
+    int seen = B0000;
+    //digitalWrite(leftLED, LOW);
+    //digitalWrite(rightLED, LOW);
+    //digitalWrite(frontLED, LOW);
+    //digitalWrite(robotLED, LOW);
+    if (IRDetected){  
+      Serial.println("IR detected");       
+      seen |= B1000;
+    }
+    if (digitalRead(lw)){  
+      Serial.println("left wall detected");  
+      seen |= B0100;
+    }
+    if (digitalRead(fw)){  
+      Serial.println("front wall detected");  
+      seen |= B0010;
+    }
+    if (digitalRead(rw)){
+      Serial.println("right wall detected");     
+      seen |= B0001;
+    }
+    return seen;
+}
+
+
+
 
 
