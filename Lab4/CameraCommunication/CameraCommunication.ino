@@ -1,9 +1,9 @@
 int incomingByte;
-int colorPin =8;
-int shapePin1 = 9;
-int shapePin0 = 10;
-int redLED = 11;
-int blueLED = 12;
+int colorPin =1;
+int shapePin1 = 8;
+int shapePin0 = 7;
+int redLED = 11; //debug
+int blueLED = 12; //debug
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
@@ -28,19 +28,19 @@ void loop() {
     
     if (digitalRead(shapePin1) || digitalRead(shapePin0)  ){
       if (digitalRead(colorPin)) {
-        digitalWrite(blueLED, HIGH);
+        digitalWrite(blueLED, HIGH); //debug
         Serial.print("blue"); 
         printShape();
       }
       else {
-        digitalWrite(redLED, HIGH);
+        digitalWrite(redLED, HIGH); //debug
         Serial.print("red"); 
         printShape();
         
       }
       delay(100);
-      digitalWrite(redLED, LOW);
-      digitalWrite(blueLED, LOW);
+      digitalWrite(redLED, LOW); //debug
+      digitalWrite(blueLED, LOW); //debug
     }
     
 }
