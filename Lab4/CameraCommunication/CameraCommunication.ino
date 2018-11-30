@@ -1,16 +1,22 @@
 int incomingByte;
-int colorPin =1;
-int shapePin1 = 8;
-int shapePin0 = 7;
+//int colorPin =7;
+//int shapePin1 = 8;
+//int shapePin0 = 9;
+
+int bluePin = 9;
+int redPin = 7;
+
 int redLED = 11; //debug
 int blueLED = 12; //debug
 void setup() {
   // put your setup code here, to run once:
-  Serial.begin(115200);
-  Serial.print("start");
-  pinMode(shapePin1, INPUT);
-  pinMode(shapePin0, INPUT);
-  pinMode(colorPin, INPUT);
+  Serial.begin(9600);
+//  Serial.print("start");
+//  pinMode(shapePin1, INPUT);
+////  pinMode(shapePin0, INPUT);
+//  pinMode(colorPin, INPUT);
+  pinMode(redPin, INPUT);
+  pinMode(bluePin, INPUT);
   pinMode(2, INPUT);
   pinMode(3, INPUT);
   pinMode(4, INPUT);
@@ -31,52 +37,69 @@ void setup() {
 //  111 = blue diamond
 
 void loop() {
-    Serial.print("state: ");
-    Serial.print(digitalRead(6));
-    Serial.print(digitalRead(5));
-    Serial.print(digitalRead(4));
-    Serial.print(digitalRead(3));
-    Serial.println(digitalRead(2));
+//    Serial.print("state: ");
+//    Serial.print(digitalRead(6));
+//    Serial.print(digitalRead(5));
+//    Serial.print(digitalRead(4));
+//    Serial.print(digitalRead(3));
+//    Serial.println(digitalRead(2));
+//
+//    Serial.print("colorpin: ");
+//    Serial.println(digitalRead(colorPin));
+//
+//    Serial.print("shape pins: ");
+//    Serial.print(digitalRead(shapePin1));
+//    Serial.println(digitalRead(shapePin0));
+//    
+//    if (digitalRead(shapePin1) || digitalRead(shapePin0)  ){
+//      if (digitalRead(colorPin)) {
+//        digitalWrite(blueLED, HIGH); //debug
+//        Serial.print("blue"); 
+//        printShape();
+//      }
+//      else {
+//        digitalWrite(redLED, HIGH); //debug
+//        Serial.print("red"); 
+//        printShape();
+//        
+//      }
+//      delay(100);
+//      digitalWrite(redLED, LOW); //debug
+//      digitalWrite(blueLED, LOW); //debug
+//    }
 
-    Serial.print("colorpin: ");
-    Serial.println(digitalRead(colorPin));
+      Serial.print("red pin: ");
+      Serial.println(digitalRead(redPin));
 
-    Serial.print("shape pins: ");
-    Serial.print(digitalRead(shapePin1));
-    Serial.println(digitalRead(shapePin0));
-    
-    if (digitalRead(shapePin1) || digitalRead(shapePin0)  ){
-      if (digitalRead(colorPin)) {
+      Serial.print("blue pin: ");
+      Serial.println(digitalRead(bluePin));
+
+      if (digitalRead(bluePin)) {
         digitalWrite(blueLED, HIGH); //debug
-        Serial.print("blue"); 
-        printShape();
       }
-      else {
+      if (digitalRead(redPin)) {
         digitalWrite(redLED, HIGH); //debug
-        Serial.print("red"); 
-        printShape();
         
       }
       delay(100);
       digitalWrite(redLED, LOW); //debug
       digitalWrite(blueLED, LOW); //debug
-    }
     
 }
 
-void printShape() {
-  if (!digitalRead(shapePin1) && digitalRead(shapePin0) ) {
-    Serial.println(" triangle");
-  }
-  if (digitalRead(shapePin1) && !digitalRead(shapePin0) ) {
-    Serial.println(" square");
-  }
-  if (digitalRead(shapePin1) && digitalRead(shapePin0) ) {
-    Serial.println(" diamond");
-  }
-
-  
-}
+//void printShape() {
+//  if (!digitalRead(shapePin1) && digitalRead(shapePin0) ) {
+//    Serial.println(" triangle");
+//  }
+//  if (digitalRead(shapePin1) && !digitalRead(shapePin0) ) {
+//    Serial.println(" square");
+//  }
+//  if (digitalRead(shapePin1) && digitalRead(shapePin0) ) {
+//    Serial.println(" diamond");
+//  }
+//
+//  
+//}
 
 
 
