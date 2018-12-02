@@ -37,6 +37,7 @@ boolean inFrontier[81];
 byte backpointer[81];
 StackArray <byte> frontier;
 int mazeWidth = 4;
+unsigned long orientPosition;
 
 void runFFT() {
   defaultT = TIMSK0;
@@ -48,7 +49,6 @@ void runFFT() {
   ADMUX = 0x43; // use adc3
   DIDR0 = 0x01; // turn off the digital input for adc0
   cli();  // UDRE interrupt slows this way down on arduino1.0
-
   for (int i = 0 ; i < 256 ; i += 2) {  //CHANGED
     while (!(ADCSRA & 0x10)); // wait for adc to be ready
     ADCSRA = 0xf5; // restart adc
@@ -108,8 +108,8 @@ void turnLeft() {
   right.write(85);
   //Serial.print("orient in turnLeft : ");
   //Serial.println(orient);
-  nextOrient = orient + 1;
-  if (nextOrient == 4) nextOrient = 0;
+  if (orient == 0) nextOrient = 3;
+  else nextOrient = orient - 1;
   //Serial.print("nextOrient in turnLeft : ");
   //Serial.println(nextOrient);
   delay(200);
@@ -128,8 +128,8 @@ void turnRight() {
   right.write(85);
   //Serial.print("orient in turnRight : ");
   //Serial.println(orient);
-  if (orient == 0) nextOrient = 3;
-  else nextOrient = orient - 1;
+  nextOrient = orient + 1;
+  if (nextOrient == 4) nextOrient = 0;
   //Serial.print("nextOrient in turnRight : ");
   //Serial.println(nextOrient);
   delay(200);
@@ -212,7 +212,6 @@ void checkLineSensors(){
 
 void waitForMic() {
   while (1) {
-    
     int buttonState = digitalRead(pushButton);
     Serial.print("buttonState ");
     Serial.println(buttonState);
@@ -275,7 +274,7 @@ void loop() {
       seen |= B0001;
     }
 
-    unsigned long orientPosition;
+
     orientPosition = runDFS(posX, posY, seen, orient, IRDetected);
     orient = orientPosition >> 8;
     byte currentPos = orientPosition & B11111111;
@@ -298,7 +297,7 @@ void loop() {
     right.write(rightSpeed);
   }
   else {
-    if (leftSensor < 800) {
+    if (leftSensor < 850) {
       //TURN LEFT
       //Serial.println("turning left onto line");
       leftSpeed = 85;
@@ -333,7 +332,7 @@ unsigned long runDFS(int posX, int posY, int seen, int orient, int robotDetected
   //      figure out which places we can visit based on walls and robot
   //      add these places to frontier if they have not been visited
   //  
-  Serial.println("----- entering DFS-----");
+  Serial.println("-----entering DFS-----");
   left.write(90); //stop the robot 
   right.write(90);
   unsigned int leftWall = seen >> 2 & B01;
@@ -344,11 +343,11 @@ unsigned long runDFS(int posX, int posY, int seen, int orient, int robotDetected
   unsigned int eastWall;
   unsigned int westWall;
     
-  switch (nextOrient){
+  switch (orient){
     case (0):
-        eastWall = leftWall;
+        westWall = leftWall;
         northWall = frontWall;
-        westWall = rightWall;
+        eastWall = rightWall;
         break;
     case (1):
         northWall = leftWall;
@@ -356,9 +355,9 @@ unsigned long runDFS(int posX, int posY, int seen, int orient, int robotDetected
         southWall = rightWall;
         break;
     case (2):
-        westWall = leftWall;
+        eastWall = leftWall;
         southWall = frontWall;
-        eastWall = rightWall;
+        westWall = rightWall;
         break;
     case (3):
         southWall = leftWall;
@@ -396,11 +395,11 @@ unsigned long runDFS(int posX, int posY, int seen, int orient, int robotDetected
   leftWall = seen >> 2 & B01;
   frontWall = seen >> 1 & B001;
   rightWall = seen & B001;
-  switch (nextOrient){
+  switch (orient){
     case (0):
-        eastWall = leftWall;
+        westWall = leftWall;
         northWall = frontWall;
-        westWall = rightWall;
+        eastWall = rightWall;
         break;
     case (1):
         northWall = leftWall;
@@ -408,9 +407,9 @@ unsigned long runDFS(int posX, int posY, int seen, int orient, int robotDetected
         southWall = rightWall;
         break;
     case (2):
-        westWall = leftWall;
+        eastWall = leftWall;
         southWall = frontWall;
-        eastWall = rightWall;
+        westWall = rightWall;
         break;
     case (3):
         southWall = leftWall;
@@ -435,20 +434,20 @@ unsigned long runDFS(int posX, int posY, int seen, int orient, int robotDetected
     case (0):
       //facing North
       Serial.println("facing N");
-      
-      if (!(westWall || visited[n+1] == 1 || inFrontier[n+1] )){
+       
+      if (!(westWall || visited[n-1] == 1 || inFrontier[n-1] )){
+        Serial.print("add pos: ");
+        Serial.println(n - mazeWidth);
+        frontier.push(n - 1);
+        backpointer[n-1] = n;
+        inFrontier[n-1] = 1;
+      }
+      if (!(eastWall|| visited[n+ 1] == 1 || inFrontier[n+1] )){
         Serial.print("add pos: ");
         Serial.println(n + 1);
         frontier.push(n + 1);
-        backpointer[n+1] = n;
+        backpointer[n+1]=n;
         inFrontier[n+1] = 1;
-      }
-      if (!(eastWall|| visited[n- 1] == 1 || inFrontier[n-1] )){
-        Serial.print("add pos: ");
-        Serial.println(n - 1);
-        frontier.push(n - 1);
-        backpointer[n-1]=n;
-        inFrontier[n-1] = 1;
       }
       if (!(northWall || robotDetected || visited[n-mazeWidth] == 1 || inFrontier[n - mazeWidth])){
         Serial.print("add pos: ");
@@ -487,19 +486,19 @@ unsigned long runDFS(int posX, int posY, int seen, int orient, int robotDetected
     case (2):
       //facing South
       Serial.println("facing S");
-      if (!(westWall || visited[n + 1] == 1 || inFrontier[n + 1] )){
+      if (!(westWall || visited[n - 1] == 1 || inFrontier[n - 1] )){
         Serial.print("add pos: ");
-        Serial.println(n +1);        
-        frontier.push(n +1);
-        backpointer[n + 1]=n;
-        inFrontier[n + 1] =1;
+        Serial.println(n -1);        
+        frontier.push(n -1);
+        backpointer[n - 1]=n;
+        inFrontier[n - 1] =1;
       }
-      if (!(eastWall || visited[n - 1] == 1 || inFrontier[n - 1])){
+      if (!(eastWall || visited[n + 1] == 1 || inFrontier[n + 1])){
         Serial.print("add pos: ");
-        Serial.println(n - 1);
-        frontier.push(n - 1);
-        backpointer[n-1]=n;
-        inFrontier[n - 1] = 1;
+        Serial.println(n + 1);
+        frontier.push(n + 1);
+        backpointer[n+1]=n;
+        inFrontier[n + 1] = 1;
       }
 
       if (!(southWall || robotDetected || visited[n+mazeWidth] == 1 || inFrontier[n + mazeWidth])){
@@ -541,7 +540,6 @@ unsigned long runDFS(int posX, int posY, int seen, int orient, int robotDetected
   } 
     unsigned long value = currentPos;
     value |= orient << 8; 
-    //Serial.println("exiting DFS");
     left.write(90); //stop the robot 
     right.write(90);
     return value; 
@@ -730,7 +728,7 @@ unsigned long moveToNode(byte curr, byte goal, int orient, int seen){
         right.write(rightSpeed);
       }
       else {
-        if (leftSensor < 800){
+        if (leftSensor < 850){
           //TURN LEFT
           //Serial.println("turning left onto line");
           leftSpeed = 85;
@@ -819,7 +817,7 @@ void moveToIntersection(){
       right.write(rightSpeed);
     }
     else {
-      if (leftSensor < 800){
+      if (leftSensor < 850){
         //TURN LEFT
         //Serial.println("turning left onto line");
         leftSpeed = 85;
