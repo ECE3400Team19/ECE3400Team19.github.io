@@ -31,3 +31,6 @@ runDFS{
 ```
 [actual code](https://github.com/ECE3400Team19/ECE3400Team19.github.io/blob/master/Milestone3/Final3400/Final3400.ino)
 
+Here is a video of our robot navigating a 4x5 maze!
+<iframe width="560" height="315" src="https://www.youtube.com/embed/m5x3R3dMZAY" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
