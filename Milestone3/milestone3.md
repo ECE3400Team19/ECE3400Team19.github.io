@@ -16,8 +16,12 @@ else not at an intersection{
   lineFollow()
 }
 runDFS{
-  n = frontier.pop()
+  n = frontier.pop() //(goal state)
   visit n- meaning move our robot to n
+    if n is within one square of where currently are, then we just move to that square
+    while n is farther away than one square{
+       we move back to the parent of our current node
+    }
   transmit the details of node n over radio
   figure out what places we can visit based on what the robot can see and its orientation
   add these places to the frontier stack
@@ -25,3 +29,5 @@ runDFS{
 }
 
 ```
+
+
