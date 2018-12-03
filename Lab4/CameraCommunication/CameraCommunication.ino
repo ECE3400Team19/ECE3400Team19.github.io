@@ -2,11 +2,11 @@ int incomingByte;
 //int colorPin =7;
 //int shapePin1 = 8;
 
-int colorPin = 6;
-int ackPin = 5;
+int colorPin = 6; //brown
+int ackPin = 5; //gray
 
-int redLED = 2; //debug
-int blueLED = 3; //debug
+//int redLED = 2; //debug
+//int blueLED = 3; //debug
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
@@ -34,10 +34,10 @@ void setup() {
 //  111 = blue diamond
 
 void loop() {
-    Serial.print("state: ");
-    //Serial.print(digitalRead(9));
-    Serial.print(digitalRead(8));
-    Serial.println(digitalRead(7));
+//    Serial.print("state: ");
+//    //Serial.print(digitalRead(9));
+//    Serial.print(digitalRead(8));
+//    Serial.println(digitalRead(7));
     
 //    Serial.print(digitalRead(3));
 //    Serial.println(digitalRead(2));
@@ -69,19 +69,19 @@ void loop() {
       if (digitalRead(ackPin)) {
         Serial.print("seeing color ");
         if (!digitalRead(colorPin)) {
-          digitalWrite(redLED, HIGH); //debug
+          //digitalWrite(redLED, HIGH); //debug
           Serial.println("red");
         }
         else {
-          digitalWrite(blueLED, HIGH); //debug
+          //digitalWrite(blueLED, HIGH); //debug
           Serial.println("blue");
         }
         
       }
       delay(100);
-      digitalWrite(redLED, LOW); //debug
-      digitalWrite(blueLED, LOW); //debug
-    
+//      digitalWrite(redLED, LOW); //debug
+//      digitalWrite(blueLED, LOW); //debug
+//    
 }
 
 //void printShape() {
