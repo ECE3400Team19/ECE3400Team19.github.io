@@ -1,13 +1,12 @@
 int incomingByte;
 //int colorPin =7;
 //int shapePin1 = 8;
-//int shapePin0 = 9;
 
-int bluePin = 9;
-int redPin = 7;
+int colorPin = 6;
+int ackPin = 5;
 
-int redLED = 11; //debug
-int blueLED = 12; //debug
+int redLED = 2; //debug
+int blueLED = 3; //debug
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
@@ -15,13 +14,11 @@ void setup() {
 //  pinMode(shapePin1, INPUT);
 ////  pinMode(shapePin0, INPUT);
 //  pinMode(colorPin, INPUT);
-  pinMode(redPin, INPUT);
-  pinMode(bluePin, INPUT);
-  pinMode(2, INPUT);
-  pinMode(3, INPUT);
-  pinMode(4, INPUT);
-  pinMode(5, INPUT);
-  pinMode(6, INPUT);
+  pinMode(ackPin, INPUT);
+  pinMode(colorPin, INPUT);
+  pinMode(7, INPUT);
+  pinMode(8, INPUT);
+  //pinMode(9, INPUT);
   pinMode(redLED, OUTPUT);
   pinMode(blueLED, OUTPUT);
 }
@@ -37,10 +34,11 @@ void setup() {
 //  111 = blue diamond
 
 void loop() {
-//    Serial.print("state: ");
-//    Serial.print(digitalRead(6));
-//    Serial.print(digitalRead(5));
-//    Serial.print(digitalRead(4));
+    Serial.print("state: ");
+    //Serial.print(digitalRead(9));
+    Serial.print(digitalRead(8));
+    Serial.println(digitalRead(7));
+    
 //    Serial.print(digitalRead(3));
 //    Serial.println(digitalRead(2));
 //
@@ -68,17 +66,16 @@ void loop() {
 //      digitalWrite(blueLED, LOW); //debug
 //    }
 
-      Serial.print("red pin: ");
-      Serial.println(digitalRead(redPin));
-
-      Serial.print("blue pin: ");
-      Serial.println(digitalRead(bluePin));
-
-      if (digitalRead(bluePin)) {
-        digitalWrite(blueLED, HIGH); //debug
-      }
-      if (digitalRead(redPin)) {
-        digitalWrite(redLED, HIGH); //debug
+      if (digitalRead(ackPin)) {
+        Serial.print("seeing color ");
+        if (!digitalRead(colorPin)) {
+          digitalWrite(redLED, HIGH); //debug
+          Serial.println("red");
+        }
+        else {
+          digitalWrite(blueLED, HIGH); //debug
+          Serial.println("blue");
+        }
         
       }
       delay(100);
