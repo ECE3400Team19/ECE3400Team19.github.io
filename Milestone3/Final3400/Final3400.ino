@@ -21,13 +21,13 @@ int leftSensor, rightSensor, middleSensor;
 int lw = 3;
 int fw = 4;
 int rw = 2;
-//int pushButton = 7;
+int pushButton = A4;
 boolean IRDetected;
 boolean visited[81];
-boolean inFrontier[81];
+//boolean inFrontier[81];
 byte backpointer[81];
 StackArray <byte> frontier;
-int mazeWidth = 4;
+int mazeWidth = 9;
 
 
 void runFFT() {
@@ -84,7 +84,7 @@ void runMICFFT() {
 
 void goStraight() {
   //Serial.println("going straight lol");
-//  nextOrient = orient;
+    nextOrient = orient;
 //  leftSpeed = 95;
 //  rightSpeed = 85;
 //  left.write(leftSpeed);
@@ -107,7 +107,7 @@ void turnLeft() {
   left.write(85);
   right.write(85);
   //delay(800);
-  delay(600);
+  delay(590);
 }
 
 void turnRight() {
@@ -125,7 +125,7 @@ void turnRight() {
   left.write(95);
   right.write(95);
   //delay(800);
-  delay(600);
+  delay(750);
 }
 
 void turnAround() {
@@ -139,8 +139,8 @@ void turnAround() {
   delay(200);
   left.write(95);
   right.write(95);
-  //delay(1800);
-  delay(1600);
+  delay(2000);
+  
 }
 
 void setup() {
@@ -152,7 +152,7 @@ void setup() {
   pinMode(lw, INPUT);
   pinMode(fw, INPUT);
   pinMode(rw, INPUT);
-  pinMode(7, INPUT); //push button
+  pinMode(pushButton, INPUT); 
 
   radio.begin();
   radio.setRetries(15, 15);
@@ -197,7 +197,7 @@ void checkLineSensors(){
 
 void waitForMic() {
   while (1) {
-    int buttonState = digitalRead(7);
+    int buttonState = digitalRead(pushButton);
     Serial.print("buttonState ");
     Serial.println(buttonState);
     if (buttonState == HIGH) break;
@@ -248,7 +248,76 @@ void loop() {
       Serial.println(F("rw detected"));
       seen |= B0001;
     }
-
+    if (frontier.peek() == 0 && !visited[0]){
+        unsigned long transmission = 0;
+          transmission |= posY << 12;
+          transmission |= posX << 8;
+          transmission |= IRDetected << 4;
+          byte leftWall = seen >> 2 & B01;
+          byte frontWall = seen >> 1 & B001;
+          byte rightWall = seen & B001;
+          byte northWall;
+          byte southWall;
+          byte eastWall;
+          byte westWall;
+          eastWall = leftWall;
+          southWall = frontWall;
+          westWall = rightWall;
+          transmission |= northWall << 3;
+          transmission |= southWall << 2;
+          transmission |= eastWall << 1;
+          transmission |= westWall;
+          //send over Radio and wait for a response
+          radio.stopListening();
+          bool ok = radio.write( &transmission, sizeof(unsigned long) );
+          //if (ok) Serial.print("ok...");
+          //else Serial.println("failed");
+          //-------------------------------------------------------------------------------------------------------------------------
+          //response waiting loop, may change it / remove it if it hampers performance too much or line following gets thrown off
+          radio.startListening();
+          unsigned long started_waiting_at = millis();
+          bool timeout = false;
+          while ( ! radio.available() && ! timeout ) {
+            if (millis() - started_waiting_at > 200 ) timeout = true;
+      
+              //--------------------------------------------
+           if ( middleSensor < 800) {
+              //Serial.println("going straight");
+            left.write(100);
+            right.write(80);
+          }
+           else {
+              if (leftSensor < 850) {
+                //TURN LEFT
+                //Serial.println("turning left onto line");
+                left.write(85);
+                right.write(85);
+              }
+              if (rightSensor < 800) {
+                //TURN RIGHT
+                // Serial.println("turning right onto line")
+                left.write(95);
+                right.write(95);
+              }
+            }
+            //-----------------------------------------------
+          }
+          // Describe the results
+          if ( timeout )
+          {
+            //Serial.println("Failed, response timed out.\n\r");
+          }
+          else
+          {
+            // Grab the response, compare, and send to debugging spew
+            unsigned long got_time;
+            radio.read( &got_time, sizeof(unsigned long) );
+      
+            // Spew it
+            Serial.print("Got response");
+            Serial.println(got_time, BIN);
+          }
+          }
     unsigned long orientPosition = runDFS(posX, posY, seen, orient, IRDetected);
     orient = orientPosition >> 8;
     byte currentPos = orientPosition & B11111111;
@@ -264,8 +333,8 @@ void loop() {
   }
   //straight line following
   else if ( middleSensor < 800) {
-    left.write(95);
-    right.write(85);
+        left.write(100);
+        right.write(80);
   }
   else {
     if (leftSensor < 850) {
@@ -301,6 +370,7 @@ unsigned long runDFS(int posX, int posY, int seen, int orient, int robotDetected
   Serial.println(F("-----entering DFS-----"));
   left.write(90); //stop the robot 
   right.write(90);
+  delay(100);
 //  unsigned int leftWall = seen >> 2 & B01;
 //  unsigned int frontWall = seen >> 1 & B001;
 //  unsigned int rightWall = seen & B001;
@@ -341,7 +411,12 @@ unsigned long runDFS(int posX, int posY, int seen, int orient, int robotDetected
         break;
   }
   byte n = frontier.pop();
-  inFrontier[n] = 0;
+  if (visited[n]){
+    unsigned long value = encodePos(posX, posY);
+    value |= orient << 8;
+    return value;
+  }
+  //inFrontier[n] = 0;
   Serial.print(F("fpos: "));
   Serial.println(n);
   byte currentPos;
@@ -353,12 +428,12 @@ unsigned long runDFS(int posX, int posY, int seen, int orient, int robotDetected
       Serial.print(F("currpos: "));
       Serial.println(currentPos);
       if (backpointer[n] == currentPos){
-        orientPosition = moveToNode(currentPos, n, orient, seen);
+        orientPosition = moveToNode(currentPos, n, orient, seen, 1); //1 indicates we should transmit over radio
         orient = orientPosition >> 8;
         currentPos = orientPosition & B11111111;
       }
       else{
-        orientPosition = moveToNode(currentPos, backpointer[currentPos], orient, seen);
+        orientPosition = moveToNode(currentPos, backpointer[currentPos], orient, seen, 0); //0 indicates do not transmit over radio
         orient = orientPosition >> 8;
         currentPos = orientPosition & B11111111;        
       }
@@ -407,103 +482,109 @@ unsigned long runDFS(int posX, int posY, int seen, int orient, int robotDetected
       //facing North
       Serial.println(F("facing N"));
        
-      if (!(westWall || visited[n-1] == 1 || inFrontier[n-1] )){
+      if (!(westWall || visited[n-1] == 1)){
         Serial.print(F("add pos: "));
-        Serial.println(n - mazeWidth);
+        Serial.println(n - 1);
         frontier.push(n - 1);
         backpointer[n-1] = n;
-        inFrontier[n-1] = 1;
+        //inFrontier[n-1] = 1;
       }
-      if (!(eastWall|| visited[n+ 1] == 1 || inFrontier[n+1] )){
+      if (!(eastWall|| visited[n+ 1] == 1)){
         Serial.print(F("add pos: "));
         Serial.println(n + 1);
         frontier.push(n + 1);
         backpointer[n+1]=n;
-        inFrontier[n+1] = 1;
+        
       }
-      if (!(northWall || robotDetected || visited[n-mazeWidth] == 1 || inFrontier[n - mazeWidth])){
+      if (!(northWall || robotDetected || visited[n-mazeWidth] == 1)){
         Serial.print(F("add pos: "));
         Serial.println(n - mazeWidth);
         frontier.push(n-mazeWidth);
         backpointer[n-mazeWidth]=n;
-        inFrontier[n - mazeWidth] = 1;
+        
       }
       break;
     case (1):
       //facing East
       Serial.println(F("facing E"));
-      if (!(northWall || visited[n - mazeWidth] == 1 || inFrontier[n - mazeWidth])){
+      if (n == 8){
+        Serial.println(F("n == 8"));
+        Serial.println(visited[9]);
+        Serial.println(robotDetected);
+        Serial.println(eastWall);
+      }
+      if (!(northWall || visited[n - mazeWidth] == 1 )){
         Serial.print(F("add pos: "));
         Serial.println(n - mazeWidth);
         frontier.push(n-mazeWidth); 
         backpointer[n-mazeWidth]=n;
-        inFrontier[n - mazeWidth] = 1;
+        
       }
-      if (!(southWall || visited[n + mazeWidth] == 1 || inFrontier[n + mazeWidth] )){
+      if (!(southWall || visited[n + mazeWidth] == 1  )){
         Serial.print(F("add pos: "));
         Serial.println(n + mazeWidth);
         frontier.push(n + mazeWidth);
         backpointer[n+mazeWidth]=n;
-        inFrontier[n + mazeWidth] = 1;
+        
       }
-      if (!(eastWall || robotDetected || visited[n + 1] == 1 || inFrontier[n + 1] )){
+      if (!(eastWall || robotDetected || visited[n + 1] == 1  )){
         Serial.print(F("add pos: "));
         Serial.println(n + 1);
         frontier.push(n + 1);
         backpointer[n+1]=n;
-        inFrontier[n +1] = 1;
+        
       }
       break;
 
     case (2):
       //facing South
       Serial.println(F("facing S"));
-      if (!(westWall || visited[n - 1] == 1 || inFrontier[n - 1] )){
+      if (!(westWall || visited[n - 1] == 1  )){
         Serial.print(F("add pos: "));
         Serial.println(n -1);        
         frontier.push(n -1);
         backpointer[n - 1]=n;
-        inFrontier[n - 1] =1;
+       
       }
-      if (!(eastWall || visited[n + 1] == 1 || inFrontier[n + 1])){
+      if (!(eastWall || visited[n + 1] == 1 )){
         Serial.print(F("add pos: "));
         Serial.println(n + 1);
         frontier.push(n + 1);
         backpointer[n+1]=n;
-        inFrontier[n + 1] = 1;
+       
       }
 
-      if (!(southWall || robotDetected || visited[n+mazeWidth] == 1 || inFrontier[n + mazeWidth])){
+      if (!(southWall || robotDetected || visited[n+mazeWidth] == 1 )){
         Serial.print(F("add pos: "));
         Serial.println(n + mazeWidth);        
         frontier.push(n+mazeWidth);
         backpointer[n+mazeWidth]=n;
-        inFrontier[n + mazeWidth] = 1;
+        
       }
       break;
       case (3):
       //facing West
       Serial.println(F("facing W"));
-      if (!(southWall || visited[n + mazeWidth] == 1 || inFrontier[n + mazeWidth])){
+      if (!(southWall || visited[n + mazeWidth] == 1 )){
         Serial.print(F("add pos: "));
         Serial.println(n + mazeWidth);        
         frontier.push(n + mazeWidth); 
         backpointer[n+mazeWidth]=n;
-        inFrontier[n + mazeWidth] = 1;
+        ;
       }
-      if (!(northWall || visited[n - mazeWidth] == 1 || inFrontier[n - mazeWidth])){
+      if (!(northWall || visited[n - mazeWidth] == 1 )){
         Serial.print(F("add pos: "));
         Serial.println(n - mazeWidth);        
         frontier.push(n-mazeWidth);
         backpointer[n-mazeWidth]=n;
-        inFrontier[n - mazeWidth] = 1;
+        
       }
-      if (!(westWall || robotDetected || visited[n - 1] == 1 || inFrontier[n - 1])){
+      if (!(westWall || robotDetected || visited[n - 1] == 1 )){
         Serial.print(F("add pos: "));
         Serial.println(n -1);        
         frontier.push(n -1);
         backpointer[n-1]=n;
-        inFrontier[n - 1] = 1;
+     
       }
       break;
     default:
@@ -524,7 +605,7 @@ byte encodePos(int posX, int posY){
 }
 
 
-unsigned long moveToNode(byte curr, byte goal, int orient, int seen){
+unsigned long moveToNode(byte curr, byte goal, int orient, int seen, bool transmit){
   posX = curr % mazeWidth;
   posY = curr/mazeWidth;
   switch (orient){
@@ -627,109 +708,105 @@ unsigned long moveToNode(byte curr, byte goal, int orient, int seen){
       default:
         break;
   }
-    
-    unsigned long transmission = 0;
-    transmission |= posY << 12;
-    transmission |= posX << 8;
-    //the rest is treasure stuff we haven't gotten to yet
-    transmission |= IRDetected << 4;
-//  unsigned int leftWall = seen >> 2 & B01;
-//  unsigned int frontWall = seen >> 1 & B001;
-//  unsigned int rightWall = seen & B001;
-//  unsigned int northWall;
-//  unsigned int southWall;
-//  unsigned int eastWall;
-//  unsigned int westWall;
-    byte leftWall = seen >> 2 & B01;
-    byte frontWall = seen >> 1 & B001;
-    byte rightWall = seen & B001;
-    byte northWall;
-    byte southWall;
-    byte eastWall;
-    byte westWall;
-    
-  switch (orient){
-    case (0):
-        westWall = leftWall;
-        northWall = frontWall;
-        eastWall = rightWall;
-        break;
-    case (1):
-        northWall = leftWall;
-        eastWall = frontWall;
-        southWall = rightWall;
-        break;
-    case (2):
-        eastWall = leftWall;
-        southWall = frontWall;
-        westWall = rightWall;
-        break;
-    case (3):
-        southWall = leftWall;
-        westWall = frontWall;
-        northWall = rightWall;
-        break;
-    default:
-        break;
-  }
-    transmission |= northWall << 3;
-    transmission |= southWall << 2;
-    transmission |= eastWall << 1;
-    transmission |= westWall;
 
-
-    
-    //send over Radio and wait for a response
-    radio.stopListening();
-    
-    bool ok = radio.write( &transmission, sizeof(unsigned long) );
-    //if (ok) Serial.print("ok...");
-    //else Serial.println("failed");
-
-    //-------------------------------------------------------------------------------------------------------------------------
-    //response waiting loop, may change it / remove it if it hampers performance too much or line following gets thrown off
-    radio.startListening();
-    unsigned long started_waiting_at = millis();
-    bool timeout = false;
-    while ( ! radio.available() && ! timeout ) {
-      if (millis() - started_waiting_at > 200 ) timeout = true;
-
-        //--------------------------------------------
-     if ( middleSensor < 800) {
-        //Serial.println("going straight");
-        left.write(95);
-        right.write(85);
+  
+  if (transmit){  
+            unsigned long transmission = 0;
+            transmission |= posY << 12;
+            transmission |= posX << 8;
+            //the rest is treasure stuff we haven't gotten to yet
+            transmission |= IRDetected << 4;
+            byte leftWall = seen >> 2 & B01;
+            byte frontWall = seen >> 1 & B001;
+            byte rightWall = seen & B001;
+            byte northWall;
+            byte southWall;
+            byte eastWall;
+            byte westWall;
+            
+          switch (orient){
+            case (0):
+                westWall = leftWall;
+                northWall = frontWall;
+                eastWall = rightWall;
+                break;
+            case (1):
+                northWall = leftWall;
+                eastWall = frontWall;
+                southWall = rightWall;
+                break;
+            case (2):
+                eastWall = leftWall;
+                southWall = frontWall;
+                westWall = rightWall;
+                break;
+            case (3):
+                southWall = leftWall;
+                westWall = frontWall;
+                northWall = rightWall;
+                break;
+            default:
+                break;
+          }
+            transmission |= northWall << 3;
+            transmission |= southWall << 2;
+            transmission |= eastWall << 1;
+            transmission |= westWall;
+            //send over Radio and wait for a response
+            radio.stopListening();
+          
+            bool ok = radio.write( &transmission, sizeof(unsigned long) );
+            //if (ok) Serial.print("ok...");
+            //else Serial.println("failed");
+        
+            //-------------------------------------------------------------------------------------------------------------------------
+            //response waiting loop, may change it / remove it if it hampers performance too much or line following gets thrown off
+            radio.startListening();
+            unsigned long started_waiting_at = millis();
+            bool timeout = false;
+            while ( ! radio.available() && ! timeout ) {
+              if (millis() - started_waiting_at > 200 ) timeout = true;
+        
+                //--------------------------------------------
+             if ( middleSensor < 800) {
+                //Serial.println("going straight");
+                left.write(100);
+                right.write(80);
+            }
+             else {
+                if (leftSensor < 850) {
+                  //TURN LEFT
+                  //Serial.println("turning left onto line");
+                  left.write(85);
+                  right.write(85);
+                }
+                if (rightSensor < 800) {
+                  //TURN RIGHT
+                  // Serial.println("turning right onto line")
+                  left.write(95);
+                  right.write(95);
+                }
+              }
+              //-----------------------------------------------
+            }
+            // Describe the results
+            if ( timeout )
+            {
+              //Serial.println("Failed, response timed out.\n\r");
+            }
+            else
+            {
+              // Grab the response, compare, and send to debugging spew
+              unsigned long got_time;
+              radio.read( &got_time, sizeof(unsigned long) );
+        
+              // Spew it
+              Serial.print("Got response");
+              Serial.println(got_time, BIN);
+            }
     }
-     else {
-        if (leftSensor < 850) {
-          //TURN LEFT
-          //Serial.println("turning left onto line");
-          left.write(85);
-          right.write(85);
-        }
-        if (rightSensor < 800) {
-          //TURN RIGHT
-          // Serial.println("turning right onto line")
-          left.write(95);
-          right.write(95);
-        }
-      }
-      //-----------------------------------------------
-    }
-    // Describe the results
-    if ( timeout )
-    {
-      //Serial.println("Failed, response timed out.\n\r");
-    }
-    else
-    {
-      // Grab the response, compare, and send to debugging spew
-      unsigned long got_time;
-      radio.read( &got_time, sizeof(unsigned long) );
-
-      // Spew it
-      Serial.print("Got response");
-      Serial.println(got_time, BIN);
+    else{
+      delay(100);
     }
     //--------------------------------------------------------------------------------------------------------------------
     
@@ -780,8 +857,8 @@ void moveToIntersection(){
     }
   else if ( middleSensor < 800) {
     //Serial.println("going straight");
-    left.write(95);
-    right.write(85);
+        left.write(100);
+        right.write(80);
   }
   else {
     if (leftSensor < 850) {
@@ -807,15 +884,15 @@ int checkWalls(){
       seen |= B1000;
     }
     if (digitalRead(lw)){  
-      Serial.println("lw detected");  
+      Serial.println(F("lw detected"));  
       seen |= B0100;
     }
     if (digitalRead(fw)){  
-      Serial.println("fw detected");  
+      Serial.println(F("fw detected"));  
       seen |= B0010;
     }
     if (digitalRead(rw)){
-      Serial.println("rw detected");     
+      Serial.println(F("rw detected"));     
       seen |= B0001;
     }
     return seen;
