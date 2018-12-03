@@ -115,12 +115,12 @@ void turnRight() {
   Serial.println(F("turning right"));
   left.write(95);
   right.write(85);
-  //Serial.print("orient in turnRight : ");
-  //Serial.println(orient);
+  Serial.print("orient in turnRight : ");
+  Serial.println(orient);
   nextOrient = orient + 1;
   if (nextOrient == 4) nextOrient = 0;
-  //Serial.print("nextOrient in turnRight : ");
-  //Serial.println(nextOrient);
+  Serial.print("nextOrient in turnRight : ");
+  Serial.println(nextOrient);
   delay(200);
   left.write(95);
   right.write(95);
@@ -370,14 +370,8 @@ unsigned long runDFS(int posX, int posY, int seen, int orient, int robotDetected
   Serial.println(F("-----entering DFS-----"));
   left.write(90); //stop the robot 
   right.write(90);
-  delay(100);
-//  unsigned int leftWall = seen >> 2 & B01;
-//  unsigned int frontWall = seen >> 1 & B001;
-//  unsigned int rightWall = seen & B001;
-//  unsigned int northWall;
-//  unsigned int southWall;
-//  unsigned int eastWall;
-//  unsigned int westWall;
+  delay(150);
+
   byte leftWall = seen >> 2 & B01;
   byte frontWall = seen >> 1 & B001;
   byte rightWall = seen & B001;
@@ -448,21 +442,25 @@ unsigned long runDFS(int posX, int posY, int seen, int orient, int robotDetected
         westWall = leftWall;
         northWall = frontWall;
         eastWall = rightWall;
+        southWall = 0;
         break;
     case (1):
         northWall = leftWall;
         eastWall = frontWall;
         southWall = rightWall;
+        westWall = 0;
         break;
     case (2):
         eastWall = leftWall;
         southWall = frontWall;
         westWall = rightWall;
+        northWall = 0;
         break;
     case (3):
         southWall = leftWall;
         westWall = frontWall;
         northWall = rightWall;
+        eastWall = 0;
         break;
     default:
         break;
@@ -605,9 +603,10 @@ byte encodePos(int posX, int posY){
 }
 
 
-unsigned long moveToNode(byte curr, byte goal, int orient, int seen, bool transmit){
+unsigned long moveToNode(byte curr, byte goal, int o, int seen, bool transmit){
   posX = curr % mazeWidth;
   posY = curr/mazeWidth;
+  orient = o;
   switch (orient){
     case(0):
       //facing North
