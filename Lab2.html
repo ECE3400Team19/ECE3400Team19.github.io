@@ -68,9 +68,9 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
        Here is a picture of our circuit and a diagram:</p>
        <br>
        <img src="Acoustic Circuit.JPG" width="330" height="300" alt="acoustic-circuit">
-       <br>
+       <br><br>
        <img src="mic_schematic.png" width="330" height="300" alt="mic-circuit">
-       <br>
+       <br><br>
        <p class="w3-text-gray">
        After building our circuit, we modified the example sketch from the FFT library, fft_adc_serial, to use analogRead(), the built-in method for reading an analog input, instead of running the ADC in free-running mode. The frequency 660Hz is in the 5th bin using the ADC, but in the 20th bin using analogRead() because analogRead() runs at a much slower sampling rate. The code is shown below:
       </p>
@@ -134,9 +134,9 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
         The setup and oscilloscope looked as follows:</p>
       <br>
       <img src="Acoustic Test.JPG" width="320" height="320" alt="tone generator setup" img align="left">
-      <br>
+      <br><br>
       <img src="oscilloscope_audio.JPG" width="320" height="320" alt="tone generator setup" img align="center">
-      <br>
+      <br><br>
       <p class="w3-text-gray">
       The frequency of the output measured by the oscilloscope was 660Hz and the voltage was 1.42 Vpp.
       <br><br>
@@ -171,9 +171,9 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
       The second stage is a simple RC low-pass filter.  With resistor and capacitor values as shown, it has a corner frequency at roughly 10 kHz.  These values were chosen so the filter would pass 6 kHz frequencies while rejecting frequencies at 18 kHz.  With this configuration, we were able to cut the amplitude of 18kHz signals to less than 50% while keeping 6kHz signals within 10% of their initial amplitude.  This filter, along with software on the board not checking bins corresponding to 18 kHz, allows us to reject the decoy signal.</p>
       <br>
       <img src="Optical_6kHz_Pass.JPG" width="504" height="378" alt="6kHz" img align="center">
-      <br>
+      <br><br>
       <img src="Optical_18kHz_reject.JPG" width="504" height="378" alt="18kHz" img align="center">
-      <br>
+      <br><br>
       <p class="w3-text-gray">
       The third stage is a non-inverting amplifier with a gain of 51x.  With a maximum range of 0-1 V, there is a possibility of the output signal clipping at the rails of the Op-Amp (0 and 5 V).  This issue of clipping is not a significant concern, as we are prioritizing early detection.  That is to say, we want to be able to see the robot from far away and react, and our reaction should avoid the case where the detector gets close enough to the other IR hat for clipping to be an issue (i.e. a collision).  With a gain of 51x, our circuit can readily detect an IR hat at a distance of 1 square away (30cm).  It’s possible that we could increase this gain further to increase our detection range but this will depend on our specific needs for detecting other robots down the line.
     </p>
