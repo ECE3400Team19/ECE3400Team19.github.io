@@ -18,9 +18,11 @@ int middlePin = A5;
 int rightPin = A1; 
 int IR = A3;
 int leftSensor, rightSensor, middleSensor;
-int lw = 3;
-int fw = 4;
-int rw = 2;
+int lw = 8; //3 to 8
+int fw = 4; 
+int rw = 7; //2 to 7
+int color = 2;
+int ack = 3;
 int pushButton = A4;
 boolean IRDetected;
 boolean visited[81];
@@ -107,7 +109,7 @@ void turnLeft() {
   left.write(85);
   right.write(85);
   //delay(800);
-  delay(590);
+  delay(750);
 }
 
 void turnRight() {
@@ -196,22 +198,29 @@ void checkLineSensors(){
 }
 
 void waitForMic() {
+  int counter = 0;
   while (1) {
     int buttonState = digitalRead(pushButton);
     Serial.print("buttonState ");
     Serial.println(buttonState);
     if (buttonState == HIGH) break;
-//    runMICFFT();
-//    Serial.println("waiting for 660 tone");
-//    Serial.println(fft_log_out[10]);
-//    if (fft_log_out[10] > 60) {
-//      //Serial.println(fft_log_out[10]);
-//      Serial.println("660 Hz signal detected");
-//      break;
-//    }
+    if (counter > 6) break;
+    runMICFFT();
+    Serial.println("waiting for 660 tone");
+    Serial.println(fft_log_out[10]);
+    if (fft_log_out[10] > 60) {
+      //Serial.println(fft_log_out[10]);
+      Serial.println("660 Hz signal detected");
+      counter++;
+    }
+    else{
+      counter = 0;
+    }
     delay(50);
   }
 }
+
+
 
 void loop() {
   leftSensor = analogRead(leftPin);
@@ -220,10 +229,12 @@ void loop() {
 
   if (leftSensor < 850  && middleSensor < 800 && rightSensor < 800) {
     Serial.println(F("at an intersection"));
+    left.write(90);
+    right.write(90);
     runFFT();
     IRDetected = 0;
     for (int i = 15; i < 25; i++) { //changed
-      if (fft_log_out[i] > 125) {
+      if (fft_log_out[i] > 83) {
         //Serial.println(fft_log_out[i]);
         IRDetected = 1;
         break;
@@ -248,6 +259,7 @@ void loop() {
       Serial.println(F("rw detected"));
       seen |= B0001;
     }
+        
     unsigned long orientPosition = runDFS(posX, posY, seen, orient, IRDetected);
     orient = orientPosition >> 8;
     byte currentPos = orientPosition & B11111111;
@@ -263,8 +275,8 @@ void loop() {
   }
   //straight line following
   else if ( middleSensor < 800) {
-                left.write(105);
-                right.write(75);
+      left.write(105);
+      right.write(75);
   }
   else {
     if (leftSensor < 850) {
@@ -334,6 +346,9 @@ unsigned long runDFS(int posX, int posY, int seen, int orient, int robotDetected
     default:
         break;
   }
+  //bool redShape = (leftWall && digitalRead(ack) && !digitalRead(color));
+  //bool blueShape = (leftWall && digitalRead(ack) && digitalRead(color));
+
   byte n = frontier.pop();
   if (visited[n]){
     unsigned long value = encodePos(posX, posY);
@@ -352,12 +367,14 @@ unsigned long runDFS(int posX, int posY, int seen, int orient, int robotDetected
       Serial.print(F("currpos: "));
       Serial.println(currentPos);
       if (backpointer[n] == currentPos){
-        orientPosition = moveToNode(currentPos, n, orient, seen, 1); //1 indicates we should transmit over radio
+        //orientPosition = moveToNode(currentPos, n, orient, seen, 1, redShape, blueShape); //1 indicates we should transmit over radio
+        orientPosition = moveToNode(currentPos, n, orient, seen, 1);
         orient = orientPosition >> 8;
         currentPos = orientPosition & B11111111;
       }
       else{
-        orientPosition = moveToNode(currentPos, backpointer[currentPos], orient, seen, 0); //0 indicates do not transmit over radio
+        //orientPosition = moveToNode(currentPos, backpointer[currentPos], orient, seen, 0, redShape, blueShape); //0 indicates do not transmit over radio
+        orientPosition = moveToNode(currentPos, backpointer[currentPos], orient, seen, 0);
         orient = orientPosition >> 8;
         currentPos = orientPosition & B11111111;        
       }
@@ -527,6 +544,7 @@ byte encodePos(int posX, int posY){
 
 
 unsigned long moveToNode(byte curr, byte goal, int o, int seen, bool transmit){
+  
   posX = curr % mazeWidth;
   posY = curr/mazeWidth;
   orient = o;
@@ -645,10 +663,10 @@ unsigned long moveToNode(byte curr, byte goal, int o, int seen, bool transmit){
             byte leftWall = seen >> 2 & B01;
             byte frontWall = seen >> 1 & B001;
             byte rightWall = seen & B001;
-            byte northWall;
-            byte southWall;
-            byte eastWall;
-            byte westWall;
+            byte northWall = 0;
+            byte southWall = 0;
+            byte eastWall = 0;
+            byte westWall = 0;
             
           switch (orient){
             case (0):
@@ -767,16 +785,32 @@ void moveToIntersection(){
     rightSensor = analogRead(rightPin);
     if (leftSensor < 850  && middleSensor < 800 && rightSensor < 800){
       
-  //    runFFT(); //true indicates run FFT for IR
-  //    //check if IR sensor detects another robot based on FFT
-  //    IRDetected = 0;
-  //    for (int i = 15; i < 25; i++){ //changed
-  //      if (fft_log_out[i] > 125){
-  //        //Serial.println(fft_log_out[i]);
-  //        IRDetected = 1;
-  //        break;
-  //      }
-  //    }  
+      runFFT(); 
+      //check if IR sensor detects another robot based on FFT
+      IRDetected = 0;
+      for (int i = 15; i < 25; i++){ //changed
+        if (fft_log_out[i] > 83){
+          //Serial.println(fft_log_out[i]);
+          IRDetected = 1;
+          break;
+        }
+      } 
+      int counter = 0; 
+      while (IRDetected){
+        left.write(90);
+        right.write(90);
+        runFFT();
+        if (counter > 4) IRDetected = 0;
+        if (fft_log_out[15] < 83 && fft_log_out[16] < 83 && fft_log_out[17] < 83 && 
+        fft_log_out[18] < 83 && fft_log_out[19] < 83 && fft_log_out[20] < 83 && 
+        fft_log_out[21] < 83 && fft_log_out[22] < 83 && fft_log_out[23] < 83 && fft_log_out[24] < 83){
+          counter++;
+        }
+        else {
+          counter = 0;
+        }
+        delay(50);
+      }
   
     //TODO: figure out what to do if robot is in path
       return;
