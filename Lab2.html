@@ -68,6 +68,7 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
        Here is a picture of our circuit and a diagram:
        <br>
        <img src="Acoustic Circuit.JPG" width="330" height="300" alt="acoustic-circuit">
+       <br>
        <img src="mic_schematic.png" width="330" height="300" alt="mic-circuit" img align = "right">
        <br>
        After building our circuit, we modified the example sketch from the FFT library, fft_adc_serial, to use analogRead(), the built-in method for reading an analog input, instead of running the ADC in free-running mode. The frequency 660Hz is in the 5th bin using the ADC, but in the 20th bin using analogRead() because analogRead() runs at a much slower sampling rate. The code is shown below:
@@ -131,6 +132,7 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
         The setup and oscilloscope looked as follows:
       <br>
       <img src="Acoustic Test.JPG" width="320" height="320" alt="tone generator setup" img align="left">
+      <br>
       <img src="oscilloscope_audio.JPG" width="320" height="320" alt="tone generator setup" img align="center">
       <br>
       The frequency of the output measured by the oscilloscope was 660Hz and the voltage was 1.42 Vpp.
@@ -164,12 +166,15 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
       The second stage is a simple RC low-pass filter.  With resistor and capacitor values as shown, it has a corner frequency at roughly 10 kHz.  These values were chosen so the filter would pass 6 kHz frequencies while rejecting frequencies at 18 kHz.  With this configuration, we were able to cut the amplitude of 18kHz signals to less than 50% while keeping 6kHz signals within 10% of their initial amplitude.  This filter, along with software on the board not checking bins corresponding to 18 kHz, allows us to reject the decoy signal.
       <br>
       <img src="Optical_6kHz_Pass.JPG" width="504" height="378" alt="6kHz" img align="center">
+      <br>
       <img src="Optical_18kHz_reject.JPG" width="504" height="378" alt="18kHz" img align="center">
       <br>
       The third stage is a non-inverting amplifier with a gain of 51x.  With a maximum range of 0-1 V, there is a possibility of the output signal clipping at the rails of the Op-Amp (0 and 5 V).  This issue of clipping is not a significant concern, as we are prioritizing early detection.  That is to say, we want to be able to see the robot from far away and react, and our reaction should avoid the case where the detector gets close enough to the other IR hat for clipping to be an issue (i.e. a collision).  With a gain of 51x, our circuit can readily detect an IR hat at a distance of 1 square away (30cm).  It’s possible that we could increase this gain further to increase our detection range but this will depend on our specific needs for detecting other robots down the line.
       <br>
       <img src="Optical_1_Square_Waveforms.JPG" width="504" height="378" alt="Detection Range" img align="center">
+      <br>
       <img src="Optical_Hat_1_Square.JPG" width="504" height="378" alt="Detection Range" img align="center">
+      <br>
     </p>
     <h3>Detecting the 6.08 kHz signal</h3>
     <p class="w3-text-gray">
@@ -178,6 +183,7 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
       To be able to detect the 6.08 kHz signal, we feed the output of our circuit as an analog input to the Arduino. To analyze the signals being read in by the phototransistor, we utilized the Arduino FFT library and modified the fft_adc_serial example sketch. The Arduino FFT library is a quick implementation of a standard FFT algorithm which operates on only real data. We used the FFT library to take in a 16-bit input organized amongst 256 frequency bins and gives an 8-bit logarithmic output. The Fast Fourier Transform (FFT) algorithm samples our signal and decomposes it into its various frequency components. Each component is a sinusoid at a particular frequency with its own amplitude and phase. After running the FFT algorithm using the fft_adc_serial sketch on our input, we were able to graph the logarithmic output vs. the signal input data.  Also included on this graph are the results for the 18kHz decoy for comparison:
       <br>
       <img src="IR_Graphs.png" width="480" height="288" alt="IR Signals">
+      <br>
     </p>
     <h3>FFT Analysis</h3>
     <p class="w3-text-gray">
@@ -267,9 +273,6 @@ The modified fft_adc_serial sketch is included below. As can be seen in the grap
     </div>
   </div>
 </div>
-
-
-
 <!-- Footer -->
 <footer class="w3-container w3-padding-64 w3-center w3-opacity">
  <p>Powered by <a href="https://www.w3schools.com/w3css/default.asp" target="_blank">w3.css</a></p>
