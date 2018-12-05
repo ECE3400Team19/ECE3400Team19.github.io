@@ -1,86 +1,10 @@
-# Lab 4: FPGA and Vision
-[Home](https://ece3400team19.github.io/)
+##IS “A BAN ON OFFENSIVE AUTONOMOUS WEAPONS BEYOND MEANINGFUL HUMAN CONTROL” GOING TO WORK?
+##By Team 19 – Asena Ulug, Cynthia Zelga, Laasya Renganathan, John Chukwunonso Nwankwo, Robert Morgowicz
 
-## Team Tasks
-For this lab, we split into two teams (Team Arduino and Team FPGA).  One to develop an FPGA module capable of detecting basic shapes from our OV7670 camera input, and another to pass this information onto our Arduino.
+  In March 2014, the Crimean peninsula was annexed from Ukraine by the Russian Federation by military takeover. Ukraine and many world leaders considered it to be a violation of international law. Sanctions were imposed on Russian but the takeover increased Russia’s position in the petroleum regulatory economies, to which it has continued to trade with. In April 2015, the Islamic Republic of Iran got into a joint deal to redesign, convert and reduce its nuclear facilities earning billions of dollars and oil revenue as deal bond, but has continued to be revolutionary in other nuclear designs selling around the world. Today, we are concerned about investing in autonomous weapons for warfare and truth remains that it is only a question of time before waring nations go all out thereby the making the ban impossible because of the stakes in the concept of war.
 
-* Arduino Team: Asena, Laasya
-* FPGA Team: Cynthia, Robert, Nonso
+  On our study case, ‘Musk/Hawking Open Letter On Autonomous Weapons’ which is an open letter from the Artificial Intelligence (AI) and Robotics researchers, we saw that it was concluded that AI has great benefit potential to human in many other ways other than warfare, but the ethical question is, why should we ever consider it for warfare?  It is almost inevitable that wars abound in our world today, as a means of dominance and a means of resolving conflicts between tribes and nations, ethically we would be glad to have conversations like, taking other approaches to produce best outcome for its citizens but we must note that war has never left any nation in a fair condition so why engage in it at all, bringing us to the bigger question of who benefits from these wars in the first place?
 
-## Lab Description
- This lab was the first step in adding a treasure detection system to our robot capable of recognizing basic shapes.  In this lab we became familiar with the camera and working on FPGA, reading the camera and creating a basic image processor capable of detecting colors.  
+  In most warfare cases, as cited in our first paragraph above, we see that disputes leading to war arises from government’s urge to dominate in resilient ways and in most cases end up enriching the stakeholders, gaining regional and political control. Who then are these stakeholders? They are major players in war, nations who continuously seek to gained dominance and profits from war conditions, and would only be question of time (in the near future) before offensive autonomous weapons beyond meaningful human control would help take over their dirty work of war engagement. Today, Jerusalem is waring against Palestine, Syria against its own nation, all in the bid for territorial control and yet the United Nation’s Security Council cannot do much about this because its member councils with veto powers are those engaging in these territorial battle.
 
-## Arduino
- The first step for the Arduino side of the lab was to determine and write to the correct registers in order to do the camera setup. In order to do so, we dug through the OV7670's camera documentation, and matched up each register description with the lab's specifications as detailed in the [prelab](https://docs.google.com/document/d/1JkrnMshaF4_Zh5bovh0Lob4HR2Z2JvsXUaYAb1SBo-s/edit?usp=sharing).
- We first needed to find the register that would enable reset of all previous register values. After this, we found registers that would enable the correct resolution format (QCIF) and our desired pixel pattern (RGB 565). We additionally adjusted scaling, enabled the use of an internal clock as external, mirror flipped the image, and changed the automatic gain scaling of the image using various registers on the camera. 
- In order to actually change the register contents, we used the ```OV7670_write_register(reg,val);``` function with the register hex id and desired value. We then iterated over the registers we edited and printed out the contents of those registers in our ```read_key_registers()``` function. Our main issue with this portion of the lab was that we could not actually write or read from these registers as the camera needed to be clocked externally from the FPGA; simply having the Arduino and camera connected did not suffice. Once we integrated all three components, this Arduino portion of the lab went smoothly. Finally, we implemented rudimentary color detection with LED feedback, which we'll describe further in the [integration](#integration) section.
- 
-
-## FPGA
-On the FPGA side, we first wrote an image into memory, then spit this image back out to the VGA display this required writing specific colors to memory at given times and hooking the output of the memory up to the VGA module.  We created a flag.  
-<img src="Lab04_Flag.jpeg" width="620" height="330" alt="SIgnal-Flag">
-The code to generate this flag was written in verilog as shown below.
-```
-always @ (WRITE_ADDRESS) begin
-		//write memory
-		if(VGA_PIXEL_X>(`SCREEN_WIDTH-1) || VGA_PIXEL_Y>(`SCREEN_HEIGHT-1))begin
-			W_EN = 1'b0;
-			pixel_data_RGB332 = 8'd0;
-		end
-		else begin
-			if ( VGA_PIXEL_X  >= 0 && VGA_PIXEL_X  <= 58) begin
-				pixel_data_RGB332 = RED;
-			end
-			else if ( VGA_PIXEL_X  >= 59 && VGA_PIXEL_X  <= 58*2) begin
-				pixel_data_RGB332 = 8'b11111111;
-			end
-			else begin
-				pixel_data_RGB332 = GREEN;
-			end
-			W_EN = 1'b1;
-		end
-end
-```
-Once we verified the memory block was updating correctly, we next sought about interfacing with the camera.  The camera sends 2 bytes off color data at a time, which our friends on the Arduino team told us was in an RGB565 configuration.  We had to reduce this to an RGB 332 configuration which was compatible with our VGA driver and storable in a single byte.  The final implementation we settled on was in the form of a finite state machine clocked by the incoming clock of the camera as shown below.  
-<img src="FSM_Diagram.PNG" width="490" height="478" alt="SIgnal-Flag">
-The FSM waits in idle until a row transmission begins.  Once there, it alternates between Byte 1 and Byte 2 until a row transmission finishes, when it transitions to line done.  When the entire image has been received, vsync will go high, at which point the FSM resets.  In Byte 1, the down sampler reads the first byte of camera data from GPIO and stores it in a register file.  In Byte 2, the down sampler reads the second byte from GPIO and concatenates bits from this new data and the data in the register file to create an 8-bit RGB332 value which is sent to memory.  
-
-## Integration
-With the two halves done, all that was left was putting them together (and a considerable amount of debugging).  We hooked the 8 data pins, HREF, PCLK, and VSYNC up to the FPGA as GPIO inputs and a single 24 MHz clock signal as an output to the camera to drive it.  We ran the register setup script that we created in the Arduino portion of the lab to initialize the correct register content. We additionally enabled the two registers required for the camera to output a "color bar" test image (as opposed to a live feed). With this test image setup, we observed correct operation, the camera updating a monitor with the color bar test image over VGA.  
-
-[] put an image of color bar; i don't have one -Laasya
-
-From here, we needed only disable a few registers to get live video feed from the camera.  To detect colors, we wrote a rudimentary verilog program to increment counters based on values of red or blue in excess of a threshold. This program sent 2 bits of output over GPIO to the Arduino. The Arduino recieved the "valid" and "color" bits sent over, and lit up red and blue LEDs according to this simple program:
-
-```
-int ackPin = 9;
-int colorPin =10;
-int redLED = 11;
-int blueLED = 12;
-void setup() {
-  // put your setup code here, to run once:
-  Serial.begin(9600);
-  Serial.print("start");
-  pinMode(ackPin, INPUT);
-  pinMode(colorPin, INPUT);
-  pinMode(redLED, OUTPUT);
-  pinMode(blueLED, OUTPUT);
-}
-
-void loop() {
-    if (digitalRead(ackPin)){
-      if (digitalRead(colorPin)) digitalWrite(blueLED, HIGH);
-      else digitalWrite(redLED, HIGH);
-      delay(100);
-      digitalWrite(redLED, LOW);
-      digitalWrite(blueLED, LOW);
-    }
-}
-```
-
-Here is a video of our color detection in action:
-<video width="480" height="640" controls muted>
-  <source src="color_detection.mp4" type="video/mp4">
-</video>
-
-The color displayed on the VGA monitor output is very clear, and improved once we powered the FPGA off of the Arduino and synced it with a common ground. This dissipated some of the noise in the heavy wiring required for this project.
+  Just as cited in cases of many autonomous cars incidents, where the owners of the cars or drivers are considered priority in the case of a crash, the investors would want to invest in a product that would appeal to the customers – in this case maximum safety, so does many investments and stakeholder prioritize their decisions to maximize profit, to which war and arms dealing are definitely part of it. In conclusion, we would be proud to argue on the contrary that the utilitarian test of what the best ways to engage in war, or the justice test of who the actions of war is fair to, or the virtue test of whether the actions taken reflecting anyone’s image but the truth remains that the subject of the application of AI in war from a stakeholders point of view would make it difficult to enforce the ban on autonomous weapons because the ethical reasoning should first arise from why should there be wars in the first place and since they abound it is only a question of time before the waring nations would go all out.
