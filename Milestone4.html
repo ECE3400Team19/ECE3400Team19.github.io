@@ -17,7 +17,7 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
 <div class="w3-top">
   <div class="w3-bar w3-red w3-card w3-left-align w3-large">
     <a class="w3-bar-item w3-button w3-hide-medium w3-hide-large w3-right w3-padding-large w3-hover-white w3-large w3-red" href="javascript:void(0);" onclick="myFunction()" title="Toggle Navigation Menu"><i class="fa fa-bars"></i></a>
-    <a href="Home.html" class="w3-bar-item w3-button w3-padding-large w3-hover-white">Home</a>
+    <a href="https://ece3400team19.github.io" class="w3-bar-item w3-button w3-padding-large w3-hover-white">Home</a>
     <a href= "Contract.html" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Contract</a>
     <a href="Lab1.html" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Lab 1</a>
     <a href="Milestone1.html" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Milestone 1</a>
@@ -27,6 +27,9 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
     <a href="Lab4.html" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Lab 4</a>
     <a href="Milestone3.html" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Milestone 3</a>
     <a href="Milestone4.html" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-white">Milestone 4</a>
+    <a href="Ethics_Homework.html" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Ethics Homework</a>
+    <a href="FinalDesign.html" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Final Design</a>
+    <a href="Photoshoot.html" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Photoshoot!</a>
   </div>
 
   <!-- Navbar on small screens -->
@@ -48,16 +51,69 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
 <div class="w3-row-padding w3-padding-64 w3-container">
   <div class="w3-content">
     <div class="w3-twothird">
-      <h2>Team Tasks</h2>
-      <h5 class="w3-padding-32">Group 1: Asena Ulug and Cynthia Zelga: Github creation and layout, Servo codes, sections 1, 2 & 3 lab write up, Robot motion
-      <br>Group 2: John Chukwunonso Nwankwo, Robert Morgowicz and Laasya Renganathan: Internal and external LED blink, sections 4, 5 & 6 lab write up, Robot assembly
+      <h2>Milestone Description</h2>
+      <h5 class="w3-padding-32">Milestone 4 required our robot to be able to:
+      <br>  * detect when there are/are not treasures
+      <br>  * successfully distinguish between red and blue treasures
+      <br>  * successfully distinguish a square, triangle, and diamond shape
       </h5>
-      <h2>Lab Description</h2>
-
-
-      <p class="w3-text-grey">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Excepteur sint
-        occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
-        laboris nisi ut aliquip ex ea commodo consequat.</p>
+      <h2>Milestone Materials</h2>
+      <h5>This milestone was an extension of Lab 4 and utilized the same materials:
+      <br>  * OV7670 camera
+      <br>  * Altera DE0 Nano FPGA
+      <br>  * Arduino Uno
+      </h5>
+      <h2>Shape Detection</h2>
+      <p class="w3-text-grey">Since we already had a decent method for color detection at the end of Lab 4, we decided to jump right into shape detection schemes.
+        This required redesigning our FSM to be able to distinguish between three different shapes.  Shape and pattern recognition is a complex problem, so we decided on the following method for determining the presence of a shape:
+        <br><br>
+        When the FSM first detects a red or blue pixel, it will enter a set of states corresponding to that color and stores the detected color in a register for output once the entire shape is processed.
+        The FSM then counts the rest of the pixels of that color for a given row by incrementing a value in another register, and stores this value in a register file once the row ends.
+        This process repeats for all subsequent rows until two consecutive rows are detected without any of the color at all, a pattern the FMS interprets as the shape ending.
+        All going well, the result of this process is an array of sorts which has the widths of lines of a specific color stored for each line in the image that a shape occupies.
+        <br><br>
+        From here, this array is interpreted.  A counter variable loops through the register file and compares adjacent elements.  From here, patterns in the widths can be detected.
+        If the widths stay about the same as Y increases, this suggests the presence of a square.  If they increase as Y increases, this suggests the presence of a triangle.
+        Finally, if they increase for a while, then begin to decrease, this suggests the presence of a diamond.
+        However, if none of these patterns are adhered to closely enough, this suggests there is no valid shape.
+        If one of these patterns is adhered to, and the shape is of sufficient size to be confident it is not a misdetection by the camera, the FSM takes the color bit stored in a register previously
+        and concatenates it with the shape code corresponding to the pattern detected.  Otherwise, the FSM outputs an invalid shape code and resets to prepare for another detection.
+        The FSM also resets when given a new image for obvious reasons.
+        <br><br>
+      </p>
+      <h2>Advantages and Disadvantages</h2>
+      <p class="w3-text-grey">This design has an advantage over static line-checking designs, as it can detect the presence of a shape given only a single pixel of the correct color,
+        which is to say, it can detect a shape anywhere in the frame as opposed to centered vertically in such a way that the statically detected lines will recognize it.  As such, this scheme
+        removes concerns over which lines to check and does not require knowledge of the camera's placement on the robot to function.
+        <br><br>
+        However, this implementation is also considerably more complex than the static counterpart.  It requires a register file large enough to hold entries for width counts of every Y coordinate (over 100)
+        as well as many superfluous registers for mid-execution width counts, loop control variables, and previous values for comparison.  The state logic is also highly complex.
+        All told, the final FSM design contained nearly 30 states even with optimizations such as only one set of final calculations for either color.
+        <br><br>
+        This complexity and other factors presented a large problem for debugging.  Since we did not have reliable access to an on-board debugger for the FPGA, we turned to sending outputs to
+        the arduino for debugging the FSM.  This proved ineffective, however, as the serial monitor used to spew information about the FSM for us to interpret was not nearly fast enough to keep up with the
+        module running at 50MHz.  As such, the data we could gather on the FSM was spotty at best and identifying errors in the code was an arduous process.  Combined with time constraints as the
+        competition date grew near, this meant that, despite our best efforts, we were unable to get the FSM working and decided to scrap shape detection altogether in favor of more robust
+        color detection.
+        <br><br>
+      </p>
+      <h2>Revamping Color Detection</h2>
+      <p class="w3-text-grey">
+      Having abandoned shapes, we focused on creating a more robust system for detecting blobs of color, even if we couldn't figure out what kind.  We went with a similar method to our Lab 4
+      color detection scheme: a majority vote of colored pixels.  For each pixel, if it was detected to be red, the FSM would increment a corresponding counter and likewise for blue.  On any
+      state, if the red count was above the blue count by a significant threshold, then the FSM would output that it had seen something red or vis versa for blue.  These counts were reset when a
+      new image arrived from the camera to be processed.  This resulted in a far simpler, and simpler to debug, 4 state FSM.
+      <br><br>
+      Once our design worked, we optimized it to try and reduce the rate of false-positives so as not to lose points on the competition.  This primarily meant an incremental design approach to
+      our threshold values, both for considering a pixel of a certain color, and for the larger counts of pixels.  In the color thresholds, we found considerable room to optimize.
+      Simply checking the bits corresponding to red or blue proved insufficient for reliable color detection.  We found that having thresholds for all three bit groups on our RGB 332 color format
+      was necessary for reliable color detection (i.e. having red be above a certain value and having blue and green below a certain value).  Considering the entire color was especially necessary
+      for the white walls the treasures were surrounded by, as they contain enough red and blue to trigger thresholds in either case, skewing the counts arbitrarily.
+      We also implemented software averaging on the Arduino side to require a steady stream of color detection to confirm the presence of a treasure.
+      <br><br>
+      Below is a video demonstration of our improved color detection with Red and Blue LEDs lighting up corresponding to their respective colors:
+      <br><br>
+      </p>
     </div>
 
     <div class="w3-third w3-center">

@@ -34,3 +34,12 @@ runDFS{
 Here is a video of our robot navigating a 4x5 maze!
 <iframe width="560" height="315" src="https://www.youtube.com/embed/m5x3R3dMZAY" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
+Our robot is able to navigate different maze configurations!!
+<iframe width="560" height="315" src="https://www.youtube.com/embed/qX5fpouX1v8" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+Our robot navigated the two mazes above as expected, using DFS for navigation and backtracking. We had difficultly transmitting to the GUI, so even when our robot navigated the maze properly, the incorrect walls or positions would show up on the GUI. 
+
+Our robot starts on a 660Hz tone and recognizes an IR hat, waits for the IR hat to move, then resumes exploring the maze:
+<iframe width="560" height="315" src="https://www.youtube.com/embed/8MXpFRq8EAk" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+
