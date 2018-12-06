@@ -56,7 +56,7 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
       <p>Here's a photo of our final robot design! What a beautiful boy</p>
 
       <h2>Introduction</h2>
-      <p class="w3-text-grey">
+      <p>
         This design report will serve as a condensed version of all of the tasks we have accomplished over the course of the semester.
         Those tasks include:
         <ul>
@@ -106,7 +106,7 @@ Loop:
     Else:
       Robot should go straight until the middle sensor detects a line
         </font></code></pre>
-
+      <font color="grey">
       This control loop remained relatively the same throughout our robot's design process.
       The main changes over the course of the semester to this line following feature were the actual orientation of the line sensors (the distance they were away from each other)
       and the functions performed when the robot is at an intersection, as the complexity of the robot increased.
@@ -120,19 +120,19 @@ Loop:
       We were able to neatly integrate our wall detection and handling code into this line detection algorithm by  creating a checkWalls() function that would run at an intersection.
       That function returns a 4-bit binary value (declared as an int) with the 3 LSBs corresponding to detection of a left, front, and right wall based off of the digitalRead value for each sensor.
       The wall detection control loop within the line following's intersection handling is shown below: <br><br>
-
-      <pre><code><font color="orange" width="500px">
-If at an intersection:
-  If there is no wall in front of us:
-    Robot moves based off of the maze traversal algorithm.
-  If there is a wall in front and on one of the sides:
-    Robot turns towards the side without a wall
-  If the middle sensor does not detect the white line, but the left sensor does:
-    Robot should turn counterclockwise until the middle line sensor returns to the line
-  If there is only a wall in the front:
-    Robot should turn based off of the maze traversal algorithm:
-  If there is a wall in every direction (F-L-R)
-    Robot turns around
+      </font>
+      <pre><code><font color="orange" width="500px">\
+        If at an intersection:
+          If there is no wall in front of us:
+            Robot moves based off of the maze traversal algorithm.
+          If there is a wall in front and on one of the sides:
+            Robot turns towards the side without a wall
+          If the middle sensor does not detect the white line, but the left sensor does:
+            Robot should turn counterclockwise until the middle line sensor returns to the line
+          If there is only a wall in the front:
+            Robot should turn based off of the maze traversal algorithm:
+          If there is a wall in every direction (F-L-R)
+            Robot turns around
 
         </font></code></pre>
       <br>
@@ -199,7 +199,7 @@ If at an intersection:
       After setting up timers on the FPGA, we then attempted to generate an initial live image creation correctly.
       Once we were able to produce a clear image, we updated the FPGA's image processor program to determine red and blue majority images in order to detect treasures.
       We did this by creating a four-state FSM for pixel count and characterization as shown below:<br>
-      <img src="Final_Des_FSM_Color.PNG" width="300" height="300" alt="acoustic-circuit">
+      <img src="Final_Des_FSM_Color.png" width="300" height="300" alt="acoustic-circuit">
       <br><br>
 
       Following this, we attempted to extend our code to be able to detect shapes.  The idea was to have a new FSM which could distingish between three shapes: Square, Triangle, and Diamond.
@@ -242,9 +242,10 @@ If at an intersection:
           Return current position of robot and its orientation
       </font></code></pre>
 
-
+      <font color="grey">
       After implementing the DFS, we were able to integrate it and its related subfunctions into our original code.
       Rather than utilizing the entire code file, here's a simplified control logic block that essentially maps out what our robot does:
+      </font>
       <br><br>
       <pre><code><font color="orange" width="500px">
         Setup
@@ -313,7 +314,19 @@ If at an intersection:
 
     <h2>Robot Cost</h2>
     <p class="w3-text-grey">
-      there should be a table here but I don't know how to figure that out :(
+      Bill of Materials
+          * 1 × Arduino Uno ($16)
+          * 2 × Continuous Rotation Servos ($13 ea)
+          * 1 × Battery Pack ($10)
+          * 3 × Line Sensors ($3 ea)
+          * 3 × Long Range IR Sensors ($7 ea)
+          * 1 × IR Hat ($5)
+          * 1 × Microphone ($1)
+          * 1 × Radio transceiver ($5)
+          * 1 × Camera ($14)
+          * 1 × FPGA ($80)
+      We ignore the cost of resistors, wires, capacitors, and op-amps as these are very small compared to the cost of the total robot. 
+      Total Cost: $183
     </p>
 
 
@@ -324,21 +337,7 @@ If at an intersection:
 <!-- Second Grid -->
 
 
-<div class="w3-container w3-black w3-center w3-opacity w3-padding-64">
-    <h1 class="w3-margin w3-xlarge">Quote of the day: live life</h1>
-</div>
 
-<!-- Footer -->
-<footer class="w3-container w3-padding-64 w3-center w3-opacity">
-  <div class="w3-xlarge w3-padding-32">
-    <i class="fa fa-facebook-official w3-hover-opacity"></i>
-    <i class="fa fa-instagram w3-hover-opacity"></i>
-    <i class="fa fa-snapchat w3-hover-opacity"></i>
-    <i class="fa fa-pinterest-p w3-hover-opacity"></i>
-    <i class="fa fa-twitter w3-hover-opacity"></i>
-    <i class="fa fa-linkedin w3-hover-opacity"></i>
- </div>=
-</footer>
 
 
 
