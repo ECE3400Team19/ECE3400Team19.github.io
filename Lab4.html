@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<title>Lab 4 |  ECE 3400 Team 19</title>
 <html lang="en">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -51,9 +52,7 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
 <div class="w3-row-padding w3-padding-64 w3-container">
   <div class="w3-content">
     <div class="w3-twothird">
-      <h1 id="lab4fpgaandvision">Lab 4: FPGA and Vision</h1>
 
-<p><a href="https://ece3400team19.github.io/">Home</a></p>
 
 <h2 id="teamtasks">Team Tasks</h2>
 
@@ -72,13 +71,13 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
 <h2 id="arduino">Arduino</h2>
 
 <p>The first step for the Arduino side of the lab was to determine and write to the correct registers in order to do the camera setup. In order to do so, we dug through the OV7670's camera documentation, and matched up each register description with the lab's specifications as detailed in the <a href="https://docs.google.com/document/d/1JkrnMshaF4_Zh5bovh0Lob4HR2Z2JvsXUaYAb1SBo-s/edit?usp=sharing">prelab</a>.
- We first needed to find the register that would enable reset of all previous register values. After this, we found registers that would enable the correct resolution format (QCIF) and our desired pixel pattern (RGB 565). We additionally adjusted scaling, enabled the use of an internal clock as external, mirror flipped the image, and changed the automatic gain scaling of the image using various registers on the camera. 
+ We first needed to find the register that would enable reset of all previous register values. After this, we found registers that would enable the correct resolution format (QCIF) and our desired pixel pattern (RGB 565). We additionally adjusted scaling, enabled the use of an internal clock as external, mirror flipped the image, and changed the automatic gain scaling of the image using various registers on the camera.
  In order to actually change the register contents, we used the <code>OV7670_write_register(reg,val);</code> function with the register hex id and desired value. We then iterated over the registers we edited and printed out the contents of those registers in our <code>read_key_registers()</code> function. Our main issue with this portion of the lab was that we could not actually write or read from these registers as the camera needed to be clocked externally from the FPGA; simply having the Arduino and camera connected did not suffice. Once we integrated all three components, this Arduino portion of the lab went smoothly. Finally, we implemented rudimentary color detection with LED feedback, which we'll describe further in the <a href="#integration">integration</a> section.</p>
 
 <h2 id="fpga">FPGA</h2>
 
 <p>On the FPGA side, we first wrote an image into memory, then spit this image back out to the VGA display this required writing specific colors to memory at given times and hooking the output of the memory up to the VGA module.  We created a flag. <br />
-<img src="Lab04_Flag.jpeg" width="620" height="330" alt="SIgnal-Flag">
+<img src="Lab4/Lab04_Flag.jpeg" width="620" height="330" alt="SIgnal-Flag">
 The code to generate this flag was written in verilog as shown below.</p>
 
 <pre><code>always @ (WRITE_ADDRESS) begin
@@ -103,14 +102,14 @@ end
 </code></pre>
 
 <p>Once we verified the memory block was updating correctly, we next sought about interfacing with the camera.  The camera sends 2 bytes off color data at a time, which our friends on the Arduino team told us was in an RGB565 configuration.  We had to reduce this to an RGB 332 configuration which was compatible with our VGA driver and storable in a single byte.  The final implementation we settled on was in the form of a finite state machine clocked by the incoming clock of the camera as shown below. <br />
-<img src="FSM_Diagram.PNG" width="490" height="478" alt="SIgnal-Flag">
+<img src="Lab4/FSM_Diagram.PNG" width="490" height="478" alt="SIgnal-Flag">
 The FSM waits in idle until a row transmission begins.  Once there, it alternates between Byte 1 and Byte 2 until a row transmission finishes, when it transitions to line done.  When the entire image has been received, vsync will go high, at which point the FSM resets.  In Byte 1, the down sampler reads the first byte of camera data from GPIO and stores it in a register file.  In Byte 2, the down sampler reads the second byte from GPIO and concatenates bits from this new data and the data in the register file to create an 8-bit RGB332 value which is sent to memory.  </p>
 
 <h2 id="integration">Integration</h2>
 
 <p>With the two halves done, all that was left was putting them together (and a considerable amount of debugging).  We hooked the 8 data pins, HREF, PCLK, and VSYNC up to the FPGA as GPIO inputs and a single 24 MHz clock signal as an output to the camera to drive it.  We ran the register setup script that we created in the Arduino portion of the lab to initialize the correct register content. We additionally enabled the two registers required for the camera to output a "color bar" test image (as opposed to a live feed). With this test image setup, we observed correct operation, the camera updating a monitor with the color bar test image over VGA.  </p>
 
-<p>[] put an image of color bar; i don't have one -Laasya</p>
+
 
 <p>From here, we needed only disable a few registers to get live video feed from the camera.  To detect colors, we wrote a rudimentary verilog program to increment counters based on values of red or blue in excess of a threshold. This program sent 2 bits of output over GPIO to the Arduino. The Arduino recieved the "valid" and "color" bits sent over, and lit up red and blue LEDs according to this simple program:</p>
 
@@ -142,7 +141,7 @@ void loop() {
 <p>Here is a video of our color detection in action:</p>
 
 <video width="480" height="640" controls muted>
-  <source src="color_detection.mp4" type="video/mp4">
+  <source src="Lab4/color_detection.mp4" type="video/mp4">
 </video>
 
 <p>The color displayed on the VGA monitor output is very clear, and improved once we powered the FPGA off of the Arduino and synced it with a common ground. This dissipated some of the noise in the heavy wiring required for this project.</p>
