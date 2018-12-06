@@ -53,26 +53,149 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
   <div class="w3-content">
     <div class="w3-twothird">
 
-      <h2>Design Approach</h2>
+      <p>Here's a photo of our final robot design! What a beautiful boy</p>
+
+      <h2>Introduction</h2>
       <p class="w3-text-grey">
-        This will serve as a condensed version of all of the tasks we have accomplished over the course of the semester.
+        This design report will serve as a condensed version of all of the tasks we have accomplished over the course of the semester.
+        Those tasks include:
+        <ul>
+          <li>Line following and wall sensing</li>
+          <li>FFTs of audio and IR signals
+            <li>Audio: to get the robot to start on a 660 Hz tone</li>
+            <li>IR: to get the robot to avoid collision with other robots emitting an IR signal</li>
+          </li>
+          <li>Radio communication and GUI mapping</li>
+          <li>Image processing using an FPGA for treasure detection
+            <li>Broken down into color and shape detection</li>
+          </li>
+          <li>Using a search algorithm in order to effectively map the maze</li>
+        </ul>
+
+        Many of these tasks were implemented throughout the course as part of our lab work.
+        However, in this design report, we will also discuss additional modifications we made in order to improve the physical design and control logic of our robot!
+        These include:
+        <ul>
+          <li>Control logic improvement</li>
+          <li>3-D printed parts</li>
+          <li>Protoboarding</li>
+        </ul>
       </p>
 
-
-    <h2>Post-Lab Optimizations</h2>
+    <h2>The Basics: Line Following and Wall Detection</h2>
     <p class="w3-text-grey">
-      this is where I'm going to write about the final robot designs
+      The essential idea for line following and wall following were maintained following their implementation in Milestones 1 and 2 respectively.
+      Line following was performed using three line sensors arranged in parallel on the front of the robot.
+      The Arduino uses an analogRead on each of the line sensors, which would return a value from 0 to 1023
+      We used the returned values from on/off a white line to determine accurate thresholds of line detection for each of the three line sensors.  <br>
+      Following a line also implied creation of subfunctions for turning, so we implemented these as well.
+      We created delay-based turnLeft() and turnRight() functions that would be called by   <br>
+      Following this, we were able to create a line following control loop that allowed the robot to stay on track: <br>
+      Loop: If the middle line sensor detects a white line: the robot should go straight
+          <li>If the middle sensor does not detect the white line, but the right sensor does: <br>
+            the robot should turn clockwise until the middle line sensor returns to the line</li>
 
-      The physical and electronic design of our robot makes our team stand out.
-      So, we improved upon our baseline design after all of the previous labs by
+          <li>If the middle sensor does not detect the white line, but the left sensor does:  <br>
+            the robot should turn counterclockwise until the middle line sensor returns to the line</li>
+
+          <li>If all 3 line sensors detect a white line:  <br>
+            the robot acknowledges that it's at an intersection.  <br>
+            the robot will perform whatever functions being at an intersection requires</li>
+
+          <li>Else:  <br>
+            the robot should go straight until the middle sensor stops detecting a line</li> <br>
+
+      This control loop remained relatively the same throughout our robot's design process.
+      The main changes over the course of the semester to this line following feature were the actual orientation of the line sensors (the distance they were away from each other)
+      and the functions performed when the robot is at an intersection, as the complexity of the robot increased.
+      Those included wall detection, information transmission, and search algorithm calculations.
+      The turn functions eventually had more logic included within them for robot orientation, and the delays associated with them were also tweaked over time.<br> <br>
+
+      We implemented our wall detection using 3 wall sensors, for front, left and right walls.
+      Each of these were intended to be processed using the Arduino's analogRead function, and then converted to a distance based off of the returned reading.
+      However, since three of the analog input pins were being utilized by line sensors, we chose to create Schmitt triggers in order to convert our analog signals to digital ones.
+      Full implementation details and Schmitt trigger threshold calculations are in our Milestone 2 documentation. <br>
+      We were able to neatly integrate our wall detection and handling code into this line detection algorithm by  creating a checkWalls() function that would run at an intersection.
+      That function returns a 4-bit binary value (declared as an int) with the 3 LSBs corresponding to detection of a left, front, and right wall based off of the digitalRead value for each sensor.
+      The wall detection control loop within the line following's intersection handling is shown below: <br>
+
+      When at an intersection:
+      <li>If there is no wall in front of us, we go straight.</li>
+      <li>If there is a wall in front and on one of the sides, we turn towards the side without a wall.</li>
+      <li>If there is only a wall in the front, we turn left.</li>
+      <li>If there is a wall in every direction, we turn around.</li>
+
+      <br>
+      Here is a video of both of these components in action:
+    </p>
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/sT4ACEVhcuc" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+
+    <h2>FFTs: Audio and IR</h2>
+    <p class="w3-text-grey">
+      so much
     </p>
 
-    <h2>Future Design Speculations</h2>
+    <h2>Radio Communication: Encoding and Transfer of Information</h2>
     <p class="w3-text-grey">
-      this is where I'm going to write about the final robot designs
+      In the final competition, our goal was to map the competition maze by displaying the contents of each square onto a GUI.
+      In order to do so, we needed to be able to send encoded information about the maze via a radio mounted on the competition robot to another radio connected to the GUI laptop (aka a base station)
+      From this base station, we also needed to decode the sent information packets, and use it to write the information to the GUI.
+      Essentially, we created two pieces of code for this portion of the project: encoding and transmission logic inside of the code currently running on the robot,
+      and a Base station code file for information decoding <br>
 
-      The physical and electronic design of our robot makes our team stand out.
-      So, we improved upon our baseline design after all of the previous labs by
+      Once we determined these goals, we had to create a scheme to transfer all of the information about a maze
+
+      [encoding table]
+
+      [stuff about base station]
+
+    </p>
+
+    <h2>FPGA: Image Processing and Treasure Detection</h2>
+    <p class="w3-text-grey">
+      omg
+    </p>
+
+    <h2>Arduino Software: Search Algorithms and Control Logic</h2>
+    <p class="w3-text-grey">
+      AAAAAADFSDFSDF
+    </p>
+
+    <h2>Physical Design: Protoboarding and 3-D Printing</h2>
+    <p class="w3-text-grey">
+      One aspect in which our team shines is the physical design of our robot.
+      In order to avoid the issues we faced that were caused by messy wiring, we transferred 100% of our circuits from breadboards to perfboards
+      We condensed our Schmitt trigger circuits as well as our Audio and IR amplification circuits to a single perfboard.
+      Additionally, we had a strip of perfboard with two columns of header pins in it (female and male) that we used exclusively for power and ground rails.
+      We included our decoupling capacitors directly onto this power/ground rail.
+      We ended up redoing our microphone circuit just before competition, but this was also perf boarded and fixed to the top of our robot.
+
+      Another way in which we improved our design for competition was the number of 3-D printed parts we created, fabricated, and incorporated.
+      If we ever found that the components provided to us were not sufficient, we were very quick in designing and including a custom part.
+      These included:
+      <li>An extension to the front ball bearing that would connect to the robot front at the correct height</li>
+      <li>Four struts between the two levels that still allowed the IR hat to be mounted at 5.5"</li>
+      <li>A custom camera mount</li>
+    </p>
+
+    <h2>Unresolved Issues and Future Improvements</h2>
+    <p class="w3-text-grey">
+      - fully debugging GUI transmission errors <br>
+      - improve backtracking algorithm from DFS <br>
+      - - Like Dijkstra's to avoid spiraling<br>
+      - actually debugging and including the FPGA <br>
+      - PCB instead of perfboarding<br>
+      - Even cleaner wiring<br>
+      - More decorations :) <br>
+    </p>
+
+    <h2>Conclusions</h2>
+    <p class="w3-text-grey">
+      This course taught us a lot about the skills required to build a robot, from circuit design, to Arduino coding and sensor integration, to FPGAs and finite state machines.
+      But the whole experience about this class goes far beyond that; while our technical abilities certainly improved, this class allowed us to grow in non-technical regards as well.
+      We learned about the joys of having things work, and got over senses of despair and frustration when they didn't. We learned how to debug and test quickly and effectively.
+      We learned how to compromise between our ideals and reality. But most importantly, we learned about the ups and downs of teamwork, which is something that we will take with us
+      into industry and beyond.
     </p>
 
     <h2>Robot Cost</h2>
