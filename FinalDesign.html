@@ -89,19 +89,16 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
       The Arduino uses an analogRead on each of the line sensors, which would return a value from 0 to 1023
       We used the returned values from on/off a white line to determine accurate thresholds of line detection for each of the three line sensors.  <br>
       Following a line also implied creation of subfunctions for turning, so we implemented these as well.
-      We created delay-based turnLeft() and turnRight() functions that would be called by   <br>
-      Following this, we were able to create a line following control loop that allowed the robot to stay on track: <br>
+      We created delay-based turnLeft() and turnRight() functions that would be called by the line following code <br><br>
+      Following this, we were able to create a line following control loop that allowed the robot to stay on track: <br><br>
       Loop: If the middle line sensor detects a white line: the robot should go straight
           <li>If the middle sensor does not detect the white line, but the right sensor does: <br>
-            the robot should turn clockwise until the middle line sensor returns to the line</li>
-
+            the robot should turn clockwise until the middle line sensor returns to the line</li><br>
           <li>If the middle sensor does not detect the white line, but the left sensor does:  <br>
-            the robot should turn counterclockwise until the middle line sensor returns to the line</li>
-
+            the robot should turn counterclockwise until the middle line sensor returns to the line</li><br>
           <li>If all 3 line sensors detect a white line:  <br>
             the robot acknowledges that it's at an intersection.  <br>
-            the robot will perform whatever functions being at an intersection requires</li>
-
+            the robot will perform whatever functions being at an intersection requires</li><br>
           <li>Else:  <br>
             the robot should go straight until the middle sensor stops detecting a line</li> <br>
 
@@ -114,17 +111,16 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
       We implemented our wall detection using 3 wall sensors, for front, left and right walls.
       Each of these were intended to be processed using the Arduino's analogRead function, and then converted to a distance based off of the returned reading.
       However, since three of the analog input pins were being utilized by line sensors, we chose to create Schmitt triggers in order to convert our analog signals to digital ones.
-      Full implementation details and Schmitt trigger threshold calculations are in our Milestone 2 documentation. <br>
+      Full implementation details and Schmitt trigger threshold calculations are in our Milestone 2 documentation. <br><br>
       We were able to neatly integrate our wall detection and handling code into this line detection algorithm by  creating a checkWalls() function that would run at an intersection.
       That function returns a 4-bit binary value (declared as an int) with the 3 LSBs corresponding to detection of a left, front, and right wall based off of the digitalRead value for each sensor.
-      The wall detection control loop within the line following's intersection handling is shown below: <br>
+      The wall detection control loop within the line following's intersection handling is shown below: <br><br>
 
       When at an intersection:
-      <li>If there is no wall in front of us, we go straight.</li>
+      <li>If there is no wall in front of us, we travel based off of the maze traversal algorithm.</li>
       <li>If there is a wall in front and on one of the sides, we turn towards the side without a wall.</li>
-      <li>If there is only a wall in the front, we turn left.</li>
+      <li>If there is only a wall in the front, we turn based off of the maze traversal algorithm.</li>
       <li>If there is a wall in every direction, we turn around.</li>
-
       <br>
       Here is a video of both of these components in action:
     </p>
@@ -132,7 +128,28 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
 
     <h2>FFTs: Audio and IR</h2>
     <p class="w3-text-grey">
-      so much
+      Our first task was to use a microphone to detect a 660 Hz signal for the robot to start on.
+      We first connected the microphone to the following amplifier circuit, as the raw output of the microphone was too low to directly connect to the Arduino.
+      <br>
+      <img src="Acoustic Circuit.JPG" width="330" height="300" alt="acoustic-circuit">
+      <br><br>
+      <img src="mic_schematic.png" width="330" height="300" alt="mic-circuit">
+      <br><br>
+      We fed the output of this signal into an analog pin of the robot's Arduino, and used the FFT library to determine the presence of a 660 Hz tone by determining which bins had a peak in them when a signal of that frequency was put into it.
+      A major problem with this is that the FFT library is very large, and integration caused memory and stability issues. Initially, we used 256 bins as suggested by the Lab 2 guidelines.
+      However, we ended up switching to 128 bins instead in order to resolve the memory issues.
+      This integration was simple, as all we needed to do to find the new peak bins was divide the original by 2. <br><br>
+
+      Our next FFT task was integration of IR detection in order to allow our robot to avoid other robots.
+      This detection would need to be processed at every intersection, as this is where our turn logic is located.
+      Each robot is equipped with an IR hat emitting a 6.6kHz signal, as well as an IR LED that is able to detect these signals.
+      In a near identical way to the microphone circuit, we connected the output of the IR detector to another amplifier circuit, fed this output into an analog pin, and ran an FFT on the output to determine the peak bins.
+      We had to recalculate the bins later upon switching to 128 samples.
+
+      The IR detection had one other issue to it: the FFT library and servos use the same timer which caused the servos to not run when the FFT was included.
+      The issue is that to run the FFT, you need to change the values of some registers (TIMSK0, ADCSRA, ADMUX, DIDR0).
+      We worked around this by saving the default values of these registers before they are altered and then resetting them after the FFT is run by wrapping the runFFT() into its own function.
+      We added this runFFT function to the control loop of the robot in the case where the robot is at an intersection.
     </p>
 
     <h2>Radio Communication: Encoding and Transfer of Information</h2>
@@ -143,22 +160,45 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
       Essentially, we created two pieces of code for this portion of the project: encoding and transmission logic inside of the code currently running on the robot,
       and a Base station code file for information decoding <br>
 
-      Once we determined these goals, we had to create a scheme to transfer all of the information about a maze
+      Once we determined these goals, we had to create a scheme to transfer all of the information about a maze <br><br>
 
-      [encoding table]
+      [TODO: encoding table]<br><br>
 
-      [stuff about base station]
+      [TODO: stuff about base station]<br><br>
 
     </p>
 
     <h2>FPGA: Image Processing and Treasure Detection</h2>
     <p class="w3-text-grey">
-      omg
+      In order for treasure detection to work in competition, we needed to correctly set up a camera from the Arduino, and interface it with an FPGA.
+      The FPGA would then communicate results back to the Arduino via parallel communication.
+      To begin with, we wrote a simple script that would enable the correct registers for our RGB protocol, QCIF format, clocking, and live images.
+      After setting up timers on the FPGA, we then attempted to generate an initial live image creation correctly.
+      Once we were able to produce a clear image, we updated the FPGA's image processor program to determine red and blue majority images in order to detect treasures.
+      We did this by creating a four-state FSM for pixel count and characterization as shown below:
+      [TODO: fsm for color]
+
+      Following this, we attempted to extend our code to be able to detect shapes.
+      [TODO: explain this, I never really understood it]
+
+      Below is a video demonstration of our target and color detection, with Red and Blue LEDs lighting up corresponding to detection of their respective colors:
+      <br><br>
+        <video width="848" height="480" controls muted>
+          <source src="color.mp4" type="video/mp4">
+        </video>
+      While we attempted to mount our color-detecting image processor onto our robot, connecting it caused all pre-existing features on the robot to fail.
+      As it was only a day before competition that we attempted to do this, we decided to focus our energy into debugging alternative issues with our design
+      in order to give our robot its best chance of success. Given more time, we would have liked to figure out what exactly (either software or hardware) caused
+      the robot to lose nearly all of its functionality once the FPGA and camera were connected.
     </p>
 
     <h2>Arduino Software: Search Algorithms and Control Logic</h2>
     <p class="w3-text-grey">
-      AAAAAADFSDFSDF
+      Up until Milestone 3, nearly all of the code that we had implemented was either hardware setup or integration.
+      But, the problem of effective maze traversal in competition provided us an opportunity to construct a search algorithm.
+      We chose to implement a depth first search (DFS) algorithm in order to explore the maze. 
+      <br><br>
+      [TODO: give a general pseudo-code control logic block if possible]
     </p>
 
     <h2>Physical Design: Protoboarding and 3-D Printing</h2>
@@ -176,16 +216,20 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
       <li>An extension to the front ball bearing that would connect to the robot front at the correct height</li>
       <li>Four struts between the two levels that still allowed the IR hat to be mounted at 5.5"</li>
       <li>A custom camera mount</li>
+      [TODO talk more about this]
     </p>
 
     <h2>Unresolved Issues and Future Improvements</h2>
     <p class="w3-text-grey">
+      - get the robot to stop detecting itself <br>
       - fully debugging GUI transmission errors <br>
       - improve backtracking algorithm from DFS <br>
       - - Like Dijkstra's to avoid spiraling<br>
+      - code modularity <br>
+      - - avoiding repetitive case blocks and, condensing code <br>
       - actually debugging and including the FPGA <br>
-      - PCB instead of perfboarding<br>
-      - Even cleaner wiring<br>
+      - PCB instead of perfboarding?<br>
+      - - Even cleaner wiring<br>
       - More decorations :) <br>
     </p>
 
@@ -205,23 +249,11 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
 
 
     </div>
-    <div class="w3-third w3-center">
-      <i class="fa fa-anchor w3-padding-64 w3-text-red"></i>
-    </div>
   </div>
 </div>
 
 <!-- Second Grid -->
-<div class="w3-row-padding w3-light-grey w3-padding-64 w3-container">
-  <div class="w3-content">
-    <div class="w3-third w3-center">
-      <i class="fa fa-coffee w3-padding-64 w3-text-red w3-margin-right"></i>
-    </div>
 
-    <div class="w3-twothird">
-    </div>
-  </div>
-</div>
 
 <div class="w3-container w3-black w3-center w3-opacity w3-padding-64">
     <h1 class="w3-margin w3-xlarge">Quote of the day: live life</h1>
