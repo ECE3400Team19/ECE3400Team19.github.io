@@ -56,7 +56,7 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
       <p>Here's a photo of our final robot design! What a beautiful boy</p>
 
       <h2>Introduction</h2>
-      <p class="w3-text-grey">
+      <p>
         This design report will serve as a condensed version of all of the tasks we have accomplished over the course of the semester.
         Those tasks include:
         <ul>
@@ -106,7 +106,7 @@ Loop:
     Else:
       Robot should go straight until the middle sensor detects a line
         </font></code></pre>
-
+      <font color="grey">
       This control loop remained relatively the same throughout our robot's design process.
       The main changes over the course of the semester to this line following feature were the actual orientation of the line sensors (the distance they were away from each other)
       and the functions performed when the robot is at an intersection, as the complexity of the robot increased.
@@ -120,19 +120,19 @@ Loop:
       We were able to neatly integrate our wall detection and handling code into this line detection algorithm by  creating a checkWalls() function that would run at an intersection.
       That function returns a 4-bit binary value (declared as an int) with the 3 LSBs corresponding to detection of a left, front, and right wall based off of the digitalRead value for each sensor.
       The wall detection control loop within the line following's intersection handling is shown below: <br><br>
-
-      <pre><code><font color="orange" width="500px">
-If at an intersection:
-  If there is no wall in front of us:
-    Robot moves based off of the maze traversal algorithm.
-  If there is a wall in front and on one of the sides:
-    Robot turns towards the side without a wall
-  If the middle sensor does not detect the white line, but the left sensor does:
-    Robot should turn counterclockwise until the middle line sensor returns to the line
-  If there is only a wall in the front:
-    Robot should turn based off of the maze traversal algorithm:
-  If there is a wall in every direction (F-L-R)
-    Robot turns around
+      </font>
+      <pre><code><font color="orange" width="500px">\
+        If at an intersection:
+          If there is no wall in front of us:
+            Robot moves based off of the maze traversal algorithm.
+          If there is a wall in front and on one of the sides:
+            Robot turns towards the side without a wall
+          If the middle sensor does not detect the white line, but the left sensor does:
+            Robot should turn counterclockwise until the middle line sensor returns to the line
+          If there is only a wall in the front:
+            Robot should turn based off of the maze traversal algorithm:
+          If there is a wall in every direction (F-L-R)
+            Robot turns around
 
         </font></code></pre>
       <br>
@@ -242,9 +242,10 @@ If at an intersection:
           Return current position of robot and its orientation
       </font></code></pre>
 
-
+      <font color="grey">
       After implementing the DFS, we were able to integrate it and its related subfunctions into our original code.
       Rather than utilizing the entire code file, here's a simplified control logic block that essentially maps out what our robot does:
+      </font>
       <br><br>
       <pre><code><font color="orange" width="500px">
         Setup
