@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<title>Milestone 2 |  ECE 3400 Team 19</title>
 <html lang="en">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -43,7 +44,7 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
 
 <!-- Header -->
 <header class="w3-container w3-red w3-center" style="padding:128px 16px">
-  <h1 class="w3-margin w3-jumbo">Milestone 2</h1>
+  <h1 class="w3-margin w3-jumbo">Milestone 2: Wall Following</h1>
   <p class="w3-xlarge">ECE 3400 Fall 2018: Team 19</p>
 </header>
 
@@ -51,9 +52,6 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
 <div class="w3-row-padding w3-padding-64 w3-container">
   <div class="w3-content">
     <div class="w3-twothird">
-<h1 id="milestone2wallfollowing">Milestone 2: Wall Following</h1>
-
-<p><a href="https://ece3400team19.github.io/">Home</a></p>
 
 <h2 id="teamtasks">Team Tasks</h2>
 
@@ -105,7 +103,7 @@ void loop() {
 <p>Here is a video of the code in action. Laasya moves her hand farther away from the sensor until she is out of range, and then moves back into range.</p>
 
 <video width="640" height="360" controls muted>
-  <source src="IMG_6671.MOV" type="video/mp4">
+  <source src="Milestone2/IMG_6671.MOV" type="video/mp4">
 </video>
 
 <p>The Arduino only has 6 analog inputs. We were already using three analog inputs for the three line sensors we implemented in Milestone 1, and two analog inputs for the microphone detection and IR detection.
@@ -114,7 +112,7 @@ This only left us one analog input. We decided to change the analog output from 
 <p>We decided on a low threshold of 0.56 V and a high threshold of 1.09 V. We chose an output voltage low of 0V and high of 3.5V.
 The low threshold corresponds to when the wall sensor is 20 cm away from an object, and the high threshold corresponds to when the wall sensor is 10 cm away from an object. These inputs to the schmitt trigger calculator gave us that R2 = 1.51 kΩ, R1 = 10 kΩ, and Vref = 0.94.</p>
 
-<p><img src="schmitt.png" width="439" height="223" alt="schmitt-trigger-circuit"></p>
+<p><img src="Milestone2/schmitt.png" width="439" height="223" alt="schmitt-trigger-circuit"></p>
 
 <p>We built this circuit and tested it by putting input voltages from a DC voltage source and checking the output with an oscilloscope. The output voltages were as expected: when we increased the voltage source slowly from 0 -> 1V, we stayed at an output voltage of around 0 until suddenly we got an output of 3.5V for an input of 1V. Then, we decreased the voltage source slowly from 1V-> 0.5V. We stayed at a high output voltage until we got an output of 0V for an input of 0.5V. Then, we tested that the wall sensor gave us a voltage of 1V or greater when we put an object close to it, and a voltage of .5V or less when an object was far away.
  However, when we put the wall sensor as the input of our schmitt trigger, nothing worked! The output stayed high (3.5V) forever. With the help of multiple TAs, we figured out that our resistor values were too small. The ratio of R2/R1 is what matters, so we switched R2 from 1.5kΩ to 15kΩ and R1 from 10kΩ to 100kΩ. We kept Vref the same. Then, our schmitt trigger worked as expected using the wall sensor as an input.</p>
@@ -341,7 +339,7 @@ void loop() {
     //read line sensors
     leftSensor = analogRead(leftPin);
     middleSensor = analogRead(middlePin);
-    rightSensor = analogRead(rightPin);    
+    rightSensor = analogRead(rightPin);
 
 
     //At Intersection, need to decide where to go
@@ -369,26 +367,26 @@ void loop() {
         digitalWrite(rightLED, LOW);
         digitalWrite(frontLED, LOW);
         digitalWrite(robotLED, LOW);
-        if (IRDetected){  
-          Serial.println("IR detected");       
+        if (IRDetected){
+          Serial.println("IR detected");
           seen |= B1000;
           digitalWrite(robotLED, HIGH);
         }
         //left wall
-        if (digitalRead(lw)){  
-          Serial.println("left wall detected");  
+        if (digitalRead(lw)){
+          Serial.println("left wall detected");
           seen |= B0100;
           digitalWrite(leftLED, HIGH);
         }
         //front wall
-        if (digitalRead(fw)){  
-          Serial.println("front wall detected");  
+        if (digitalRead(fw)){
+          Serial.println("front wall detected");
           seen |= B0010;
           digitalWrite(frontLED, HIGH);
         }
         //right wall
         if (digitalRead(rw)){
-          Serial.println("right wall detected");     
+          Serial.println("right wall detected");
           seen |= B0001;
           digitalWrite(rightLED, HIGH);
         }
@@ -485,7 +483,7 @@ void loop() {
 </code></pre>
 
 
-      
+
     </div>
 
   </div>
