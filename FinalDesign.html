@@ -184,11 +184,17 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
       To begin with, we wrote a simple script that would enable the correct registers for our RGB protocol, QCIF format, clocking, and live images.
       After setting up timers on the FPGA, we then attempted to generate an initial live image creation correctly.
       Once we were able to produce a clear image, we updated the FPGA's image processor program to determine red and blue majority images in order to detect treasures.
-      We did this by creating a four-state FSM for pixel count and characterization as shown below:
-      [TODO: fsm for color]
+      We did this by creating a four-state FSM for pixel count and characterization as shown below:<br>
+      <img src="Final_Des_FSM_Color.PNG" width="300" height="300" alt="acoustic-circuit">
+      <br><br>
 
-      Following this, we attempted to extend our code to be able to detect shapes.
-      [TODO: explain this, I never really understood it]
+      Following this, we attempted to extend our code to be able to detect shapes.  The idea was to have a new FSM which could distingish between three shapes: Square, Triangle, and Diamond.
+      To accomplish this, our FSM first looked for a red or blue pixel in the iage, and identified the first on it saw as the starting point for that shape.
+      Then, it stored counts of red or blue pixels for each line in the image until detecting a suffiecent lack of colored pixels to decide the entire shape had been seen.
+      These counts are analagous to widths of red or blue lines in the image and were stored for later use.
+      With this array of widths, we could identify patterns corresponding to shapes: if the widths stayed about the same, it was a square.  If they increased, it was a triangle, and if they
+      increased for a while, then decreased, it was a diamond.
+      However, this design proved complicated to implement and debugging was difficult on the FPGA.  As such, we ran out of time and weren't able to finish this aspect of the robot.<br>
 
       Below is a video demonstration of our target and color detection, with Red and Blue LEDs lighting up corresponding to detection of their respective colors:
       <br><br>
