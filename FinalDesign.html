@@ -28,9 +28,9 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
     <a href="Lab4.html" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Lab 4</a>
     <a href="Milestone3.html" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Milestone 3</a>
     <a href="Milestone4.html" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Milestone 4</a>
-    <a href="Ethics_Homework.html" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-white">Ethics Homework</a>
+    <a href="Ethics_Homework.html" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Ethics Homework</a>
     <a href="FinalDesign.html" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-white">Final Design</a>
-    <a href="Photoshoot.html" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-white">Photoshoot!</a>
+    <a href="Photoshoot.html" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">Photoshoot!</a>
   </div>
 
   <!-- Navbar on small screens -->
@@ -162,9 +162,18 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
 
       Once we determined these goals, we had to create a scheme to transfer all of the information about a maze <br><br>
 
-      [TODO: encoding table]<br><br>
+      To avoid sending an excessive amount of data through the radios, we defined an encoding to send all the data we needed in just two bytes.
+      These two bytes were stored in an unsigned long and we used bit masking to set them for a trnsmission over the radios.  The encoding was as follows:<br>
+      - Bits 15-12: The Y-coordinate of the robot's position, A number from 0-9.<br>
+      - Bits 11-8: The X-coordinate of the robot's position, A number from 0-9.<br>
+      - Bits 7-6: A 2-bit shape code identifying one of three treasure shapes.  The unused combination was used to denote an invalid shape.<br>
+      - Bit  5: A single bit for the color of the above treasure, either red or blue.  Ignored if the shape code was set to invalid.<br>
+      - Bit  4: A single bit for IR detection, if set it means another robot was detected.<br>
+      - Bits 3-0: 4 Bits for walls seen by the robot in the square of its current position.  One bit for each possible wall (N,S,E,W).
+      <br><br>
 
-      [TODO: stuff about base station]<br><br>
+      The base station read these 2 bytes from the radio transmission and deccoded them into a series of print statements to be spewed to the GUI.  Most of the complicated
+      encoding was done on the robot side, so the base station code was pretty simple; just a series of conditionals apart from some acknowledgement procedures for the radio.  <br><br>
 
     </p>
 
@@ -196,7 +205,7 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
     <p class="w3-text-grey">
       Up until Milestone 3, nearly all of the code that we had implemented was either hardware setup or integration.
       But, the problem of effective maze traversal in competition provided us an opportunity to construct a search algorithm.
-      We chose to implement a depth first search (DFS) algorithm in order to explore the maze. 
+      We chose to implement a depth first search (DFS) algorithm in order to explore the maze.
       <br><br>
       [TODO: give a general pseudo-code control logic block if possible]
     </p>
