@@ -11,9 +11,9 @@ Milestone 4 requires our robot to be able to:
 ## Milestone Materials
 
 This milestone was an extension of Lab 4 and utilized the same materials:
-	* OV7670 camera
-	* Altera DE0 Nano FPGA
-	* Arduino Uno
+* OV7670 camera
+* Altera DE0 Nano FPGA
+* Arduino Uno
 
 ## 
 
