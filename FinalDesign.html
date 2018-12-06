@@ -205,9 +205,44 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
     <p class="w3-text-grey">
       Up until Milestone 3, nearly all of the code that we had implemented was either hardware setup or integration.
       But, the problem of effective maze traversal in competition provided us an opportunity to construct a search algorithm.
-      We chose to implement a depth first search (DFS) algorithm in order to explore the maze.
+      We chose to implement a depth first search (DFS) algorithm in order to explore the maze utilizing the StackArray library in Arduino.
+      The robot will add grid blocks that it has yet to visit to its frontier, and will backtrack to access them after popping each from a StackArray.
+      Below is a pseudocode block that essentially maps out our DFS algorithm:
+      <pre><code>
+        StackArray&lt;byte&gt; frontier
+        runDFS:
+          n = frontier.pop()                                  //(goal state)
+          visit(n):                                           // move our robot to n
+            If n is within one square of where currently are:
+              Move to that square
+            While n is farther away than one square:
+              Move back to the parent of current node
+          Determine what places we can visit                  //based on robot orientation and walls detected
+          Add these places to the frontier stack
+          Return current position of robot and its orientation
+
+      </code></pre>
+
+
+      After implementing the DFS, we were able to integrate it and its related subfunctions into our original code.
+      Rather than utilizing the entire code file, here's a simplified control logic block that essentially maps out what our robot does:
       <br><br>
-      [TODO: give a general pseudo-code control logic block if possible]
+      <pre><code><font color="orange" width="500px">
+        Setup
+          Wait for microphone to detect 660 Hz
+        Loop:
+          If at an intersection:
+            Check F-L-R walls
+            Check IR sensor for robot
+              Stop until the IR signal goes away
+            Run DFS and get the next orientation and position
+            Update orientation relative to north
+            Get new position
+            Send position and wall info to the maze GUI
+          Else:
+            Follow the lines in the path specified by DFS/backtracking
+        </font></code></pre>
+
     </p>
 
     <h2>Physical Design: Protoboarding and 3-D Printing</h2>
