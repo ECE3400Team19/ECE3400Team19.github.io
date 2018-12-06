@@ -37,3 +37,5 @@ Here is a video of our robot navigating a 4x5 maze!
 Our robot is able to navigate different maze configurations!!
 <iframe width="560" height="315" src="https://www.youtube.com/embed/qX5fpouX1v8" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
+Our robot starts on a 660Hz tone and recognizes an IR hat, waits for the IR hat to move, then resumes exploring the maze:
+<iframe width="560" height="315" src="https://www.youtube.com/embed/8MXpFRq8EAk" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
