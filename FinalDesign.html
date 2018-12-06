@@ -92,19 +92,19 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
       We created delay-based turnLeft() and turnRight() functions that would be called by the line following code <br><br>
       Following this, we were able to create a line following control loop that allowed the robot to stay on track: <br><br>
 
-      <pre><code><font color="orange" width="500px">\
-        Loop:
-          If the middle line sensor detects a white line:
-            Robot should go straight
-          If the middle sensor does not detect the white line, but the right sensor does:
-            Robot should turn clockwise until the middle line sensor returns to the line
-          If the middle sensor does not detect the white line, but the left sensor does:
-            Robot should turn counterclockwise until the middle line sensor returns to the line
-          If all 3 line sensors detect a white line:
-            Robot acknowledges that it's at an intersection.
-            Robot will perform whatever functions being at an intersection requires
-            Else:
-              Robot should go straight until the middle sensor detects a line
+      <pre><code><font color="orange" width="500px">
+Loop:
+  If the middle line sensor detects a white line:
+    Robot should go straight
+  If the middle sensor does not detect the white line, but the right sensor does:
+    Robot should turn clockwise until the middle line sensor returns to the line
+  If the middle sensor does not detect the white line, but the left sensor does:
+    Robot should turn counterclockwise until the middle line sensor returns to the line
+  If all 3 line sensors detect a white line:
+    Robot acknowledges that it's at an intersection.
+    Robot will perform whatever functions being at an intersection requires
+    Else:
+      Robot should go straight until the middle sensor detects a line
         </font></code></pre>
 
       This control loop remained relatively the same throughout our robot's design process.
@@ -121,18 +121,18 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
       That function returns a 4-bit binary value (declared as an int) with the 3 LSBs corresponding to detection of a left, front, and right wall based off of the digitalRead value for each sensor.
       The wall detection control loop within the line following's intersection handling is shown below: <br><br>
 
-      <pre><code><font color="orange" width="500px">\
-        If at an intersection:
-          If there is no wall in front of us:
-            Robot moves based off of the maze traversal algorithm.
-          If there is a wall in front and on one of the sides:
-            Robot turns towards the side without a wall
-          If the middle sensor does not detect the white line, but the left sensor does:
-            Robot should turn counterclockwise until the middle line sensor returns to the line
-          If there is only a wall in the front:
-            Robot should turn based off of the maze traversal algorithm:
-          If there is a wall in every direction (F-L-R)
-            Robot turns around
+      <pre><code><font color="orange" width="500px">
+If at an intersection:
+  If there is no wall in front of us:
+    Robot moves based off of the maze traversal algorithm.
+  If there is a wall in front and on one of the sides:
+    Robot turns towards the side without a wall
+  If the middle sensor does not detect the white line, but the left sensor does:
+    Robot should turn counterclockwise until the middle line sensor returns to the line
+  If there is only a wall in the front:
+    Robot should turn based off of the maze traversal algorithm:
+  If there is a wall in every direction (F-L-R)
+    Robot turns around
 
         </font></code></pre>
       <br>
