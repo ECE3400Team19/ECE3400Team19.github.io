@@ -65,35 +65,35 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
       </h5>
       <h2>Shape Detection</h2>
       <p class="w3-text-grey">Since we already had a decent method for color detection at the end of Lab 4, we decided to jump right into shape detection schemes.
-        This required redesigning our FSM to be able to distinguish between three differnt shapes.  Shape and pattern recgnition is a complex problem, so we decided on the following method for determinting the presence of a shape:
+        This required redesigning our FSM to be able to distinguish between three different shapes.  Shape and pattern recognition is a complex problem, so we decided on the following method for determining the presence of a shape:
         <br><br>
-        When the FSM first detects a red or blue pixel, it will enter a set of states corresponding to that color and stor this color in a register for output once the entire shape is processed.
+        When the FSM first detects a red or blue pixel, it will enter a set of states corresponding to that color and stores the detected color in a register for output once the entire shape is processed.
         The FSM then counts the rest of the pixels of that color for a given row by incrementing a value in another register, and stores this value in a register file once the row ends.
         This process repeats for all subsequent rows until two consecutive rows are detected without any of the color at all, a pattern the FMS interprets as the shape ending.
         All going well, the result of this process is an array of sorts which has the widths of lines of a specific color stored for each line in the image that a shape occupies.
         <br><br>
         From here, this array is interpreted.  A counter variable loops through the register file and compares adjacent elements.  From here, patterns in the widths can be detected.
-        If the widths stay about the same as Y decreases, this suggests the presence of a square.  If they increase, as Y increases, this suggests the presence of a triangle.
-        Finally, if they increase for a while, then begin to decrease, this suggests a diamond pattern.
-        However, if these patterns are not adhered to closely enough, this suggests therer is no valid shape.
-        If one of these patterns is adhered to, and the shape is of sufficeient size to be confident it is not a misdetection by the camera, the FSM takes the color bit stored in a register previously
+        If the widths stay about the same as Y increases, this suggests the presence of a square.  If they increase as Y increases, this suggests the presence of a triangle.
+        Finally, if they increase for a while, then begin to decrease, this suggests the presence of a diamond.
+        However, if none of these patterns are adhered to closely enough, this suggests there is no valid shape.
+        If one of these patterns is adhered to, and the shape is of sufficient size to be confident it is not a misdetection by the camera, the FSM takes the color bit stored in a register previously
         and concatenates it with the shape code corresponding to the pattern detected.  Otherwise, the FSM outputs an invalid shape code and resets to prepare for another detection.
         The FSM also resets when given a new image for obvious reasons.
         <br><br>
       </p>
       <h2>Advantages and Disadvantages</h2>
       <p class="w3-text-grey">This design has an advantage over static line-checking designs, as it can detect the presence of a shape given only a single pixel of the correct color,
-        which is to say, it can detect a shape anywhere in the frame as opposed to centered vertically in such a way that the staticly detected lines will recognize it.  As such, this scheme
+        which is to say, it can detect a shape anywhere in the frame as opposed to centered vertically in such a way that the statically detected lines will recognize it.  As such, this scheme
         removes concerns over which lines to check and does not require knowledge of the camera's placement on the robot to function.
         <br><br>
         However, this implementation is also considerably more complex than the static counterpart.  It requires a register file large enough to hold entries for width counts of every Y coordinate (over 100)
-        as well as many superflous registers for mid-execution width counts, loop control variables, and previous values for comparison.  The state logic is also highly complex.
+        as well as many superfluous registers for mid-execution width counts, loop control variables, and previous values for comparison.  The state logic is also highly complex.
         All told, the final FSM design contained nearly 30 states even with optimizations such as only one set of final calculations for either color.
         <br><br>
         This complexity and other factors presented a large problem for debugging.  Since we did not have reliable access to an on-board debugger for the FPGA, we turned to sending outputs to
-        the arduino for debugging the FSM.  This proved ineffective, however, as the serial moniter used to spew information about the FSM was not nearly fast enough to keep up with the
-        module runnign at 50MHz.  As such, the data we could gather on the FSM was spotty at best and identifying errors in the code was an arduous process.  Combined with time contraints as the
-        competition date grew near, this meant that, dispite our best efforts, we were unable to get the FSM working and decided to scrap shape detection altogether in favor of more robust
+        the arduino for debugging the FSM.  This proved ineffective, however, as the serial monitor used to spew information about the FSM for us to interpret was not nearly fast enough to keep up with the
+        module running at 50MHz.  As such, the data we could gather on the FSM was spotty at best and identifying errors in the code was an arduous process.  Combined with time constraints as the
+        competition date grew near, this meant that, despite our best efforts, we were unable to get the FSM working and decided to scrap shape detection altogether in favor of more robust
         color detection.
         <br><br>
       </p>
@@ -106,9 +106,9 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
       <br><br>
       Once our design worked, we optimized it to try and reduce the rate of false-positives so as not to lose points on the competition.  This primarily meant an incremental design approach to
       our threshold values, both for considering a pixel of a certain color, and for the larger counts of pixels.  In the color thresholds, we found considerable room to optimize.
-      Simply checking the bits corresponding to red or blue proved insufficent for reliable color detection.  We found that having thresholds for all three bit groups on our RGB 332 color format
-      was necessary for reliable color detection (i.e. having red be above a cdrtain value and having blue and green below a certain value).  Considering the entire color was especially necessary
-      for the white walls the treasures were surounded by, as they contain enough red and blue to trigger thrsholds in either case, skewing the counts arbitrarily.
+      Simply checking the bits corresponding to red or blue proved insufficient for reliable color detection.  We found that having thresholds for all three bit groups on our RGB 332 color format
+      was necessary for reliable color detection (i.e. having red be above a certain value and having blue and green below a certain value).  Considering the entire color was especially necessary
+      for the white walls the treasures were surrounded by, as they contain enough red and blue to trigger thresholds in either case, skewing the counts arbitrarily.
       We also implemented software averaging on the Arduino side to require a steady stream of color detection to confirm the presence of a treasure.
       <br><br>
       Below is a video demonstration of our improved color detection with Red and Blue LEDs lighting up corresponding to their respective colors:
