@@ -77,7 +77,7 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
 <h2 id="fpga">FPGA</h2>
 
 <p>On the FPGA side, we first wrote an image into memory, then spit this image back out to the VGA display this required writing specific colors to memory at given times and hooking the output of the memory up to the VGA module.  We created a flag. <br />
-<img src="Lab4/Lab04_Flag.jpeg" width="620" height="330" alt="SIgnal-Flag">
+<img src="Lab4/Lab04_Flag.jpeg" width="620" height="330" alt="SIgnal-Flag"> <br>
 The code to generate this flag was written in verilog as shown below.</p>
 
 <pre><code>always @ (WRITE_ADDRESS) begin
@@ -102,7 +102,7 @@ end
 </code></pre>
 
 <p>Once we verified the memory block was updating correctly, we next sought about interfacing with the camera.  The camera sends 2 bytes off color data at a time, which our friends on the Arduino team told us was in an RGB565 configuration.  We had to reduce this to an RGB 332 configuration which was compatible with our VGA driver and storable in a single byte.  The final implementation we settled on was in the form of a finite state machine clocked by the incoming clock of the camera as shown below. <br />
-<img src="FSM_Diagram.png" width="490" height="478" alt="Signal-Flag">
+<img src="FSM_Diagram.png" width="490" height="478" alt="Signal-Flag"><br>
 The FSM waits in idle until a row transmission begins.  Once there, it alternates between Byte 1 and Byte 2 until a row transmission finishes, when it transitions to line done.  When the entire image has been received, vsync will go high, at which point the FSM resets.  In Byte 1, the down sampler reads the first byte of camera data from GPIO and stores it in a register file.  In Byte 2, the down sampler reads the second byte from GPIO and concatenates bits from this new data and the data in the register file to create an 8-bit RGB332 value which is sent to memory.  </p>
 
 <h2 id="integration">Integration</h2>
