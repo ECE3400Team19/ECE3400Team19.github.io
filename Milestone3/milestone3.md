@@ -34,3 +34,6 @@ runDFS{
 Here is a video of our robot navigating a 4x5 maze!
 <iframe width="560" height="315" src="https://www.youtube.com/embed/m5x3R3dMZAY" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
+Our robot is able to navigate different maze configurations!!
+<iframe width="560" height="315" src="https://www.youtube.com/embed/qX5fpouX1v8" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
